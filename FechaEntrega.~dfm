@@ -1,6 +1,6 @@
 object frmEntrega: TfrmEntrega
-  Left = 19
-  Top = 121
+  Left = 102
+  Top = 63
   Width = 1005
   Height = 589
   Caption = 'Relacion de Fecha de Entrega'
@@ -720,6 +720,13 @@ object frmEntrega: TfrmEntrega
       Height = 13
       Caption = 'Orden :'
     end
+    object Label5: TLabel
+      Left = 644
+      Top = 42
+      Width = 35
+      Height = 13
+      Caption = 'Tarea :'
+    end
     object deRecibido1: TDateEditor
       Left = 147
       Top = 20
@@ -977,6 +984,14 @@ object frmEntrega: TfrmEntrega
       Caption = '...'
       TabOrder = 20
       OnClick = Button4Click
+    end
+    object cmbTareas: TComboBox
+      Left = 682
+      Top = 39
+      Width = 145
+      Height = 21
+      ItemHeight = 13
+      TabOrder = 21
     end
   end
   object GroupBox3: TGroupBox

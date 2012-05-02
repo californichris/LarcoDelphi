@@ -58,10 +58,13 @@ type
     btnTodos3: TButton;
     Button5: TButton;
     Button6: TButton;
+    Label5: TLabel;
+    cmbTareas: TComboBox;
     procedure FormCreate(Sender: TObject);
     procedure BindProductos();
     procedure BindClientes();
     Procedure BindPartes(Query: String);
+    Procedure BindTareas(Query: String);    
     Procedure BindOrdenes(Query: String);
     procedure BindGrid();
     procedure ExportGrid(Grid:TGridView;sFileName: String);
@@ -147,8 +150,10 @@ begin
     cmbClientes.Text := 'Todos';
     cmbPartes.Text := 'Todos';
     cmbOrdenes.Text := 'Todos';
+    cmbTareas.Text := 'Todos';
 
     BindClientes();
+    BindTareas('');
     CheckBox1.Checked := False;
     btnOKClick(nil);
     BindGrid();
@@ -158,7 +163,7 @@ begin
 end;
 
 procedure TfrmEntrega.BindGrid();
-var SQLStr,SQLWhere : String;
+var SQLStr,SQLWhere, SQLWhere2 : String;
 begin
     lblCount.Caption := '';
     giCantidad := 0;
@@ -175,6 +180,7 @@ begin
               'LEFT OUTER JOIN tblEmpleados E ON I.[USE_Login] = E.[ID] WHERE I.ITS_Status <> 9 ';
 
     SQLWhere := '';
+    SQLWhere2 := '';
     if chkRecibido.Checked then
     begin
         if SQLWhere <> '' then SQLWhere := SQLWhere + ' AND ';
@@ -223,7 +229,14 @@ begin
         SQLWhere := SQLWhere + ' O.Numero = ' + QuotedStr(cmbPartes.Text) + ' ';
     end;
 
+    if cmbTareas.Text <> 'Todos' then
+    begin
+        if SQLWhere2 <> '' then SQLWhere2 := SQLWhere2 + ' AND ';
+        SQLWhere2 := SQLWhere2 + ' T.Nombre = ' + QuotedStr(cmbTareas.Text) + ' ';
+    end;
+
     if SQLWhere <> '' then SQLStr := SQLStr + ' AND ' + SQLWhere;
+    if SQLWhere2 <> '' then SQLStr := SQLStr + ' AND ' + SQLWhere2;
 
     Qry.SQL.Clear;
     Qry.SQL.Text := SQLStr;
@@ -343,6 +356,31 @@ begin
     While not Qry2.Eof do
     Begin
         cmbPartes.Items.Add(Qry2['Numero']);
+        Qry2.Next;
+    End;
+
+    Qry2.Close;
+end;
+
+procedure TfrmEntrega.BindTareas(Query: String);
+var Qry2 : TADOQuery;
+SQLStr : String;
+begin
+    Qry2 := TADOQuery.Create(nil);
+    Qry2.Connection := Conn;
+
+
+    SQLStr := 'SELECT DISTINCT(Nombre) AS Nombre FROM tblTareas T Order by Nombre';
+
+    Qry2.SQL.Clear;
+    Qry2.SQL.Text := SQLStr;
+    Qry2.Open;
+
+    cmbTareas.Items.Clear;
+    cmbTareas.Items.Add('Todos');
+    While not Qry2.Eof do
+    Begin
+        cmbTareas.Items.Add(Qry2['Nombre']);
         Qry2.Next;
     End;
 
