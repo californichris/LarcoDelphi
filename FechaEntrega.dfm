@@ -274,6 +274,7 @@ object frmEntrega: TfrmEntrega
     Top = 120
     Width = 993
     Height = 505
+    Cursor = 3000
     Hint = 'Presiona F5 para Refrescar'
     BorderStyle = bsSingle
     GridStyle = gsReport

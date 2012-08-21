@@ -226,6 +226,7 @@ begin
     if cmbPartes.Text <> 'Todos' then
     begin
         if SQLWhere <> '' then SQLWhere := SQLWhere + ' AND ';
+        //if Pos('*', cmbPartes.Text) > 0 then 
         SQLWhere := SQLWhere + ' O.Numero = ' + QuotedStr(cmbPartes.Text) + ' ';
     end;
 
