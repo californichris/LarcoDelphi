@@ -1,8 +1,8 @@
 object frmMain: TfrmMain
-  Left = 203
-  Top = 172
+  Left = 473
+  Top = 96
   Width = 696
-  Height = 480
+  Height = 478
   Caption = 'Larco'
   Color = clAppWorkSpace
   Font.Charset = ANSI_CHARSET
@@ -40,7 +40,7 @@ object frmMain: TfrmMain
   end
   object StatusBar: TStatusBar
     Left = 0
-    Top = 415
+    Top = 413
     Width = 688
     Height = 19
     Panels = <
@@ -340,6 +340,17 @@ object frmMain: TfrmMain
       end
       object N8: TMenuItem
         Caption = '-'
+      end
+    end
+    object Stock1: TMenuItem
+      Caption = 'Stock'
+      object Planos1: TMenuItem
+        Caption = 'Planos'
+        OnClick = Planos1Click
+      end
+      object EntradasStock1: TMenuItem
+        Caption = 'Entradas Stock'
+        OnClick = EntradasStock1Click
       end
     end
   end

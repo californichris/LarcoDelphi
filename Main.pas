@@ -84,6 +84,9 @@ type
     ReportedeMaterialesporOrdendeTrabajo1: TMenuItem;
     DiasInhabiles1: TMenuItem;
     ReportedeCumplimientodeTiempodeEntrega1: TMenuItem;
+    Planos1: TMenuItem;
+    Stock1: TMenuItem;
+    EntradasStock1: TMenuItem;
     procedure Productos1Click(Sender: TObject);
     procedure Monitor1Click(Sender: TObject);
     procedure areas1Click(Sender: TObject);
@@ -148,6 +151,8 @@ type
     procedure DiasInhabiles1Click(Sender: TObject);
     procedure ReportedeCumplimientodeTiempodeEntrega1Click(
       Sender: TObject);
+    procedure Planos1Click(Sender: TObject);
+    procedure EntradasStock1Click(Sender: TObject);
   private
     { Private declarations }
     FirstTimeLogin : Boolean;
@@ -179,7 +184,7 @@ uses Login, Users, PorcentajeScrap, Screens, PorcentajeRetrabajo,
   ReporteEntradasSalidasLarco, ReporteMaterialesEscasos, SalidasLarco,
   ReporteProductividadEmpleado, ReporteProductividadEmpleadoDinero,
   ReporteMaterialesPorOrden, CatalogoDiasInhabiles,
-  ReporteCumplimientoFechaEntrega;
+  ReporteCumplimientoFechaEntrega, CatalogoPlanos, EntradasSalidasStock;
 
 {$R *.dfm}
 
@@ -955,6 +960,12 @@ begin
       end
       else if UT(formName) = UT('frmCumplimientoTiempoEntrega') then begin
         menuItem.OnClick := ReportedeCumplimientodeTiempodeEntrega1Click;
+      end
+      else if UT(formName) = UT('frmCatalogoPlanos') then begin
+        menuItem.OnClick := Planos1Click;
+      end
+      else if UT(formName) = UT('frmESStock') then begin
+        menuItem.OnClick := EntradasStock1Click;
       end;
 end;
 
@@ -1355,6 +1366,34 @@ else
   begin
         Application.CreateForm(TfrmCumplimientoTiempoEntrega, frmCumplimientoTiempoEntrega);
         frmCumplimientoTiempoEntrega.Show;
+  end;
+end;
+
+procedure TfrmMain.Planos1Click(Sender: TObject);
+begin
+if FormIsRunning('frmCatalogoPlanos') Then
+  begin
+        setActiveWindow(frmCatalogoPlanos.Handle);
+        frmCatalogoPlanos.WindowState := wsNormal;
+  end
+else
+  begin
+        Application.CreateForm(TfrmCatalogoPlanos, frmCatalogoPlanos);
+        frmCatalogoPlanos.Show;
+  end;
+end;
+
+procedure TfrmMain.EntradasStock1Click(Sender: TObject);
+begin
+if FormIsRunning('frmESStock') Then
+  begin
+        setActiveWindow(frmESStock.Handle);
+        frmESStock.WindowState := wsNormal;
+  end
+else
+  begin
+        Application.CreateForm(TfrmESStock, frmESStock);
+        frmESStock.Show;
   end;
 end;
 

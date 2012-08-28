@@ -147,7 +147,7 @@ var control : TControl;
 begin
   lblAnio.Caption := getFormYear(frmMain.sConnString, Self.Name);
   lblMaterialDesc.Caption := '';
-  
+
   gsPaisesIds := TStringList.Create;
   gsProvIds := TStringList.Create;
   gsMaterialesIds := TStringList.Create;

@@ -75,7 +75,9 @@ uses
   ReporteMaterialesPorOrdenQr in 'ReporteMaterialesPorOrdenQr.pas' {qrReporteMaterialesPorOrden: TQuickRep},
   CatalogoDiasInhabiles in 'CatalogoDiasInhabiles.pas' {frmDiasInhabiles},
   ReporteCumplimientoFechaEntrega in 'ReporteCumplimientoFechaEntrega.pas' {frmCumplimientoTiempoEntrega},
-  ReporteCumplimientoFechaEntregaQr in 'ReporteCumplimientoFechaEntregaQr.pas' {qrCumplimientoTiempoEntrega: TQuickRep};
+  ReporteCumplimientoFechaEntregaQr in 'ReporteCumplimientoFechaEntregaQr.pas' {qrCumplimientoTiempoEntrega: TQuickRep},
+  CatalogoPlanos in 'CatalogoPlanos.pas' {frmCatalogoPlanos},
+  EntradasSalidasStock in 'EntradasSalidasStock.pas' {frmESStock};
 
 {$R *.res}
 
