@@ -77,8 +77,7 @@ uses
   ReporteCumplimientoFechaEntrega in 'ReporteCumplimientoFechaEntrega.pas' {frmCumplimientoTiempoEntrega},
   ReporteCumplimientoFechaEntregaQr in 'ReporteCumplimientoFechaEntregaQr.pas' {qrCumplimientoTiempoEntrega: TQuickRep},
   CatalogoPlanos in 'CatalogoPlanos.pas' {frmCatalogoPlanos},
-  EntradasSalidasStock in 'EntradasSalidasStock.pas' {frmESStock},
-  CatalogoPlanosModal in 'CatalogoPlanosModal.pas' {ModalfrmCatalogoPlanos};
+  EntradasSalidasStock in 'EntradasSalidasStock.pas' {frmESStock};
 
 {$R *.res}
 

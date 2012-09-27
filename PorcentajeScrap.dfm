@@ -1,6 +1,6 @@
 object frmScrapPorcen: TfrmScrapPorcen
   Left = 53
-  Top = 90
+  Top = 70
   Width = 1014
   Height = 670
   Caption = 'Porcentaje de Scrap'
@@ -757,6 +757,101 @@ object frmScrapPorcen: TfrmScrapPorcen
   OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
+  object GroupBox2: TGroupBox
+    Left = 11
+    Top = 85
+    Width = 989
+    Height = 540
+    TabOrder = 1
+    object lblCLiberadas: TLabel
+      Left = 57
+      Top = 94
+      Width = 97
+      Height = 13
+      Caption = 'Ordenes Liberadas :'
+    end
+    object lblCScrap: TLabel
+      Left = 47
+      Top = 118
+      Width = 107
+      Height = 13
+      Caption = 'Ordenes Scrapeadas :'
+    end
+    object lblCTotal: TLabel
+      Left = 64
+      Top = 142
+      Width = 90
+      Height = 13
+      Caption = 'Total de Ordenes :'
+    end
+    object lblLiberadas: TLabel
+      Left = 164
+      Top = 94
+      Width = 56
+      Height = 13
+      Caption = 'lblLiberadas'
+    end
+    object lblScrap: TLabel
+      Left = 164
+      Top = 118
+      Width = 37
+      Height = 13
+      Caption = 'lblScrap'
+    end
+    object lblTotal: TLabel
+      Left = 165
+      Top = 142
+      Width = 34
+      Height = 13
+      Caption = 'lblTotal'
+    end
+    object lblCPorcentaje: TLabel
+      Left = 95
+      Top = 166
+      Width = 59
+      Height = 13
+      Caption = 'Porcentaje :'
+    end
+    object lblPorcentaje: TLabel
+      Left = 165
+      Top = 166
+      Width = 62
+      Height = 13
+      Caption = 'lblPorcentaje'
+    end
+    object Chart1: TChart
+      Left = 365
+      Top = 23
+      Width = 477
+      Height = 258
+      AllowPanning = pmNone
+      AllowZoom = False
+      BackWall.Brush.Color = clWhite
+      BackWall.Brush.Style = bsClear
+      BackWall.Pen.Visible = False
+      Title.Text.Strings = (
+        'Porcentaje de Scrap')
+      AxisVisible = False
+      ClipPoints = False
+      Frame.Visible = False
+      View3DOptions.Elevation = 315
+      View3DOptions.Orthogonal = False
+      View3DOptions.Perspective = 0
+      View3DOptions.Rotation = 360
+      View3DWalls = False
+      TabOrder = 0
+      object Series1: TPieSeries
+        Marks.ArrowLength = 8
+        Marks.Visible = True
+        SeriesColor = clRed
+        OtherSlice.Text = 'Other'
+        PieValues.DateTime = False
+        PieValues.Name = 'Pie'
+        PieValues.Multiplier = 1
+        PieValues.Order = loNone
+      end
+    end
+  end
   object GroupBox3: TGroupBox
     Left = 11
     Top = 85
@@ -1492,6 +1587,66 @@ object frmScrapPorcen: TfrmScrapPorcen
         Color = clWindow
         Cursor = crDefault
         DrawingOptions = doNormal
+        DefaultWidth = 80
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'Tahoma'
+        Font.Style = []
+        Footer.Color = clWindow
+        Footer.FormulaKind = fkNone
+        Header.Color = clBtnFace
+        Header.Caption = 'Area Detectado'
+        Header.DisplayMode = dmTextOnly
+        Options = [coCanClick, coCanSort, coEditorAutoSelect, coPublicUsing]
+        Position = 11
+        SlideBounds.Height = 0
+        SlideBounds.Left = 0
+        SlideBounds.Top = 0
+        SlideBounds.Width = 0
+        Sorted = False
+        SortType = stAlphabetic
+        VerticalAlignment = vaMiddle
+        Visible = True
+        Width = 80
+        WrapKind = wkEllipsis
+        AutoExecute = False
+      end
+      object TTextualColumn
+        Alignment = taLeftJustify
+        Color = clWindow
+        Cursor = crDefault
+        DrawingOptions = doNormal
+        DefaultWidth = 100
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'Tahoma'
+        Font.Style = []
+        Footer.Color = clWindow
+        Footer.FormulaKind = fkNone
+        Header.Color = clBtnFace
+        Header.Caption = 'Empleado Detecto'
+        Header.DisplayMode = dmTextOnly
+        Options = [coCanClick, coCanSort, coEditorAutoSelect, coPublicUsing]
+        Position = 12
+        SlideBounds.Height = 0
+        SlideBounds.Left = 0
+        SlideBounds.Top = 0
+        SlideBounds.Width = 0
+        Sorted = False
+        SortType = stAlphabetic
+        VerticalAlignment = vaMiddle
+        Visible = True
+        Width = 100
+        WrapKind = wkEllipsis
+        AutoExecute = False
+      end
+      object TTextualColumn
+        Alignment = taLeftJustify
+        Color = clWindow
+        Cursor = crDefault
+        DrawingOptions = doNormal
         DefaultWidth = 100
         Font.Charset = ANSI_CHARSET
         Font.Color = clWindowText
@@ -1504,7 +1659,7 @@ object frmScrapPorcen: TfrmScrapPorcen
         Header.Caption = 'Motivo'
         Header.DisplayMode = dmTextOnly
         Options = [coCanClick, coCanSort, coEditorAutoSelect, coPublicUsing]
-        Position = 11
+        Position = 13
         SlideBounds.Height = 0
         SlideBounds.Left = 0
         SlideBounds.Top = 0
@@ -1534,7 +1689,7 @@ object frmScrapPorcen: TfrmScrapPorcen
         Header.Caption = 'Parcial'
         Header.DisplayMode = dmTextOnly
         Options = [coCanClick, coCanSort, coEditorAutoSelect, coPublicUsing]
-        Position = 12
+        Position = 14
         SlideBounds.Height = 0
         SlideBounds.Left = 0
         SlideBounds.Top = 0
@@ -1564,7 +1719,7 @@ object frmScrapPorcen: TfrmScrapPorcen
         Header.Caption = 'Reprogramar'
         Header.DisplayMode = dmTextOnly
         Options = [coCanClick, coCanSort, coEditorAutoSelect, coPublicUsing]
-        Position = 13
+        Position = 15
         SlideBounds.Height = 0
         SlideBounds.Left = 0
         SlideBounds.Top = 0
@@ -1576,101 +1731,6 @@ object frmScrapPorcen: TfrmScrapPorcen
         Width = 80
         WrapKind = wkEllipsis
         AutoExecute = False
-      end
-    end
-  end
-  object GroupBox2: TGroupBox
-    Left = 11
-    Top = 85
-    Width = 989
-    Height = 540
-    TabOrder = 1
-    object lblCLiberadas: TLabel
-      Left = 57
-      Top = 94
-      Width = 97
-      Height = 13
-      Caption = 'Ordenes Liberadas :'
-    end
-    object lblCScrap: TLabel
-      Left = 47
-      Top = 118
-      Width = 107
-      Height = 13
-      Caption = 'Ordenes Scrapeadas :'
-    end
-    object lblCTotal: TLabel
-      Left = 64
-      Top = 142
-      Width = 90
-      Height = 13
-      Caption = 'Total de Ordenes :'
-    end
-    object lblLiberadas: TLabel
-      Left = 164
-      Top = 94
-      Width = 56
-      Height = 13
-      Caption = 'lblLiberadas'
-    end
-    object lblScrap: TLabel
-      Left = 164
-      Top = 118
-      Width = 37
-      Height = 13
-      Caption = 'lblScrap'
-    end
-    object lblTotal: TLabel
-      Left = 165
-      Top = 142
-      Width = 34
-      Height = 13
-      Caption = 'lblTotal'
-    end
-    object lblCPorcentaje: TLabel
-      Left = 95
-      Top = 166
-      Width = 59
-      Height = 13
-      Caption = 'Porcentaje :'
-    end
-    object lblPorcentaje: TLabel
-      Left = 165
-      Top = 166
-      Width = 62
-      Height = 13
-      Caption = 'lblPorcentaje'
-    end
-    object Chart1: TChart
-      Left = 365
-      Top = 23
-      Width = 477
-      Height = 258
-      AllowPanning = pmNone
-      AllowZoom = False
-      BackWall.Brush.Color = clWhite
-      BackWall.Brush.Style = bsClear
-      BackWall.Pen.Visible = False
-      Title.Text.Strings = (
-        'Porcentaje de Scrap')
-      AxisVisible = False
-      ClipPoints = False
-      Frame.Visible = False
-      View3DOptions.Elevation = 315
-      View3DOptions.Orthogonal = False
-      View3DOptions.Perspective = 0
-      View3DOptions.Rotation = 360
-      View3DWalls = False
-      TabOrder = 0
-      object Series1: TPieSeries
-        Marks.ArrowLength = 8
-        Marks.Visible = True
-        SeriesColor = clRed
-        OtherSlice.Text = 'Other'
-        PieValues.DateTime = False
-        PieValues.Name = 'Pie'
-        PieValues.Multiplier = 1
-        PieValues.Order = loNone
       end
     end
   end

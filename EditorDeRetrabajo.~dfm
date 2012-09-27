@@ -816,39 +816,39 @@ object frmEditorRetrabajo: TfrmEditorRetrabajo
     Height = 243
     TabOrder = 0
     object Label1: TLabel
-      Left = 40
+      Left = 39
       Top = 28
       Width = 92
       Height = 13
       Caption = 'Orden de Trabajo :'
     end
     object Label2: TLabel
-      Left = 91
-      Top = 59
-      Width = 42
+      Left = 92
+      Top = 51
+      Width = 39
       Height = 13
-      Caption = 'Motivo : '
+      Caption = 'Motivo :'
     end
     object Label3: TLabel
       Left = 37
-      Top = 91
-      Width = 97
+      Top = 77
+      Width = 94
       Height = 13
-      Caption = 'Area Responsable : '
+      Caption = 'Area Responsable :'
     end
     object Label4: TLabel
-      Left = 13
-      Top = 123
-      Width = 120
+      Left = 14
+      Top = 103
+      Width = 117
       Height = 13
-      Caption = 'Empleado Responsable : '
+      Caption = 'Empleado Responsable :'
     end
     object Label5: TLabel
-      Left = 53
-      Top = 155
-      Width = 76
+      Left = 48
+      Top = 128
+      Width = 83
       Height = 13
-      Caption = 'Detectado por :'
+      Caption = 'Area Detectado :'
     end
     object lblAnio: TLabel
       Left = 272
@@ -865,6 +865,13 @@ object frmEditorRetrabajo: TfrmEditorRetrabajo
       Caption = 'id'
       Visible = False
     end
+    object Label6: TLabel
+      Left = 37
+      Top = 154
+      Width = 94
+      Height = 13
+      Caption = 'Empleado Detecto :'
+    end
     object txtOrden: TMaskEdit
       Left = 136
       Top = 24
@@ -878,7 +885,7 @@ object frmEditorRetrabajo: TfrmEditorRetrabajo
     end
     object txtMotivo: TEdit
       Left = 136
-      Top = 57
+      Top = 49
       Width = 377
       Height = 21
       MaxLength = 50
@@ -887,7 +894,7 @@ object frmEditorRetrabajo: TfrmEditorRetrabajo
     end
     object cmbTareas: TComboBox
       Left = 136
-      Top = 88
+      Top = 74
       Width = 232
       Height = 21
       Enabled = False
@@ -896,7 +903,7 @@ object frmEditorRetrabajo: TfrmEditorRetrabajo
     end
     object cmbEmpleados: TComboBox
       Left = 136
-      Top = 119
+      Top = 99
       Width = 231
       Height = 21
       Enabled = False
@@ -905,7 +912,7 @@ object frmEditorRetrabajo: TfrmEditorRetrabajo
     end
     object cmbDetectado: TComboBox
       Left = 136
-      Top = 151
+      Top = 124
       Width = 231
       Height = 21
       Enabled = False
@@ -1000,7 +1007,7 @@ object frmEditorRetrabajo: TfrmEditorRetrabajo
       Visible = False
     end
     object Editar: TButton
-      Left = 134
+      Left = 126
       Top = 202
       Width = 49
       Height = 25
@@ -1015,7 +1022,7 @@ object frmEditorRetrabajo: TfrmEditorRetrabajo
       OnClick = EditarClick
     end
     object Borrar: TButton
-      Left = 189
+      Left = 181
       Top = 202
       Width = 49
       Height = 25
@@ -1030,7 +1037,7 @@ object frmEditorRetrabajo: TfrmEditorRetrabajo
       OnClick = BorrarClick
     end
     object Buscar: TButton
-      Left = 245
+      Left = 237
       Top = 202
       Width = 49
       Height = 25
@@ -1079,6 +1086,15 @@ object frmEditorRetrabajo: TfrmEditorRetrabajo
       ShowHint = True
       TabOrder = 14
       OnClick = btnCancelarClick
+    end
+    object cmbEmpleadoDetecto: TComboBox
+      Left = 136
+      Top = 150
+      Width = 231
+      Height = 21
+      Enabled = False
+      ItemHeight = 13
+      TabOrder = 15
     end
   end
 end

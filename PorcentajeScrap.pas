@@ -120,7 +120,7 @@ end;
 procedure TfrmScrapPorcen.Button1Click(Sender: TObject);
 var  Qry : TADOQuery;
 Conn : TADOConnection;
-SQLStr : String;
+SQLStr, parcial : String;
 begin
     //Create Connection
     giLiberadas := 0;
@@ -170,10 +170,12 @@ begin
     SQLStr := 'SELECT RIGHT(S.ITE_Nombre,LEN(S.ITE_Nombre) - 3) AS Orden,O.Ordenada As Cantidad, ' +
               'O.Producto As Descripcion,O.Numero,O.Terminal,Interna As Fecha, ' +
               'RIGHT(S.SCR_NewItem,LEN(S.SCR_NewItem) - 3) AS NewOrden, ' +
-              'S.SCR_Cantidad,S.SCR_Fecha,S.SCR_Tarea AS Area,E.Nombre As EmpleadoRes,SCR_Motivo,SCR_Parcial,SCR_Repro ' +
+              'S.SCR_Cantidad,S.SCR_Fecha,S.SCR_Tarea AS Area,E.Nombre As EmpleadoRes, '+
+              'SCR_Motivo,SCR_Parcial,SCR_Repro,SCR_Detectado, SCR_EmpleadoDetectado,D.Nombre As EmpleadoDetectado ' +
               'FROM tblScrap S ' +
               'INNER JOIN tblOrdenes O ON S.ITE_Nombre  = O.ITE_Nombre ' +
               'LEFT OUTER JOIN tblEmpleados E ON E.[Id] = S.SCR_EmpleadoRes ' +
+              'LEFT OUTER JOIN tblEmpleados D ON D.[Id] = S.SCR_EmpleadoDetectado ' +
               'WHERE SCR_Fecha >= ' + QuotedStr(deFrom.Text) +
               ' AND SCR_Fecha <= ' + QuotedStr(deTo.Text + ' 23:59:59.99' );
 
@@ -218,9 +220,18 @@ begin
         GridView2.Cells[8,GridView2.RowCount -1] := VarToStr(Qry['SCR_Fecha']);
         GridView2.Cells[9,GridView2.RowCount -1] := VarToStr(Qry['Area']);
         GridView2.Cells[10,GridView2.RowCount -1] := VarToStr(Qry['EmpleadoRes']);
-        GridView2.Cells[11,GridView2.RowCount -1] := VarToStr(Qry['SCR_Motivo']);
-        GridView2.Cells[12,GridView2.RowCount -1] := VarToStr(Qry['SCR_Parcial']);
-        GridView2.Cells[13,GridView2.RowCount -1] := VarToStr(Qry['SCR_Repro']);
+        GridView2.Cells[11,GridView2.RowCount -1] := VarToStr(Qry['SCR_Detectado']);
+        GridView2.Cells[12,GridView2.RowCount -1] := VarToStr(Qry['EmpleadoDetectado']);
+        GridView2.Cells[13,GridView2.RowCount -1] := VarToStr(Qry['SCR_Motivo']);
+        parcial := VarToStr(Qry['SCR_Parcial']);
+        if parcial = '-1' then begin
+          parcial := 'Si';
+        end
+        else begin
+          parcial := 'No';
+        end;
+        GridView2.Cells[14,GridView2.RowCount -1] := parcial;
+        GridView2.Cells[15,GridView2.RowCount -1] := VarToStr(Qry['SCR_Repro']);
 
         giScrap := giScrap + StrToInt(GridView2.Cells[2,GridView2.RowCount -1]);
         if GridView2.Cells[12,GridView2.RowCount -1] <> '0' then begin

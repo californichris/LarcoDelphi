@@ -1,8 +1,8 @@
 object frmRetrabajo: TfrmRetrabajo
-  Left = 7
-  Top = 177
-  Width = 1017
-  Height = 480
+  Left = 109
+  Top = 112
+  Width = 1091
+  Height = 516
   Caption = 'Porcentaje de Retrabajo'
   Color = clBtnFace
   Font.Charset = ANSI_CHARSET
@@ -811,7 +811,6 @@ object frmRetrabajo: TfrmRetrabajo
       Top = 83
       Width = 961
       Height = 201
-      Cursor = 3000
       Hint = 'Presiona F5 para Refrescar'
       BorderStyle = bsSingle
       GridStyle = gsReport
@@ -1429,6 +1428,66 @@ object frmRetrabajo: TfrmRetrabajo
         Color = clWindow
         Cursor = crDefault
         DrawingOptions = doNormal
+        DefaultWidth = 80
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'Tahoma'
+        Font.Style = []
+        Footer.Color = clWindow
+        Footer.FormulaKind = fkNone
+        Header.Color = clBtnFace
+        Header.Caption = 'Area Detectado'
+        Header.DisplayMode = dmTextOnly
+        Options = [coCanClick, coCanSort, coEditorAutoSelect, coPublicUsing]
+        Position = 10
+        SlideBounds.Height = 0
+        SlideBounds.Left = 0
+        SlideBounds.Top = 0
+        SlideBounds.Width = 0
+        Sorted = False
+        SortType = stAlphabetic
+        VerticalAlignment = vaMiddle
+        Visible = True
+        Width = 80
+        WrapKind = wkEllipsis
+        AutoExecute = False
+      end
+      object TTextualColumn
+        Alignment = taLeftJustify
+        Color = clWindow
+        Cursor = crDefault
+        DrawingOptions = doNormal
+        DefaultWidth = 80
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'Tahoma'
+        Font.Style = []
+        Footer.Color = clWindow
+        Footer.FormulaKind = fkNone
+        Header.Color = clBtnFace
+        Header.Caption = 'Empleado Detecto'
+        Header.DisplayMode = dmTextOnly
+        Options = [coCanClick, coCanSort, coEditorAutoSelect, coPublicUsing]
+        Position = 11
+        SlideBounds.Height = 0
+        SlideBounds.Left = 0
+        SlideBounds.Top = 0
+        SlideBounds.Width = 0
+        Sorted = False
+        SortType = stAlphabetic
+        VerticalAlignment = vaMiddle
+        Visible = True
+        Width = 80
+        WrapKind = wkEllipsis
+        AutoExecute = False
+      end
+      object TTextualColumn
+        Alignment = taLeftJustify
+        Color = clWindow
+        Cursor = crDefault
+        DrawingOptions = doNormal
         DefaultWidth = 100
         Font.Charset = ANSI_CHARSET
         Font.Color = clWindowText
@@ -1441,7 +1500,7 @@ object frmRetrabajo: TfrmRetrabajo
         Header.Caption = 'Motivo'
         Header.DisplayMode = dmTextOnly
         Options = [coCanClick, coCanSort, coEditorAutoSelect, coPublicUsing]
-        Position = 10
+        Position = 12
         SlideBounds.Height = 0
         SlideBounds.Left = 0
         SlideBounds.Top = 0

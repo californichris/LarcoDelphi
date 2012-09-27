@@ -1,6 +1,6 @@
 object frmEmpleados: TfrmEmpleados
-  Left = 226
-  Top = 242
+  Left = 360
+  Top = 164
   BorderStyle = bsSingle
   Caption = 'Empleados'
   ClientHeight = 439

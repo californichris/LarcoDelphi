@@ -1,6 +1,6 @@
 object frmRelacionOC: TfrmRelacionOC
-  Left = 179
-  Top = 100
+  Left = 169
+  Top = 62
   Width = 1136
   Height = 654
   Caption = 'Relacion  de Ordene de Compra por Cliente'
@@ -128,7 +128,7 @@ object frmRelacionOC: TfrmRelacionOC
   object GridView1: TGridView
     Left = 10
     Top = 120
-    Width = 993
+    Width = 1031
     Height = 497
     Hint = 'Presiona F5 para Refrescar'
     BorderStyle = bsSingle
@@ -184,7 +184,7 @@ object frmRelacionOC: TfrmRelacionOC
       Color = clWindow
       Cursor = crDefault
       DrawingOptions = doNormal
-      DefaultWidth = 80
+      DefaultWidth = 84
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
@@ -205,7 +205,7 @@ object frmRelacionOC: TfrmRelacionOC
       SortType = stDate
       VerticalAlignment = vaMiddle
       Visible = True
-      Width = 80
+      Width = 84
       WrapKind = wkEllipsis
       AutoExecute = False
     end
@@ -214,7 +214,7 @@ object frmRelacionOC: TfrmRelacionOC
       Color = clWindow
       Cursor = crDefault
       DrawingOptions = doNormal
-      DefaultWidth = 90
+      DefaultWidth = 95
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
@@ -235,7 +235,7 @@ object frmRelacionOC: TfrmRelacionOC
       SortType = stAlphabetic
       VerticalAlignment = vaMiddle
       Visible = True
-      Width = 90
+      Width = 95
       WrapKind = wkEllipsis
       AutoExecute = False
     end
@@ -244,7 +244,7 @@ object frmRelacionOC: TfrmRelacionOC
       Color = clWindow
       Cursor = crDefault
       DrawingOptions = doNormal
-      DefaultWidth = 50
+      DefaultWidth = 53
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
@@ -261,11 +261,11 @@ object frmRelacionOC: TfrmRelacionOC
       SlideBounds.Left = 0
       SlideBounds.Top = 0
       SlideBounds.Width = 0
-      Sorted = True
+      Sorted = False
       SortType = stNumeric
       VerticalAlignment = vaMiddle
       Visible = True
-      Width = 50
+      Width = 53
       WrapKind = wkEllipsis
       AutoExecute = False
     end
@@ -304,7 +304,7 @@ object frmRelacionOC: TfrmRelacionOC
       Color = clWindow
       Cursor = crDefault
       DrawingOptions = doNormal
-      DefaultWidth = 100
+      DefaultWidth = 105
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
@@ -325,7 +325,7 @@ object frmRelacionOC: TfrmRelacionOC
       SortType = stAlphabetic
       VerticalAlignment = vaMiddle
       Visible = True
-      Width = 100
+      Width = 105
       WrapKind = wkEllipsis
       AutoExecute = False
     end
@@ -334,7 +334,37 @@ object frmRelacionOC: TfrmRelacionOC
       Color = clWindow
       Cursor = crDefault
       DrawingOptions = doNormal
-      DefaultWidth = 90
+      DefaultWidth = 94
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      Footer.Color = clWindow
+      Footer.FormulaKind = fkNone
+      Header.Color = clBtnFace
+      Header.Caption = 'No. Plano'
+      Header.DisplayMode = dmTextOnly
+      Options = [coCanClick, coCanSort, coEditorAutoSelect, coPublicUsing]
+      Position = 6
+      SlideBounds.Height = 0
+      SlideBounds.Left = 0
+      SlideBounds.Top = 0
+      SlideBounds.Width = 0
+      Sorted = False
+      SortType = stAlphabetic
+      VerticalAlignment = vaMiddle
+      Visible = True
+      Width = 94
+      WrapKind = wkEllipsis
+      AutoExecute = False
+    end
+    object TTextualColumn
+      Alignment = taLeftJustify
+      Color = clWindow
+      Cursor = crDefault
+      DrawingOptions = doNormal
+      DefaultWidth = 94
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
@@ -346,7 +376,7 @@ object frmRelacionOC: TfrmRelacionOC
       Header.Caption = 'No.Parte'
       Header.DisplayMode = dmTextOnly
       Options = [coAutoSize, coCanClick, coCanSort, coEditorAutoSelect, coPublicUsing]
-      Position = 6
+      Position = 7
       SlideBounds.Height = 0
       SlideBounds.Left = 0
       SlideBounds.Top = 0
@@ -355,7 +385,7 @@ object frmRelacionOC: TfrmRelacionOC
       SortType = stAlphabetic
       VerticalAlignment = vaMiddle
       Visible = True
-      Width = 90
+      Width = 94
       WrapKind = wkEllipsis
       AutoExecute = False
     end
@@ -364,7 +394,7 @@ object frmRelacionOC: TfrmRelacionOC
       Color = clWindow
       Cursor = crDefault
       DrawingOptions = doNormal
-      DefaultWidth = 90
+      DefaultWidth = 95
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
@@ -376,7 +406,7 @@ object frmRelacionOC: TfrmRelacionOC
       Header.Caption = 'Fecha Compro.'
       Header.DisplayMode = dmTextOnly
       Options = [coAutoSize, coCanClick, coCanSort, coEditorAutoSelect, coPublicUsing]
-      Position = 7
+      Position = 8
       SlideBounds.Height = 0
       SlideBounds.Left = 0
       SlideBounds.Top = 0
@@ -385,7 +415,7 @@ object frmRelacionOC: TfrmRelacionOC
       SortType = stDate
       VerticalAlignment = vaMiddle
       Visible = True
-      Width = 90
+      Width = 95
       WrapKind = wkEllipsis
       AutoExecute = False
     end
@@ -394,7 +424,7 @@ object frmRelacionOC: TfrmRelacionOC
       Color = clWindow
       Cursor = crDefault
       DrawingOptions = doNormal
-      DefaultWidth = 90
+      DefaultWidth = 94
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
@@ -406,7 +436,7 @@ object frmRelacionOC: TfrmRelacionOC
       Header.Caption = 'Fecha Interna'
       Header.DisplayMode = dmTextOnly
       Options = [coAutoSize, coCanClick, coCanSort, coEditorAutoSelect, coPublicUsing]
-      Position = 8
+      Position = 9
       SlideBounds.Height = 0
       SlideBounds.Left = 0
       SlideBounds.Top = 0
@@ -415,7 +445,7 @@ object frmRelacionOC: TfrmRelacionOC
       SortType = stDate
       VerticalAlignment = vaMiddle
       Visible = True
-      Width = 90
+      Width = 94
       WrapKind = wkEllipsis
       AutoExecute = False
     end
@@ -424,7 +454,7 @@ object frmRelacionOC: TfrmRelacionOC
       Color = clWindow
       Cursor = crDefault
       DrawingOptions = doNormal
-      DefaultWidth = 100
+      DefaultWidth = 105
       Font.Charset = ANSI_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
@@ -436,7 +466,7 @@ object frmRelacionOC: TfrmRelacionOC
       Header.Caption = 'Tarea'
       Header.DisplayMode = dmTextOnly
       Options = [coAutoSize, coCanClick, coCanSort, coEditorAutoSelect, coPublicUsing]
-      Position = 9
+      Position = 10
       SlideBounds.Height = 0
       SlideBounds.Left = 0
       SlideBounds.Top = 0
@@ -445,7 +475,7 @@ object frmRelacionOC: TfrmRelacionOC
       SortType = stAlphabetic
       VerticalAlignment = vaMiddle
       Visible = True
-      Width = 100
+      Width = 105
       WrapKind = wkEllipsis
       AutoExecute = False
     end
@@ -454,7 +484,7 @@ object frmRelacionOC: TfrmRelacionOC
       Color = clWindow
       Cursor = crDefault
       DrawingOptions = doNormal
-      DefaultWidth = 70
+      DefaultWidth = 74
       Font.Charset = ANSI_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
@@ -466,7 +496,7 @@ object frmRelacionOC: TfrmRelacionOC
       Header.Caption = 'Status'
       Header.DisplayMode = dmTextOnly
       Options = [coAutoSize, coCanClick, coCanSort, coEditorAutoSelect, coPublicUsing]
-      Position = 10
+      Position = 11
       SlideBounds.Height = 0
       SlideBounds.Left = 0
       SlideBounds.Top = 0
@@ -475,7 +505,7 @@ object frmRelacionOC: TfrmRelacionOC
       SortType = stAlphabetic
       VerticalAlignment = vaMiddle
       Visible = True
-      Width = 70
+      Width = 74
       WrapKind = wkEllipsis
       AutoExecute = False
     end
@@ -496,7 +526,7 @@ object frmRelacionOC: TfrmRelacionOC
       Header.Caption = 'Total'
       Header.DisplayMode = dmTextOnly
       Options = [coCanClick, coCanSort, coEditorAutoSelect, coPublicUsing]
-      Position = 11
+      Position = 12
       SlideBounds.Height = 0
       SlideBounds.Left = 0
       SlideBounds.Top = 0
@@ -526,12 +556,12 @@ object frmRelacionOC: TfrmRelacionOC
       Header.Caption = 'Dlls'
       Header.DisplayMode = dmTextOnly
       Options = [coCanClick, coCanSort, coEditorAutoSelect, coPublicUsing]
-      Position = 12
+      Position = 13
       SlideBounds.Height = 0
       SlideBounds.Left = 0
       SlideBounds.Top = 0
       SlideBounds.Width = 0
-      Sorted = False
+      Sorted = True
       SortType = stAlphabetic
       VerticalAlignment = vaMiddle
       Visible = True
@@ -554,36 +584,6 @@ object frmRelacionOC: TfrmRelacionOC
       Footer.FormulaKind = fkNone
       Header.Color = clBtnFace
       Header.Caption = 'FileName'
-      Header.DisplayMode = dmTextOnly
-      Options = [coCanClick, coCanSort, coEditorAutoSelect, coPublicUsing]
-      Position = 13
-      SlideBounds.Height = 0
-      SlideBounds.Left = 0
-      SlideBounds.Top = 0
-      SlideBounds.Width = 0
-      Sorted = False
-      SortType = stAlphabetic
-      VerticalAlignment = vaMiddle
-      Visible = False
-      Width = 80
-      WrapKind = wkEllipsis
-      AutoExecute = False
-    end
-    object TTextualColumn
-      Alignment = taLeftJustify
-      Color = clWindow
-      Cursor = crDefault
-      DrawingOptions = doNormal
-      DefaultWidth = 80
-      Font.Charset = ANSI_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'Tahoma'
-      Font.Style = []
-      Footer.Color = clWindow
-      Footer.FormulaKind = fkNone
-      Header.Color = clBtnFace
-      Header.Caption = 'Stock'
       Header.DisplayMode = dmTextOnly
       Options = [coCanClick, coCanSort, coEditorAutoSelect, coPublicUsing]
       Position = 14
@@ -613,10 +613,40 @@ object frmRelacionOC: TfrmRelacionOC
       Footer.Color = clWindow
       Footer.FormulaKind = fkNone
       Header.Color = clBtnFace
-      Header.Caption = 'Programado'
+      Header.Caption = 'Stock'
       Header.DisplayMode = dmTextOnly
       Options = [coCanClick, coCanSort, coEditorAutoSelect, coPublicUsing]
       Position = 15
+      SlideBounds.Height = 0
+      SlideBounds.Left = 0
+      SlideBounds.Top = 0
+      SlideBounds.Width = 0
+      Sorted = False
+      SortType = stAlphabetic
+      VerticalAlignment = vaMiddle
+      Visible = False
+      Width = 80
+      WrapKind = wkEllipsis
+      AutoExecute = False
+    end
+    object TTextualColumn
+      Alignment = taLeftJustify
+      Color = clWindow
+      Cursor = crDefault
+      DrawingOptions = doNormal
+      DefaultWidth = 80
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      Footer.Color = clWindow
+      Footer.FormulaKind = fkNone
+      Header.Color = clBtnFace
+      Header.Caption = 'Programado'
+      Header.DisplayMode = dmTextOnly
+      Options = [coCanClick, coCanSort, coEditorAutoSelect, coPublicUsing]
+      Position = 16
       SlideBounds.Height = 0
       SlideBounds.Left = 0
       SlideBounds.Top = 0
@@ -633,7 +663,7 @@ object frmRelacionOC: TfrmRelacionOC
   object GroupBox1: TGroupBox
     Left = 10
     Top = 8
-    Width = 993
+    Width = 1031
     Height = 105
     Hint = 'Presiona F5 para Refrescar'
     ParentShowHint = False
@@ -663,14 +693,14 @@ object frmRelacionOC: TfrmRelacionOC
     end
     object Label3: TLabel
       Left = 10
-      Top = 50
+      Top = 39
       Width = 53
       Height = 13
       Caption = 'No. Parte :'
     end
     object Label5: TLabel
       Left = 234
-      Top = 50
+      Top = 39
       Width = 66
       Height = 13
       Caption = 'Ord.Compra :'
@@ -678,27 +708,41 @@ object frmRelacionOC: TfrmRelacionOC
     object Label6: TLabel
       Left = 488
       Top = 16
-      Width = 31
+      Width = 29
       Height = 13
-      Caption = 'A'#241'io : '
+      Caption = 'A'#241'o : '
+    end
+    object Label7: TLabel
+      Left = 456
+      Top = 39
+      Width = 61
+      Height = 13
+      Caption = 'Descripcion :'
+    end
+    object Label8: TLabel
+      Left = 674
+      Top = 40
+      Width = 53
+      Height = 13
+      Caption = 'No. Plano :'
     end
     object GroupBox2: TGroupBox
-      Left = 545
-      Top = 49
-      Width = 342
-      Height = 49
+      Left = 700
+      Top = 65
+      Width = 327
+      Height = 36
       TabOrder = 8
       Visible = False
       object Label1: TLabel
         Left = 70
-        Top = 16
+        Top = 12
         Width = 53
         Height = 13
         Caption = 'Cantidad : '
       end
       object chkTotal: TCheckBox
         Left = 8
-        Top = 16
+        Top = 12
         Width = 57
         Height = 17
         Caption = 'Total'
@@ -707,15 +751,15 @@ object frmRelacionOC: TfrmRelacionOC
       end
       object txtCantidad: TEdit
         Left = 124
-        Top = 14
+        Top = 10
         Width = 111
         Height = 21
         Enabled = False
         TabOrder = 1
       end
       object Cancel: TButton
-        Left = 292
-        Top = 14
+        Left = 276
+        Top = 10
         Width = 45
         Height = 20
         Caption = 'Cancel'
@@ -724,8 +768,8 @@ object frmRelacionOC: TfrmRelacionOC
       end
       object OK: TButton
         Left = 242
-        Top = 14
-        Width = 46
+        Top = 10
+        Width = 30
         Height = 20
         Caption = 'Ok'
         TabOrder = 3
@@ -733,9 +777,9 @@ object frmRelacionOC: TfrmRelacionOC
       end
     end
     object Button1: TButton
-      Left = 200
+      Left = 189
       Top = 75
-      Width = 75
+      Width = 50
       Height = 21
       Caption = 'Export'
       TabOrder = 0
@@ -751,7 +795,7 @@ object frmRelacionOC: TfrmRelacionOC
       Visible = False
     end
     object Button2: TButton
-      Left = 96
+      Left = 88
       Top = 75
       Width = 97
       Height = 21
@@ -760,7 +804,7 @@ object frmRelacionOC: TfrmRelacionOC
       OnClick = Button2Click
     end
     object btnBuscar: TButton
-      Left = 16
+      Left = 9
       Top = 75
       Width = 75
       Height = 21
@@ -769,9 +813,9 @@ object frmRelacionOC: TfrmRelacionOC
       OnClick = btnBuscarClick
     end
     object Imprimir: TButton
-      Left = 624
+      Left = 506
       Top = 75
-      Width = 97
+      Width = 85
       Height = 21
       Caption = 'Imprimir Orden'
       Enabled = False
@@ -779,9 +823,9 @@ object frmRelacionOC: TfrmRelacionOC
       OnClick = ImprimirClick
     end
     object Stock: TButton
-      Left = 543
+      Left = 453
       Top = 76
-      Width = 75
+      Width = 50
       Height = 21
       BiDiMode = bdLeftToRight
       Caption = 'Stock'
@@ -791,9 +835,9 @@ object frmRelacionOC: TfrmRelacionOC
       OnClick = StockClick
     end
     object Editar: TButton
-      Left = 727
+      Left = 594
       Top = 75
-      Width = 75
+      Width = 50
       Height = 21
       Caption = 'Editar'
       Enabled = False
@@ -801,9 +845,9 @@ object frmRelacionOC: TfrmRelacionOC
       OnClick = EditarClick
     end
     object Borrar: TButton
-      Left = 808
+      Left = 647
       Top = 75
-      Width = 75
+      Width = 50
       Height = 21
       Caption = 'Borrar'
       Enabled = False
@@ -812,25 +856,26 @@ object frmRelacionOC: TfrmRelacionOC
     end
     object cmbPartes: TComboBox
       Left = 66
-      Top = 47
+      Top = 38
       Width = 145
       Height = 21
       ItemHeight = 13
       TabOrder = 9
+      OnKeyDown = cmbPartesKeyDown
     end
     object cmbCompra: TComboBox
       Left = 306
-      Top = 47
+      Top = 38
       Width = 145
       Height = 21
       ItemHeight = 13
       TabOrder = 10
     end
     object Button5: TButton
-      Left = 282
-      Top = 76
-      Width = 75
-      Height = 20
+      Left = 243
+      Top = 75
+      Width = 50
+      Height = 21
       Caption = 'Importar'
       TabOrder = 11
       OnClick = Button5Click
@@ -926,6 +971,24 @@ object frmRelacionOC: TfrmRelacionOC
       Caption = 'Fecha de Recibido  :'
       TabOrder = 19
       OnClick = chkRecibidoClick
+    end
+    object cmbProductos: TComboBox
+      Left = 522
+      Top = 38
+      Width = 145
+      Height = 21
+      ItemHeight = 13
+      TabOrder = 20
+      OnKeyDown = cmbPartesKeyDown
+    end
+    object cmbPlanos: TComboBox
+      Left = 730
+      Top = 38
+      Width = 145
+      Height = 21
+      ItemHeight = 13
+      TabOrder = 21
+      OnKeyDown = cmbPartesKeyDown
     end
   end
   object ProgressBar1: TProgressBar
@@ -1167,12 +1230,12 @@ object frmRelacionOC: TfrmRelacionOC
     end
   end
   object Timer1: TTimer
-    Left = 968
-    Top = 20
+    Left = 984
+    Top = 12
   end
   object SaveDialog1: TSaveDialog
-    Left = 932
-    Top = 20
+    Left = 948
+    Top = 12
   end
   object PopupMenu2: TPopupMenu
     Left = 952
@@ -1183,7 +1246,7 @@ object frmRelacionOC: TfrmRelacionOC
     end
   end
   object OpenDialog1: TOpenDialog
-    Left = 933
-    Top = 54
+    Left = 1013
+    Top = 14
   end
 end

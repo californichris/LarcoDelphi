@@ -42,6 +42,8 @@ type
     lblAnio: TLabel;
     lblId: TLabel;
     deFecha: TDateEditor;
+    Label9: TLabel;
+    cmbEmpleadoDetecto: TComboBox;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure BindEmpleados();
@@ -110,15 +112,18 @@ begin
         cmbEmpleados.Items.Clear;
         cmbUsuario.Items.Clear;
         cmbEmpleados.Items.Add('000 - Desconocido');
+        cmbEmpleadoDetecto.Items.Add('000 - Desconocido');
         While not Qry2.Eof do
         Begin
             cmbEmpleados.Items.Add(FormatFloat('000',Qry2['ID']) + ' - ' + Qry2['Nombre']);
+            cmbEmpleadoDetecto.Items.Add(FormatFloat('000',Qry2['ID']) + ' - ' + Qry2['Nombre']);
             cmbUsuario.Items.Add(FormatFloat('000',Qry2['ID']) + ' - ' + Qry2['Nombre']);
             Qry2.Next;
         End;
 
         cmbUsuario.Text := '';
         cmbEmpleados.Text := '';
+        cmbEmpleadoDetecto.Text := '';
     except
           on e : EOleException do
                 ShowMessage('La base de datos no esta disponible. Por favor verifique que exista conectividad al servidor.');
@@ -171,28 +176,28 @@ end;
 
 procedure TfrmScrapEditor.FormCreate(Sender: TObject);
 begin
-    lblAnio.Caption := getFormYear(frmMain.sConnString,Self.Name);
-    gsYear := RightStr(lblAnio.Caption,2);
+  lblAnio.Caption := getFormYear(frmMain.sConnString,Self.Name);
+  gsYear := RightStr(lblAnio.Caption,2);
 
-    Conn := TADOConnection.Create(nil);
-    Conn.ConnectionString := frmMain.sConnString;
-    Conn.LoginPrompt := False;
+  Conn := TADOConnection.Create(nil);
+  Conn.ConnectionString := frmMain.sConnString;
+  Conn.LoginPrompt := False;
 
-    Qry := TADOQuery.Create(nil);
-    Qry.Connection :=Conn;
+  Qry := TADOQuery.Create(nil);
+  Qry.Connection :=Conn;
 
-    LoadScrap();
+  LoadScrap();
 
-    BindEmpleados();
-    BindTareas();
-    if Qry.RecordCount > 0 then
-        BindScrap()
-    else
-    begin
-        Editar.Enabled := False;
-        Borrar.Enabled := False;
-        Buscar.Enabled := False;
-    end;
+  BindEmpleados();
+  BindTareas();
+  if Qry.RecordCount > 0 then
+      BindScrap()
+  else
+  begin
+      Editar.Enabled := False;
+      Borrar.Enabled := False;
+      Buscar.Enabled := False;
+  end;
   sPermits := getUserPermits(frmMain.sConnString, Self.Name, frmMain.sUserLogin);
   EnableFormButtons(gbButtons, sPermits);
 
@@ -213,6 +218,7 @@ begin
     cmbEmpleados.Text := VarToStr(Qry['Responsable']);
     cmbDetectado.Text := VarToStr(Qry['SCR_Detectado']);
     cmbUsuario.Text := VarToStr(Qry['Usuario']);
+    cmbEmpleadoDetecto.Text := VarToStr(Qry['Detectado']);
     txtCantidad.Text := VarToStr(Qry['SCR_Cantidad']);
     txtRepro.Text := VarToStr(Qry['SCR_Repro']);
     deFecha.Text := VarToStr(Qry['Fecha']);
@@ -226,6 +232,7 @@ begin
     txtMotivo.Text := '';
     cmbTareas.Text := '';
     cmbEmpleados.Text := '';
+    cmbEmpleadoDetecto.Text := '';
     cmbDetectado.Text := '';
     cmbUsuario.Text := '';
     txtCantidad.Text := '';
@@ -314,6 +321,7 @@ begin
     deFecha.Enabled := not Value;
     cmbTareas.Enabled := not Value;
     cmbEmpleados.Enabled := not Value;
+    cmbEmpleadoDetecto.Enabled := not Value;
     cmbDetectado.Enabled := not Value;
     cmbUsuario.Enabled := not Value;
     chkParcial.Enabled := not Value;
@@ -405,8 +413,6 @@ begin
 end;
 
 function TfrmScrapEditor.ValidateData():Boolean;
-var i:Integer;
-bfound : boolean;
 begin
         result := True;
 
@@ -434,6 +440,12 @@ begin
             result :=  False;
           end;
 
+        if UT(cmbEmpleadoDetecto.Text) = '' then
+          begin
+            MessageDlg('Por favor Seleccione el Empleado que lo detecto.', mtInformation,[mbOk], 0);
+            result :=  False;
+          end;
+
         if UT(cmbUsuario.Text) = '' then
           begin
             MessageDlg('Por favor Seleccione un Empleado de la lista scrapeado por.', mtInformation,[mbOk], 0);
@@ -446,73 +458,35 @@ begin
             result :=  False;
           end;
 
-        bfound := False;
-        for i:= 0 to cmbTareas.Items.Count do
-        begin
-                if cmbTareas.Text = cmbTareas.Items[i] then
-                begin
-                     bfound := True;
-                     break;
-                end;
-        end;
-
-        if bfound = false then
-          begin
+        if (cmbTareas.Items.IndexOf(cmbTareas.Text) = -1) then begin
             MessageDlg('Area Responsable Incorrecta : ' + cmbTareas.Text +
                        '. Seleccionelo de la lista.', mtInformation,[mbOk], 0);
             result :=  False;
-          end;
-
-        bfound := False;
-        for i:= 0 to cmbEmpleados.Items.Count do
-        begin
-                if cmbEmpleados.Text = cmbEmpleados.Items[i] then
-                begin
-                     bfound := True;
-                     break;
-                end;
         end;
 
-        if bfound = false then
-          begin
+        if (cmbEmpleados.Items.IndexOf(cmbEmpleados.Text) = -1) then begin
             MessageDlg('Empleado Responsable Incorrecto : ' + cmbEmpleados.Text +
                        '. Seleccionelo de la lista.' , mtInformation,[mbOk], 0);
             result :=  False;
-          end;
-
-        bfound := False;
-        for i:= 0 to cmbDetectado.Items.Count do
-        begin
-                if cmbDetectado.Text = cmbDetectado.Items[i] then
-                begin
-                     bfound := True;
-                     break;
-                end;
         end;
 
-        if bfound = false then
-          begin
-            MessageDlg('Detectado por Incorrecto : ' + cmbDetectado.Text +
+        if (cmbDetectado.Items.IndexOf(cmbDetectado.Text) = -1) then begin
+            MessageDlg('Area Detectado Incorrecto : ' + cmbDetectado.Text +
                        '. Seleccionelo de la lista.' , mtInformation,[mbOk], 0);
             result :=  False;
-          end;
-
-        bfound := False;
-        for i:= 0 to cmbUsuario.Items.Count do
-        begin
-                if cmbUsuario.Text = cmbUsuario.Items[i] then
-                begin
-                     bfound := True;
-                     break;
-                end;
         end;
 
-        if bfound = false then
-          begin
+        if (cmbEmpleadoDetecto.Items.IndexOf(cmbEmpleadoDetecto.Text) = -1) then begin
+            MessageDlg('Empleado que lo detecto Incorrecto : ' + cmbEmpleadoDetecto.Text +
+                       '. Seleccionelo de la lista.' , mtInformation,[mbOk], 0);
+            result :=  False;
+        end;
+
+        if (cmbUsuario.Items.IndexOf(cmbUsuario.Text) = -1) then begin
             MessageDlg('Scrapeado por Incorrecto : ' + cmbUsuario.Text +
                        '. Seleccionelo de la lista.' , mtInformation,[mbOk], 0);
             result :=  False;
-          end;
+        end;
 
         if not IsDate(deFecha.Text) then
           begin
@@ -577,14 +551,15 @@ begin
         end;
 
         SQLStr := 'INSERT INTO tblScrap(ITE_Nombre,SCR_Motivo,SCR_Tarea,SCR_EmpleadoRes,SCR_Cantidad,' +
-                  'SCR_Parcial,SCR_Repro,USE_Login,SCR_Fecha,SCR_NewItem,SCR_Impreso,SCR_Activo,SCR_Detectado) ' +
+                  'SCR_Parcial,SCR_Repro,USE_Login,SCR_Fecha,SCR_NewItem,SCR_Impreso,SCR_Activo,SCR_Detectado, ' +
+                  'SCR_EmpleadoDetectado,Update_Date,Update_User) ' +
                   'VALUES(' + QuotedStr(gsYear + '-' + txtOrden.Text) + ',' +
                   QuotedStr(txtMotivo.Text) + ',' + QuotedStr(cmbTareas.Text) + ',' +
                   QuotedStr(LeftStr(cmbEmpleados.Text,3)) + ',' + txtCantidad.Text + ',' +
                   BoolToStrInt(chkParcial.Checked) + ',' + txtRepro.Text +
                   ',' + QuotedStr(LeftStr(cmbUsuario.Text,3)) + ',' +
                   QuotedStr(deFecha.Text) + ',NULL,0,0,' +
-                  QuotedStr(cmbDetectado.Text) + ')';
+                  QuotedStr(cmbDetectado.Text) + ',' + LeftStr(cmbEmpleadoDetecto.Text,3) + ',GETDATE(),' + frmMain.sUserLogin + ')';
 
         conn.Execute(SQLStr);
 
@@ -612,6 +587,9 @@ begin
                   ',USE_Login = ' + QuotedStr(LeftStr(cmbUsuario.Text,3)) +
                   ',SCR_Fecha = ' + QuotedStr(deFecha.Text) +
                   ',SCR_Detectado = ' + QuotedStr(cmbDetectado.Text) +
+                  ',SCR_EmpleadoDetectado = ' + LeftStr(cmbEmpleadoDetecto.Text, 3) +
+                  ',Update_Date = GETDATE() ' +
+                  ',Update_User = ' + frmMain.sUserLogin +
                   ' WHERE SCR_ID = ' + lblID.Caption;
 
         conn.Execute(SQLStr);
@@ -729,12 +707,14 @@ begin
     Qry.SQL.Clear;
     Qry.SQL.Text := 'SELECT S.*,Convert(varchar(10),SCR_Fecha,101) AS Fecha, ' +
                     'CASE WHEN E.Nombre IS NULL THEN ''000 - Desconocido'' ELSE ' +
-                    'S.SCR_EmpleadoRes + '' - '' + E.Nombre END AS Responsable, ' +
+                    'Right(''000'' + S.SCR_EmpleadoRes, 3) + '' - '' + E.Nombre END AS Responsable, ' +
                     'CASE WHEN U.Nombre IS NULL THEN ''000 - Desconocido'' ELSE ' +
-                    'S.USE_Login + '' - '' + U.Nombre END AS Usuario ' +
+                    'Right(''000'' + S.USE_Login, 3) + '' - '' + U.Nombre END AS Usuario, ' +
+                    'CASE WHEN D.Nombre IS NULL THEN ''000 - Desconocido'' ELSE Right(''000'' + CAST(S.SCR_EmpleadoDetectado AS Varchar(3)), 3) + '' - '' + D.Nombre END AS Detectado ' +
                     'FROM tblScrap S ' +
                     'LEFT OUTER JOIN tblEmpleados E ON S.SCR_EmpleadoRes = E.ID ' +
                     'LEFT OUTER JOIN tblEmpleados U ON S.USE_Login = U.ID ' +
+                    'LEFT OUTER JOIN tblEmpleados D ON S.SCR_EmpleadoDetectado = D.ID ' +
                     'WHERE Left(ITE_Nombre,2) = ' + QuotedStr(gsYear) + ' ' +
                     'ORDER BY S.SCR_ID ';
     Qry.Open;
@@ -755,6 +735,7 @@ begin
     If Qry2.RecordCount > 0 Then
         Result := True;
 
+    Qry.Close;
 end;
 
 function TfrmScrapEditor.ValidateScrap(Orden: String):Boolean;
@@ -771,6 +752,7 @@ begin
     If Qry2.RecordCount > 0 Then
         Result := False;
 
+    Qry.Close;
 end;
 
 function TfrmScrapEditor.ValidarCantidad(Item:String;Cantidad:Integer):Boolean;
@@ -792,6 +774,7 @@ begin
         if Cantidad > StrToInt(VarToStr(Qry2['Ordenada'])) then
                 Result := False;
 
+    Qry2.Close;
 end;
 
 function TfrmScrapEditor.FormIsRunning(FormName: String):Boolean;

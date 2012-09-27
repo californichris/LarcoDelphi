@@ -1,6 +1,6 @@
 object frmScrapPorcen: TfrmScrapPorcen
   Left = 53
-  Top = 90
+  Top = 70
   Width = 1014
   Height = 670
   Caption = 'Porcentaje de Scrap'
@@ -1139,6 +1139,7 @@ object frmScrapPorcen: TfrmScrapPorcen
       Top = 320
       Width = 961
       Height = 201
+      Cursor = 3000
       Hint = 'Presiona F5 para Refrescar'
       BorderStyle = bsSingle
       GridStyle = gsReport
@@ -1492,6 +1493,66 @@ object frmScrapPorcen: TfrmScrapPorcen
         Color = clWindow
         Cursor = crDefault
         DrawingOptions = doNormal
+        DefaultWidth = 80
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'Tahoma'
+        Font.Style = []
+        Footer.Color = clWindow
+        Footer.FormulaKind = fkNone
+        Header.Color = clBtnFace
+        Header.Caption = 'Area Detectado'
+        Header.DisplayMode = dmTextOnly
+        Options = [coCanClick, coCanSort, coEditorAutoSelect, coPublicUsing]
+        Position = 11
+        SlideBounds.Height = 0
+        SlideBounds.Left = 0
+        SlideBounds.Top = 0
+        SlideBounds.Width = 0
+        Sorted = False
+        SortType = stAlphabetic
+        VerticalAlignment = vaMiddle
+        Visible = True
+        Width = 80
+        WrapKind = wkEllipsis
+        AutoExecute = False
+      end
+      object TTextualColumn
+        Alignment = taLeftJustify
+        Color = clWindow
+        Cursor = crDefault
+        DrawingOptions = doNormal
+        DefaultWidth = 100
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'Tahoma'
+        Font.Style = []
+        Footer.Color = clWindow
+        Footer.FormulaKind = fkNone
+        Header.Color = clBtnFace
+        Header.Caption = 'Empleado Detecto'
+        Header.DisplayMode = dmTextOnly
+        Options = [coCanClick, coCanSort, coEditorAutoSelect, coPublicUsing]
+        Position = 12
+        SlideBounds.Height = 0
+        SlideBounds.Left = 0
+        SlideBounds.Top = 0
+        SlideBounds.Width = 0
+        Sorted = False
+        SortType = stAlphabetic
+        VerticalAlignment = vaMiddle
+        Visible = True
+        Width = 100
+        WrapKind = wkEllipsis
+        AutoExecute = False
+      end
+      object TTextualColumn
+        Alignment = taLeftJustify
+        Color = clWindow
+        Cursor = crDefault
+        DrawingOptions = doNormal
         DefaultWidth = 100
         Font.Charset = ANSI_CHARSET
         Font.Color = clWindowText
@@ -1504,7 +1565,7 @@ object frmScrapPorcen: TfrmScrapPorcen
         Header.Caption = 'Motivo'
         Header.DisplayMode = dmTextOnly
         Options = [coCanClick, coCanSort, coEditorAutoSelect, coPublicUsing]
-        Position = 11
+        Position = 13
         SlideBounds.Height = 0
         SlideBounds.Left = 0
         SlideBounds.Top = 0
@@ -1534,7 +1595,7 @@ object frmScrapPorcen: TfrmScrapPorcen
         Header.Caption = 'Parcial'
         Header.DisplayMode = dmTextOnly
         Options = [coCanClick, coCanSort, coEditorAutoSelect, coPublicUsing]
-        Position = 12
+        Position = 14
         SlideBounds.Height = 0
         SlideBounds.Left = 0
         SlideBounds.Top = 0
@@ -1564,7 +1625,7 @@ object frmScrapPorcen: TfrmScrapPorcen
         Header.Caption = 'Reprogramar'
         Header.DisplayMode = dmTextOnly
         Options = [coCanClick, coCanSort, coEditorAutoSelect, coPublicUsing]
-        Position = 13
+        Position = 15
         SlideBounds.Height = 0
         SlideBounds.Left = 0
         SlideBounds.Top = 0

@@ -1,6 +1,6 @@
 object frmScrapDinero: TfrmScrapDinero
-  Left = 0
-  Top = 184
+  Left = 195
+  Top = 112
   Width = 1018
   Height = 536
   Caption = 'Reporte de Scrap en Dinero'
@@ -1790,7 +1790,7 @@ object frmScrapDinero: TfrmScrapDinero
         Footer.Color = clWindow
         Footer.FormulaKind = fkNone
         Header.Color = clBtnFace
-        Header.Caption = 'Detectado Por'
+        Header.Caption = 'Area Responsable'
         Header.DisplayMode = dmTextOnly
         Options = [coCanClick, coCanSort, coEditorAutoSelect, coPublicUsing]
         Position = 9
@@ -2072,6 +2072,66 @@ object frmScrapDinero: TfrmScrapDinero
         SortType = stAlphabetic
         VerticalAlignment = vaMiddle
         Visible = False
+        Width = 80
+        WrapKind = wkEllipsis
+        AutoExecute = False
+      end
+      object TTextualColumn
+        Alignment = taLeftJustify
+        Color = clWindow
+        Cursor = crDefault
+        DrawingOptions = doNormal
+        DefaultWidth = 80
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'Tahoma'
+        Font.Style = []
+        Footer.Color = clWindow
+        Footer.FormulaKind = fkNone
+        Header.Color = clBtnFace
+        Header.Caption = 'Area Detectado'
+        Header.DisplayMode = dmTextOnly
+        Options = [coCanClick, coCanSort, coEditorAutoSelect, coPublicUsing]
+        Position = 19
+        SlideBounds.Height = 0
+        SlideBounds.Left = 0
+        SlideBounds.Top = 0
+        SlideBounds.Width = 0
+        Sorted = False
+        SortType = stAlphabetic
+        VerticalAlignment = vaMiddle
+        Visible = True
+        Width = 80
+        WrapKind = wkEllipsis
+        AutoExecute = False
+      end
+      object TTextualColumn
+        Alignment = taLeftJustify
+        Color = clWindow
+        Cursor = crDefault
+        DrawingOptions = doNormal
+        DefaultWidth = 80
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'Tahoma'
+        Font.Style = []
+        Footer.Color = clWindow
+        Footer.FormulaKind = fkNone
+        Header.Color = clBtnFace
+        Header.Caption = 'Empleado Detecto'
+        Header.DisplayMode = dmTextOnly
+        Options = [coCanClick, coCanSort, coEditorAutoSelect, coPublicUsing]
+        Position = 20
+        SlideBounds.Height = 0
+        SlideBounds.Left = 0
+        SlideBounds.Top = 0
+        SlideBounds.Width = 0
+        Sorted = False
+        SortType = stAlphabetic
+        VerticalAlignment = vaMiddle
+        Visible = True
         Width = 80
         WrapKind = wkEllipsis
         AutoExecute = False

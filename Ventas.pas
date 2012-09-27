@@ -6,7 +6,7 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs,ADODB,DB,IniFiles,All_Functions,StrUtils,chris_Functions, Mask, StdCtrls,sndkey32,
   ScrollView, CustomGridViewControl, CustomGridView, GridView, ComCtrls,ComObj,
-  CellEditors,ImpresionOrden,Larco_Functions;
+  CellEditors,ImpresionOrden,Larco_Functions, ExtCtrls;
 
 type
   TfrmVentas = class(TForm)
@@ -48,10 +48,6 @@ type
     Buscar: TButton;
     btnAceptar: TButton;
     btnCancelar: TButton;
-    Button1: TButton;
-    Button2: TButton;
-    Button3: TButton;
-    Button4: TButton;
     TabSheet2: TTabSheet;
     gvVentas: TGridView;
     btnExport: TButton;
@@ -63,18 +59,42 @@ type
     txtCompra: TEdit;
     chkDlls: TCheckBox;
     Button5: TButton;
-    Label17: TLabel;
-    lblTarea: TLabel;
-    Label18: TLabel;
-    lblStatus: TLabel;
     lblStock: TLabel;
     lblAnio: TLabel;
     chkStock: TCheckBox;
+    chkPlano: TCheckBox;
+    cmbPlanos: TComboBox;
+    Panel1: TPanel;
+    Primero: TButton;
+    Anterior: TButton;
+    Ultimo: TButton;
+    Siguiente: TButton;
+    GroupBox1: TGroupBox;
+    Label22: TLabel;
+    gvNumParte: TGridView;
+    Label23: TLabel;
+    gvNumPlano: TGridView;
+    Label19: TLabel;
+    gvProdNumero: TGridView;
+    Label20: TLabel;
+    gvProdPlano: TGridView;
+    GroupBox2: TGroupBox;
+    GroupBox3: TGroupBox;
+    gvStatus: TGridView;
+    chkStockParcial: TCheckBox;
+    txtStockParcial: TEdit;
+    chkMezclar: TCheckBox;
+    GridView1: TGridView;
+    MaskEdit1: TMaskEdit;
+    Edit1: TEdit;
+    DeleteOrden: TButton;
+    AddOrden: TButton;
     function FormIsRunning(FormName: String):Boolean;
     procedure ExportGrid(Grid:TGridView;sFileName: String);
     procedure BindGrid();
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure BindProductos();
+    procedure BindPlanos();    
     procedure BindEmpleados();
     Procedure BindOrden();
     procedure FormCreate(Sender: TObject);
@@ -112,6 +132,14 @@ type
     procedure cmbEmpleadosDropDown(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
+    procedure chkPlanoClick(Sender: TObject);
+    procedure cmbPlanosDropDown(Sender: TObject);
+    procedure cmbPlanosChange(Sender: TObject);
+    procedure PrimeroClick(Sender: TObject);
+    procedure EnableButtons();
+    procedure txtNumeroExit(Sender: TObject);
+    procedure txtOrdenKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
   private
     { Private declarations }
   public
@@ -133,6 +161,30 @@ uses Main, Editor;
 procedure TfrmVentas.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
 Action := caFree;
+end;
+
+procedure TfrmVentas.BindPlanos();
+var Qry2 : TADOQuery;
+SQLStr : String;
+begin
+    Qry2 := TADOQuery.Create(nil);
+    Qry2.Connection :=Conn;
+
+    SQLStr := 'SELECT PN_Id, PN_Numero FROM tblPlano ORDER BY PN_Numero';
+
+    Qry2.SQL.Clear;
+    Qry2.SQL.Text := SQLStr;
+    Qry2.Open;
+
+    cmbPlanos.Items.Clear;
+    While not Qry2.Eof do
+    Begin
+        cmbPlanos.AddItem(VarToStr(Qry2['PN_Numero']), createValue(VarToStr(Qry2['PN_Id'])));
+        Qry2.Next;
+    End;
+
+    cmbPlanos.Text := '';
+    Qry2.Close;
 end;
 
 procedure TfrmVentas.BindProductos();
@@ -208,6 +260,7 @@ begin
 
     BindProductos();
     BindEmpleados();
+    BindPlanos();
 
     if Qry.RecordCount > 0 then
         BindOrden()
@@ -222,18 +275,6 @@ begin
     EnableFormButtons(gbButtons, sPermits);
 
     giOpcion := 0;
-end;
-
-procedure TfrmVentas.BorrarClick(Sender: TObject);
-begin
-giOpcion := 3;
-btnAceptar.Enabled := True;
-btnCancelar.Enabled := True;
-
-Nuevo.Enabled := False;
-Editar.Enabled := False;
-Buscar.Enabled := False;
-Button5.Enabled := False;
 end;
 
 procedure TfrmVentas.SendTab(Sender: TObject; var Key: Word;  Shift: TShiftState);
@@ -270,52 +311,54 @@ begin
     chkDlls.Checked := False;
     txtCompra.Text := '';
     chkStock.Checked := False;
+    chkPlano.Checked := False;
+    cmbPlanos.Text := '';
+
+    gvNumParte.ClearRows;
+    gvNumPlano.ClearRows;
+    gvProdNumero.ClearRows;
+    gvProdPlano.ClearRows;
+    gvStatus.ClearRows;
 end;
 
 procedure TfrmVentas.NuevoClick(Sender: TObject);
 begin
+giOpcion := 1;
 ClearData();
 EnableControls(False);
+EnableButtons();
+
 deEntrega.Text := DateToStr(Now);
 deInterna.Text := DateToStr(Now);
 txtRecibido.Text := DateToStr(Now);
-txtOrden.SetFocus;
-giOpcion := 1;
-
-Editar.Enabled := False;
-Borrar.Enabled := False;
-Buscar.Enabled := False;
-Button5.Enabled := False;
 txtUnitario.Text := '0';
 txtTotal.Text := '0';
+
+txtOrden.SetFocus;
 end;
 
 procedure TfrmVentas.EditarClick(Sender: TObject);
 begin
 giOpcion := 2;
 EnableControls(False);
-
-Nuevo.Enabled := False;
-Borrar.Enabled := False;
-Buscar.Enabled := False;
-Button5.Enabled := False;
+EnableButtons();
 txtOrden.SetFocus;
+end;
+
+procedure TfrmVentas.BorrarClick(Sender: TObject);
+begin
+giOpcion := 3;
+EnableButtons();
 end;
 
 procedure TfrmVentas.BuscarClick(Sender: TObject);
 begin
-ClearData();
-btnAceptar.Enabled := True;
-btnCancelar.Enabled := True;
-txtOrden.ReadOnly := False;
-//EnableControls(False);
-txtOrden.SetFocus;
 giOpcion := 4;
+ClearData();
+EnableButtons();
 
-Nuevo.Enabled := False;
-Editar.Enabled := False;
-Borrar.Enabled := False;
-Button5.Enabled := False;
+txtOrden.ReadOnly := False;
+txtOrden.SetFocus;
 end;
 
 procedure TfrmVentas.EnableControls(Value:Boolean);
@@ -338,6 +381,12 @@ begin
     chkAprobacion.Enabled := not Value;
     chkDlls.Enabled := not Value;
     chkStock.Enabled := not Value;
+    chkPlano.Enabled := not Value;
+    if giOpcion = 0 then begin
+      cmbPlanos.Enabled := not Value;
+    end else begin
+      cmbPlanos.Enabled := chkPlano.Checked;
+    end;
 
     btnAceptar.Enabled := not Value;
     btnCancelar.Enabled := not Value;
@@ -348,6 +397,7 @@ end;
 procedure TfrmVentas.btnCancelarClick(Sender: TObject);
 begin
 ClearData();
+giOpcion := 0;
 EnableControls(True);
 
 Nuevo.Enabled := True;
@@ -359,12 +409,12 @@ begin
       Buscar.Enabled := True;
 end;
 BindOrden();
-giOpcion := 0;
+
 EnableFormButtons(gbButtons, sPermits);
 end;
 
 procedure TfrmVentas.BindOrden();
-var SQLStr : String;
+var SQLStr, planoId : String;
 Qry2 : TADOQuery;
 begin
     if Qry.RecordCount <= 0 Then
@@ -394,9 +444,22 @@ begin
     txtCompra.Text := VarToStr(Qry['OrdenCompra']);
     chkStock.Checked := StrToBool(VarToStr(Qry['Stock']));
 
+    chkplano.Checked := False;
+    cmbPlanos.Text := '';
+    planoId := VarToStr(Qry['PN_Id']);
+    if planoId <> '' then begin
+      chkplano.Checked := True;
+      setValue(planoId, cmbPlanos);
+    end;
+
+    application.ProcessMessages;
+
+    cmbPlanosChange(nil);
+    txtNumeroExit(nil);
+
     if chkStock.Checked then
         Exit;
-        
+
     Qry2 := TADOQuery.Create(nil);
     Qry2.Connection :=Conn;
 
@@ -413,10 +476,12 @@ begin
     Qry2.SQL.Text := SQLStr;
     Qry2.Open;
 
+    gvStatus.ClearRows;
     if Qry2.RecordCount > 0 then
     begin
-        lblTarea.Caption := VarToStr(Qry2['Nombre']);
-        lblStatus.Caption := VarToStr(Qry2['status']);
+        gvStatus.AddRow();
+        gvStatus.Cells[0, gvStatus.RowCount -1] := VarToStr(Qry2['Nombre']);
+        gvStatus.Cells[1, gvStatus.RowCount -1] := VarToStr(Qry2['Status']);
     end;
 
     Qry2.Close;
@@ -427,7 +492,7 @@ end;
 procedure TfrmVentas.btnAceptarClick(Sender: TObject);
 var SQLStr,sOrden : String;
 Qry2 : TADOQuery;
-sNew : String;
+sNew, planoId : String;
 stock,cambio : boolean;
 begin
 
@@ -440,6 +505,12 @@ begin
           Exit;
 
         sNew := gsYear + txtOrden.Text;
+
+        planoId := 'NULL';
+        if chkPlano.Checked then begin
+          planoId := getSelectedValue(cmbPlanos);
+        end;
+
         SQLStr := 'Insert_Orden ' + QuotedStr(gsYear + txtOrden.Text) + ',' + QuotedStr(txtProceso.Text) +
                   ',' + txtRequerida.Text + ',' + txtOrdenada.Text + ',' + QuotedStr(cmbProductos.Text) +
                   ',' + QuotedStr(txtNumero.Text) + ',' + QuotedStr(txtTerminal.Text) +
@@ -450,7 +521,7 @@ begin
                   ',' + txtUnitario.Text + ',' + txtTotal.Text + ',' + QuotedStr(gsFirstTask) +
                   ',' + QuotedStr(frmMain.sUserLogin) + ',' + QuotedStr(GetLocalIP) +
                   ',' + QuotedStr(txtCompra.Text) + ',' + BoolToStrInt(chkDlls.Checked) +
-                  ',' + BoolToStrInt(chkStock.Checked);
+                  ',' + BoolToStrInt(chkStock.Checked) + ',' + planoId;
 
         Qry2.SQL.Clear;
         Qry2.SQL.Text := SQLStr;
@@ -499,6 +570,12 @@ begin
                 cambio := true;
 
         sNew := gsYear + txtOrden.Text;
+
+        planoId := 'NULL';
+        if chkPlano.Checked then begin
+          planoId := getSelectedValue(cmbPlanos);
+        end;
+
         SQLStr := 'Update_Orden ' + lblId.Caption  + ',' + QuotedStr(gsYear + txtOrden.Text) + ',' + QuotedStr(txtProceso.Text) +
                   ',' + txtRequerida.Text + ',' + txtOrdenada.Text + ',' + QuotedStr(cmbProductos.Text) +
                   ',' + QuotedStr(txtNumero.Text) + ',' + QuotedStr(txtTerminal.Text) +
@@ -509,7 +586,7 @@ begin
                   ',' + txtUnitario.Text + ',' + txtTotal.Text + ',' + QuotedStr(gsFirstTask) +
                   ',' + QuotedStr(frmMain.sUserLogin) + ',' + QuotedStr(GetLocalIP) +
                   ',' + QuotedStr(txtCompra.Text) + ',' + BoolToStrInt(chkDlls.Checked) +
-                  ',' + BoolToStrInt(cambio) + ',' + BoolToStrInt(stock);
+                  ',' + BoolToStrInt(cambio) + ',' + BoolToStrInt(stock)+ ',' + planoId;
 
         Qry2.SQL.Clear;
         Qry2.SQL.Text := SQLStr;
@@ -578,24 +655,27 @@ begin
           //Exit;
   end;
 
-EnableControls(True);
-btnAceptar.Enabled := False;
-btnCancelar.Enabled := False;
-Nuevo.Enabled := True;
-Button5.Enabled := True;
-if Qry.RecordCount > 0 Then
-begin
-      Editar.Enabled := True;
-      Borrar.Enabled := True;
-      Buscar.Enabled := True;
 
-end;
-BindOrden;
-EnableFormButtons(gbButtons, sPermits);
-if giOpcion = 1 then
-      NuevoClick(nil);
+  btnAceptar.Enabled := False;
+  btnCancelar.Enabled := False;
+  Nuevo.Enabled := True;
+  Button5.Enabled := True;
+  if Qry.RecordCount > 0 Then
+  begin
+        Editar.Enabled := True;
+        Borrar.Enabled := True;
+        Buscar.Enabled := True;
 
-giOpcion := 0;
+  end;
+  BindOrden;
+  EnableFormButtons(gbButtons, sPermits);
+  if giOpcion = 1 then begin
+        NuevoClick(nil);
+  end
+  else begin
+    giOpcion := 0;
+    EnableControls(True);
+  end;
 end;
 
 function TfrmVentas.ValidateData():Boolean;
@@ -705,7 +785,18 @@ begin
             result :=  False;
           end;
 
+        cmbPlanos.Text := Trim(cmbPlanos.Text);
+        if (chkPlano.Checked) and (cmbPlanos.Text = '') then
+        begin
+            MessageDlg('El Numero de Plano es requerido.', mtInformation,[mbOk], 0);
+            result :=  False;
+        end;
 
+        if (chkPlano.Checked) and (cmbPlanos.Items.IndexOf(cmbPlanos.Text) = -1) then
+        begin
+            MessageDlg('Numero de Plano incorrecto seleccionelo de la lista.', mtInformation,[mbOk], 0);
+            result :=  False;
+        end;
 end;
 
 function  TfrmVentas.ValidateCliente(Clave:String):Boolean;
@@ -749,12 +840,33 @@ Buscar.Enabled := True;
 EnableFormButtons(gbButtons, sPermits);
 end;
 
+procedure TfrmVentas.PrimeroClick(Sender: TObject);
+begin
+  if Qry.RecordCount = 0 then
+          Exit;
+
+  if (Sender as TButton).Caption = '| <' then
+    Qry.First
+  else if (Sender as TButton).Caption = '<' then
+    Qry.Prior
+  else if (Sender as TButton).Caption = '>' then
+    Qry.Next
+  else if (Sender as TButton).Caption = '> |' then
+    Qry.Last;
+
+  ClearData();
+  BindOrden();
+  EnableButtons();
+end;
+
 procedure TfrmVentas.Button2Click(Sender: TObject);
 begin
 if Qry.RecordCount = 0 then
         Exit;
 
 Qry.Prior;
+
+ClearData();
 BindOrden;
 btnAceptar.Enabled := False;
 btnCancelar.Enabled := False;
@@ -1104,6 +1216,255 @@ begin
                 btnCancelarClick(nil);
         end;
 
+end;
+
+procedure TfrmVentas.chkPlanoClick(Sender: TObject);
+begin
+  if giOpcion <> 0 then begin
+    cmbPlanos.Enabled := chkPlano.Checked;
+    if not chkPlano.Checked then
+      cmbPlanos.Text := '';
+  end;
+  
+end;
+
+procedure TfrmVentas.cmbPlanosDropDown(Sender: TObject);
+begin
+BindPlanos();
+end;
+
+procedure TfrmVentas.cmbPlanosChange(Sender: TObject);
+var SQLStr, enStock, piezas, ordenes: String;
+Qry2 : TADOQuery;
+begin
+  cmbPlanos.Text := Trim(cmbPlanos.Text);
+  if cmbPlanos.Text = '' then
+    Exit;
+
+  Qry2 := TADOQuery.Create(nil);
+  Qry2.Connection :=Conn;
+
+  SQLStr := 'SELECT P.PN_Id,P.PN_Numero, ' +
+            'SUM(CASE WHEN S.ST_Tipo = ''Entrada'' THEN S.ST_Cantidad ELSE 0 END) AS Entradas, ' +
+            'SUM(CASE WHEN S.ST_Tipo = ''Salida'' THEN S.ST_Cantidad ELSE 0 END) AS Salidas, ' +
+            'SUM(CASE WHEN S.ST_Tipo = ''Entrada'' THEN S.ST_Cantidad ELSE 0 END) - SUM(CASE WHEN S.ST_Tipo = ''Salida'' THEN S.ST_Cantidad ELSE 0 END) AS Cantidad ' +
+            'FROM tblPlano P ' +
+            'INNER JOIN tblStock S ON P.PN_Id = S.PN_Id AND P.PN_Numero = ' + QuotedStr(cmbPlanos.Text) + ' ' +
+            'GROUP BY P.PN_Id,P.PN_Numero';
+
+
+  Qry2.SQL.Clear;
+  Qry2.SQL.Text := SQLStr;
+  Qry2.Open;
+
+  enStock := '';
+  piezas := '';
+  ordenes := '';
+
+  if Qry2.RecordCount > 0 then begin
+      enStock := VarToStr(Qry2['Cantidad']);
+  end;
+
+  SQLStr := 'SELECT P.PN_Id,P.PN_Numero, COUNT(*) AS Ordenes, SUM(O.Requerida) AS Piezas ' +
+            'FROM tblOrdenes O ' +
+            'INNER JOIN tblPlano P ON O.PN_Id = P.PN_Id AND P.PN_Numero = ' + QuotedStr(cmbPlanos.Text) + ' ' +
+            'WHERE O.Recibido <= GETDATE() AND O.Recibido >= DATEADD(MONTH, -6, GETDATE()) ' +
+            'GROUP BY P.PN_Id,P.PN_Numero';
+
+  Qry2.SQL.Clear;
+  Qry2.SQL.Text := SQLStr;
+  Qry2.Open;
+
+  if Qry2.RecordCount > 0 then begin
+      piezas := VarToStr(Qry2['Piezas']);
+      ordenes := VarToStr(Qry2['Ordenes']);
+  end;
+
+  gvNumPlano.ClearRows;
+  gvNumPlano.AddRow();
+  gvNumPlano.Cells[0, gvNumPlano.RowCount -1] := ordenes;
+  gvNumPlano.Cells[1, gvNumPlano.RowCount -1] := piezas;
+  gvNumPlano.Cells[2, gvNumPlano.RowCount -1] := enStock;
+
+  SQLStr := 'SELECT RIGHT(O.ITE_Nombre,LEN(O.ITE_Nombre) - 3) AS Orden, ' +
+            'O.Ordenada As Cantidad, O.Requerida As Cliente, ' +
+            'T.Nombre AS Tarea, ' +
+            'CASE WHEN I.ITS_Status = 0 THEN ''Listo'' ' +
+            'WHEN I.ITS_Status = 1 THEN ''Activo'' ' +
+            'WHEN I.ITS_Status = 2 THEN ''Terminado'' END AS Status ' +
+            'FROM tblOrdenes O  ' +
+            'INNER JOIN tblItemTasks I ON O.ITE_ID = I.ITE_ID ' +
+            'AND ITS_DTStart IS NOT NULL AND ITS_DTStop IS NULL AND I.ITS_Status <> 9 ' +
+            'AND LEFT(O.ITE_Nombre,2) = ' + QuotedStr(gsOYear) + ' ' +
+            'INNER JOIN tblTareas T ON T.[ID] = I.TAS_ID ' +
+            'INNER JOIN tblPlano P ON O.PN_Id = P.PN_Id AND P.PN_Numero = ' + QuotedStr(cmbPlanos.Text);
+
+  Qry2.SQL.Clear;
+  Qry2.SQL.Text := SQLStr;
+  Qry2.Open;
+
+  gvProdPlano.ClearRows;
+  while not Qry2.Eof do begin
+    gvProdPlano.AddRow();
+    gvProdPlano.Cells[0, gvProdPlano.RowCount -1] := VarToStr(Qry2['Orden']);
+    gvProdPlano.Cells[1, gvProdPlano.RowCount -1] := VarToStr(Qry2['Cantidad']);
+    gvProdPlano.Cells[2, gvProdPlano.RowCount -1] := VarToStr(Qry2['Cliente']);
+    gvProdPlano.Cells[3, gvProdPlano.RowCount -1] := VarToStr(Qry2['Tarea']);
+    gvProdPlano.Cells[4, gvProdPlano.RowCount -1] := VarToStr(Qry2['Status']);
+    Qry2.Next;
+  end;
+
+  Qry2.Close;
+  Qry2.Free;
+end;
+
+procedure TfrmVentas.EnableButtons();
+begin
+  if giOpcion = 0 then begin
+    Nuevo.Enabled := True;
+    Editar.Enabled := False;
+    Borrar.Enabled := False;
+    Buscar.Enabled := False;
+    Button5.Enabled := True; //Imprimir
+    if Qry.RecordCount > 0 Then
+    begin
+          Editar.Enabled := True;
+          Borrar.Enabled := True;
+          Buscar.Enabled := True;
+
+          EnableFormButtons(gbButtons, sPermits);
+    end;
+  end
+  else if giOpcion = 1 then begin
+    Editar.Enabled := False;
+    Borrar.Enabled := False;
+    Buscar.Enabled := False;
+    Button5.Enabled := False; //Imprimir
+  end
+  else if giOpcion = 2 then begin
+    Nuevo.Enabled := False;
+    Borrar.Enabled := False;
+    Buscar.Enabled := False;
+    Button5.Enabled := False; //Imprimir
+  end
+  else if giOpcion = 3 then begin
+    Nuevo.Enabled := False;
+    Editar.Enabled := False;
+    Buscar.Enabled := False;
+    Button5.Enabled := False; //Imprimir
+  end
+  else if giOpcion = 4 then begin
+    Nuevo.Enabled := False;
+    Editar.Enabled := False;
+    Borrar.Enabled := False;
+    Button5.Enabled := False; //Imprimir
+  end;
+
+  if giOpcion = 0 then begin
+    btnAceptar.Enabled := False;
+    btnCancelar.Enabled := False;
+  end else begin
+    btnAceptar.Enabled := True;
+    btnCancelar.Enabled := True;
+  end;
+
+end;
+
+procedure TfrmVentas.txtNumeroExit(Sender: TObject);
+var SQLStr, enStock, piezas, ordenes: String;
+Qry2 : TADOQuery;
+begin
+  txtNumero.Text := Trim(txtNumero.Text);
+  if txtNumero.Text = '' then
+    Exit;
+
+  Qry2 := TADOQuery.Create(nil);
+  Qry2.Connection :=Conn;
+
+  SQLStr := 'SELECT PA.PN_Id,PA.PA_Alias, ' +
+            'SUM(CASE WHEN S.ST_Tipo = ''Entrada'' THEN S.ST_Cantidad ELSE 0 END) AS Entradas, ' +
+            'SUM(CASE WHEN S.ST_Tipo = ''Salida'' THEN S.ST_Cantidad ELSE 0 END) AS Salidas, ' +
+            'SUM(CASE WHEN S.ST_Tipo = ''Entrada'' THEN S.ST_Cantidad ELSE 0 END) - SUM(CASE WHEN S.ST_Tipo = ''Salida'' THEN S.ST_Cantidad ELSE 0 END) AS Cantidad ' +
+            'FROM tblPlanoAlias PA ' +
+            'INNER JOIN tblStock S ON PA.PN_Id = S.PN_Id AND PA.PA_Alias = ' + QuotedStr(txtNumero.Text) + ' ' +
+            'GROUP BY PA.PN_Id,PA.PA_Alias';
+
+
+  Qry2.SQL.Clear;
+  Qry2.SQL.Text := SQLStr;
+  Qry2.Open;
+
+  enStock := '';
+  piezas := '';
+  ordenes := '';
+
+  if Qry2.RecordCount > 0 then begin
+      enStock := VarToStr(Qry2['Cantidad']);
+  end;
+
+  SQLStr := 'SELECT COUNT(*) AS Ordenes, SUM(O.Requerida) AS Piezas ' +
+            'FROM tblOrdenes O ' +
+            'WHERE O.Recibido <= GETDATE() AND O.Recibido >= DATEADD(MONTH, -6, GETDATE()) AND O.Numero = ' + QuotedStr(txtNumero.Text);
+
+  Qry2.SQL.Clear;
+  Qry2.SQL.Text := SQLStr;
+  Qry2.Open;
+
+  if Qry2.RecordCount > 0 then begin
+      piezas := VarToStr(Qry2['Piezas']);
+      ordenes := VarToStr(Qry2['Ordenes']);
+  end;
+
+  gvNumParte.ClearRows;
+  gvNumParte.AddRow();
+  gvNumParte.Cells[0, gvNumParte.RowCount -1] := ordenes;
+  gvNumParte.Cells[1, gvNumParte.RowCount -1] := piezas;
+  gvNumParte.Cells[2, gvNumParte.RowCount -1] := enStock;
+
+  SQLStr := 'SELECT RIGHT(O.ITE_Nombre,LEN(O.ITE_Nombre) - 3) AS Orden, ' +
+            'O.Ordenada As Cantidad, O.Requerida As Cliente, ' +
+            'T.Nombre AS Tarea, ' +
+            'CASE WHEN I.ITS_Status = 0 THEN ''Listo'' ' +
+            'WHEN I.ITS_Status = 1 THEN ''Activo'' ' +
+            'WHEN I.ITS_Status = 2 THEN ''Terminado'' END AS Status ' +
+            'FROM tblOrdenes O  ' +
+            'INNER JOIN tblItemTasks I ON O.ITE_ID = I.ITE_ID ' +
+            'AND ITS_DTStart IS NOT NULL AND ITS_DTStop IS NULL AND I.ITS_Status <> 9 ' +
+            'AND LEFT(O.ITE_Nombre,2) = ' + QuotedStr(gsOYear) + ' AND O.Numero = ' + QuotedStr(txtNumero.Text) + ' ' +
+            'INNER JOIN tblTareas T ON T.[ID] = I.TAS_ID';
+
+  Qry2.SQL.Clear;
+  Qry2.SQL.Text := SQLStr;
+  Qry2.Open;
+
+  gvProdNumero.ClearRows;
+  while not Qry2.Eof do begin
+    gvProdNumero.AddRow();
+    gvProdNumero.Cells[0, gvProdNumero.RowCount -1] := VarToStr(Qry2['Orden']);
+    gvProdNumero.Cells[1, gvProdNumero.RowCount -1] := VarToStr(Qry2['Cantidad']);
+    gvProdNumero.Cells[2, gvProdNumero.RowCount -1] := VarToStr(Qry2['Cliente']);
+    gvProdNumero.Cells[3, gvProdNumero.RowCount -1] := VarToStr(Qry2['Tarea']);
+    gvProdNumero.Cells[4, gvProdNumero.RowCount -1] := VarToStr(Qry2['Status']);
+    Qry2.Next;
+  end;
+
+  Qry2.Close;
+  Qry2.Free;
+end;
+
+procedure TfrmVentas.txtOrdenKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+   if (Key = vk_return) and (giopcion = 4)then begin // buscar
+     btnAceptarClick(nil);
+   end
+   else if Key = vk_return then begin
+     AppActivate(Application.Handle);
+     SendKeys('{TAB}',False);
+   end
+   else if (Key = vk_Escape) and (btnCancelar.Enabled = True)  then begin
+     btnCancelarClick(nil);
+   end;
 end;
 
 end.

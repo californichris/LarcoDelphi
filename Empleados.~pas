@@ -73,7 +73,6 @@ type
 
 var
   frmEmpleados: TfrmEmpleados;
-  gsConnString,StartDDir: String;
   giOpcion : Integer;
   Conn : TADOConnection;
   Qry : TADOQuery;

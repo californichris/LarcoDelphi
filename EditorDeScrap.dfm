@@ -1,10 +1,10 @@
 object frmScrapEditor: TfrmScrapEditor
-  Left = 261
-  Top = 183
+  Left = 421
+  Top = 156
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
   Caption = 'Editor de Scrap'
-  ClientHeight = 416
+  ClientHeight = 366
   ClientWidth = 543
   Color = clBtnFace
   Font.Charset = ANSI_CHARSET
@@ -701,77 +701,77 @@ object frmScrapEditor: TfrmScrapEditor
     Left = 8
     Top = 6
     Width = 529
-    Height = 403
+    Height = 355
     TabOrder = 0
     object Label1: TLabel
-      Left = 40
+      Left = 41
       Top = 28
       Width = 92
       Height = 13
       Caption = 'Orden de Trabajo :'
     end
     object Label2: TLabel
-      Left = 91
-      Top = 59
-      Width = 42
+      Left = 94
+      Top = 51
+      Width = 39
       Height = 13
-      Caption = 'Motivo : '
+      Caption = 'Motivo :'
     end
     object Label3: TLabel
-      Left = 37
-      Top = 91
-      Width = 97
+      Left = 39
+      Top = 77
+      Width = 94
       Height = 13
-      Caption = 'Area Responsable : '
+      Caption = 'Area Responsable :'
     end
     object Label4: TLabel
-      Left = 13
-      Top = 123
-      Width = 120
+      Left = 16
+      Top = 103
+      Width = 117
       Height = 13
-      Caption = 'Empleado Responsable : '
+      Caption = 'Empleado Responsable :'
     end
     object Label5: TLabel
-      Left = 53
-      Top = 155
-      Width = 76
-      Height = 13
-      Caption = 'Detectado por :'
-    end
-    object lblCantidad: TLabel
-      Left = 26
-      Top = 214
-      Width = 107
-      Height = 13
-      Caption = 'Cantidad Scrapeada : '
-    end
-    object lblRepro: TLabel
       Left = 50
-      Top = 246
+      Top = 128
       Width = 83
       Height = 13
-      Caption = 'A Reprogramar : '
+      Caption = 'Area Detectado :'
+    end
+    object lblCantidad: TLabel
+      Left = 29
+      Top = 202
+      Width = 104
+      Height = 13
+      Caption = 'Cantidad Scrapeada :'
+    end
+    object lblRepro: TLabel
+      Left = 53
+      Top = 228
+      Width = 80
+      Height = 13
+      Caption = 'A Reprogramar :'
     end
     object Label6: TLabel
-      Left = 94
-      Top = 276
+      Left = 97
+      Top = 253
       Width = 36
       Height = 13
       Caption = 'Fecha :'
     end
     object Label7: TLabel
-      Left = 59
-      Top = 306
+      Left = 62
+      Top = 276
       Width = 71
       Height = 13
       Caption = 'Nueva Orden :'
     end
     object Label8: TLabel
-      Left = 53
-      Top = 185
-      Width = 80
+      Left = 56
+      Top = 178
+      Width = 77
       Height = 13
-      Caption = 'Scrapeado por : '
+      Caption = 'Scrapeado por :'
     end
     object lblAnio: TLabel
       Left = 272
@@ -788,6 +788,13 @@ object frmScrapEditor: TfrmScrapEditor
       Caption = 'id'
       Visible = False
     end
+    object Label9: TLabel
+      Left = 39
+      Top = 153
+      Width = 94
+      Height = 13
+      Caption = 'Empleado Detecto :'
+    end
     object txtOrden: TMaskEdit
       Left = 136
       Top = 24
@@ -801,7 +808,7 @@ object frmScrapEditor: TfrmScrapEditor
     end
     object txtMotivo: TEdit
       Left = 136
-      Top = 57
+      Top = 49
       Width = 377
       Height = 21
       MaxLength = 50
@@ -810,7 +817,7 @@ object frmScrapEditor: TfrmScrapEditor
     end
     object cmbTareas: TComboBox
       Left = 136
-      Top = 88
+      Top = 74
       Width = 232
       Height = 21
       Enabled = False
@@ -819,7 +826,7 @@ object frmScrapEditor: TfrmScrapEditor
     end
     object cmbEmpleados: TComboBox
       Left = 136
-      Top = 119
+      Top = 99
       Width = 231
       Height = 21
       Enabled = False
@@ -828,7 +835,7 @@ object frmScrapEditor: TfrmScrapEditor
     end
     object cmbDetectado: TComboBox
       Left = 136
-      Top = 151
+      Top = 124
       Width = 231
       Height = 21
       Enabled = False
@@ -837,7 +844,7 @@ object frmScrapEditor: TfrmScrapEditor
     end
     object txtCantidad: TEdit
       Left = 136
-      Top = 211
+      Top = 199
       Width = 121
       Height = 21
       MaxLength = 10
@@ -847,7 +854,7 @@ object frmScrapEditor: TfrmScrapEditor
     end
     object chkParcial: TCheckBox
       Left = 266
-      Top = 213
+      Top = 201
       Width = 63
       Height = 17
       Hint = 'Si es scrap total dejelo en sin marcar.'
@@ -859,7 +866,7 @@ object frmScrapEditor: TfrmScrapEditor
     end
     object txtRepro: TEdit
       Left = 136
-      Top = 242
+      Top = 224
       Width = 121
       Height = 21
       MaxLength = 10
@@ -869,7 +876,7 @@ object frmScrapEditor: TfrmScrapEditor
     end
     object txtNuevaOrden: TMaskEdit
       Left = 136
-      Top = 303
+      Top = 273
       Width = 121
       Height = 21
       EditMask = '000-000-00;1;_'
@@ -880,7 +887,7 @@ object frmScrapEditor: TfrmScrapEditor
     end
     object cmbUsuario: TComboBox
       Left = 136
-      Top = 181
+      Top = 174
       Width = 231
       Height = 21
       Enabled = False
@@ -889,7 +896,7 @@ object frmScrapEditor: TfrmScrapEditor
     end
     object Button1: TButton
       Left = 8
-      Top = 362
+      Top = 314
       Width = 25
       Height = 25
       Hint = 'Primer Empleado'
@@ -907,7 +914,7 @@ object frmScrapEditor: TfrmScrapEditor
     end
     object Button2: TButton
       Left = 32
-      Top = 362
+      Top = 314
       Width = 25
       Height = 25
       Hint = 'Previo'
@@ -925,7 +932,7 @@ object frmScrapEditor: TfrmScrapEditor
     end
     object Button3: TButton
       Left = 56
-      Top = 362
+      Top = 314
       Width = 25
       Height = 25
       Hint = 'Siguiente'
@@ -943,7 +950,7 @@ object frmScrapEditor: TfrmScrapEditor
     end
     object Button4: TButton
       Left = 80
-      Top = 362
+      Top = 314
       Width = 25
       Height = 25
       Hint = 'Ultimo Empleado'
@@ -961,7 +968,7 @@ object frmScrapEditor: TfrmScrapEditor
     end
     object Nuevo: TButton
       Left = 135
-      Top = 362
+      Top = 314
       Width = 49
       Height = 25
       Caption = 'Nuevo'
@@ -976,7 +983,7 @@ object frmScrapEditor: TfrmScrapEditor
     end
     object Editar: TButton
       Left = 190
-      Top = 362
+      Top = 314
       Width = 49
       Height = 25
       Caption = 'Editar'
@@ -991,7 +998,7 @@ object frmScrapEditor: TfrmScrapEditor
     end
     object Borrar: TButton
       Left = 245
-      Top = 362
+      Top = 314
       Width = 49
       Height = 25
       Caption = 'Borrar'
@@ -1006,7 +1013,7 @@ object frmScrapEditor: TfrmScrapEditor
     end
     object Buscar: TButton
       Left = 301
-      Top = 362
+      Top = 314
       Width = 49
       Height = 25
       Caption = 'Buscar'
@@ -1021,7 +1028,7 @@ object frmScrapEditor: TfrmScrapEditor
     end
     object btnAceptar: TButton
       Left = 412
-      Top = 362
+      Top = 314
       Width = 49
       Height = 25
       Caption = 'Aceptar'
@@ -1039,7 +1046,7 @@ object frmScrapEditor: TfrmScrapEditor
     end
     object btnCancelar: TButton
       Left = 466
-      Top = 362
+      Top = 314
       Width = 49
       Height = 25
       Caption = 'Cancelar'
@@ -1056,8 +1063,8 @@ object frmScrapEditor: TfrmScrapEditor
       OnClick = btnCancelarClick
     end
     object deFecha: TDateEditor
-      Left = 137
-      Top = 272
+      Left = 136
+      Top = 249
       Width = 121
       Height = 20
       Alignment = taLeftJustify
@@ -1073,6 +1080,15 @@ object frmScrapEditor: TfrmScrapEditor
       Text = '4/11/2006'
       Style = dsDropDown
       Date = 38818
+    end
+    object cmbEmpleadoDetecto: TComboBox
+      Left = 136
+      Top = 149
+      Width = 231
+      Height = 21
+      Enabled = False
+      ItemHeight = 13
+      TabOrder = 21
     end
   end
 end

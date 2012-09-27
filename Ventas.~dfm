@@ -1,11 +1,11 @@
 object frmVentas: TfrmVentas
   Left = 205
-  Top = 130
+  Top = 104
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
   Caption = 'Ventas'
-  ClientHeight = 510
-  ClientWidth = 616
+  ClientHeight = 579
+  ClientWidth = 912
   Color = clBtnFace
   Font.Charset = ANSI_CHARSET
   Font.Color = clWindowText
@@ -572,115 +572,115 @@ object frmVentas: TfrmVentas
   PixelsPerInch = 96
   TextHeight = 13
   object PageControl1: TPageControl
-    Left = 8
-    Top = 8
-    Width = 601
-    Height = 497
+    Left = 2
+    Top = 5
+    Width = 906
+    Height = 572
     ActivePage = TabSheet1
     TabIndex = 0
     TabOrder = 0
     object TabSheet1: TTabSheet
       Caption = 'Ventas'
       object gbButtons: TGroupBox
-        Left = 5
-        Top = -2
+        Left = 1
+        Top = -1
         Width = 585
-        Height = 467
+        Height = 545
         TabOrder = 0
         object Label1: TLabel
-          Left = 16
-          Top = 27
+          Left = 15
+          Top = 43
           Width = 95
           Height = 13
           Caption = 'Orden de Trabajo : '
         end
         object Label2: TLabel
-          Left = 250
-          Top = 26
+          Left = 317
+          Top = 42
           Width = 71
           Height = 13
           Caption = 'Tipo Proceso : '
         end
         object Label3: TLabel
-          Left = 23
-          Top = 60
+          Left = 24
+          Top = 67
           Width = 86
           Height = 13
           Caption = 'Cantidad Cliente: '
         end
         object Label4: TLabel
-          Left = 48
-          Top = 94
+          Left = 46
+          Top = 93
           Width = 64
           Height = 13
           Caption = 'Descripcion : '
         end
         object Label5: TLabel
-          Left = 273
-          Top = 94
+          Left = 344
+          Top = 93
           Width = 44
           Height = 13
           Caption = 'Numero :'
         end
         object Label6: TLabel
-          Left = 16
-          Top = 156
+          Left = 13
+          Top = 144
           Width = 97
           Height = 13
           Caption = 'Fecha de Recibido : '
         end
         object Label7: TLabel
-          Left = 8
-          Top = 188
+          Left = 7
+          Top = 170
           Width = 103
           Height = 13
           Caption = 'Fecha  Compromiso : '
         end
         object Label8: TLabel
-          Left = 64
-          Top = 218
+          Left = 63
+          Top = 194
           Width = 47
           Height = 13
           Caption = 'Nombre : '
         end
         object Label10: TLabel
-          Left = 62
-          Top = 126
+          Left = 60
+          Top = 118
           Width = 50
           Height = 13
           Caption = 'Terminal : '
         end
         object Label11: TLabel
-          Left = 28
-          Top = 280
+          Left = 29
+          Top = 383
           Width = 81
           Height = 13
           Caption = 'Observaciones : '
         end
         object Label12: TLabel
           Left = 36
-          Top = 251
+          Top = 220
           Width = 74
           Height = 13
           Caption = 'Valor Unitario : '
         end
         object Label13: TLabel
-          Left = 20
-          Top = 360
+          Left = 21
+          Top = 460
           Width = 89
           Height = 13
           Caption = 'Otra Descripcion : '
         end
         object Label9: TLabel
-          Left = 241
-          Top = 60
+          Left = 309
+          Top = 67
           Width = 79
           Height = 13
           Caption = 'Cantidad Larco: '
         end
         object Label14: TLabel
-          Left = 244
-          Top = 251
+          Left = 354
+          Top = 220
           Width = 34
           Height = 13
           Caption = 'Total : '
@@ -694,56 +694,30 @@ object frmVentas: TfrmVentas
           Visible = False
         end
         object Label15: TLabel
-          Left = 244
-          Top = 155
+          Left = 310
+          Top = 143
           Width = 78
           Height = 13
           Caption = 'Fecha Interna : '
         end
         object Label16: TLabel
-          Left = 241
-          Top = 126
+          Left = 308
+          Top = 118
           Width = 80
           Height = 13
           Caption = 'Orden Compra : '
         end
-        object Label17: TLabel
-          Left = 64
-          Top = 408
-          Width = 38
-          Height = 13
-          Caption = 'Tarea : '
-        end
-        object lblTarea: TLabel
-          Left = 112
-          Top = 408
-          Width = 3
-          Height = 13
-        end
-        object Label18: TLabel
-          Left = 272
-          Top = 408
-          Width = 41
-          Height = 13
-          Caption = 'Status : '
-        end
-        object lblStatus: TLabel
-          Left = 313
-          Top = 409
-          Width = 3
-          Height = 13
-        end
         object lblStock: TLabel
-          Left = 16
-          Top = 312
-          Width = 6
+          Left = 304
+          Top = 232
+          Width = 33
           Height = 13
           Caption = '0'
           Visible = False
         end
         object lblAnio: TLabel
-          Left = 472
-          Top = 56
+          Left = 480
+          Top = 8
           Width = 82
           Height = 29
           Caption = 'lblAnio'
@@ -755,9 +729,9 @@ object frmVentas: TfrmVentas
           ParentFont = False
         end
         object txtProceso: TEdit
-          Left = 321
-          Top = 24
-          Width = 121
+          Left = 389
+          Top = 40
+          Width = 180
           Height = 21
           MaxLength = 50
           ReadOnly = True
@@ -766,8 +740,8 @@ object frmVentas: TfrmVentas
         end
         object txtRequerida: TEdit
           Left = 112
-          Top = 58
-          Width = 89
+          Top = 65
+          Width = 180
           Height = 21
           ReadOnly = True
           TabOrder = 2
@@ -778,8 +752,8 @@ object frmVentas: TfrmVentas
         end
         object cmbProductos: TComboBox
           Left = 112
-          Top = 91
-          Width = 121
+          Top = 88
+          Width = 180
           Height = 21
           Enabled = False
           ItemHeight = 13
@@ -790,19 +764,20 @@ object frmVentas: TfrmVentas
           OnKeyDown = SendTab
         end
         object txtNumero: TEdit
-          Left = 321
-          Top = 91
-          Width = 121
+          Left = 389
+          Top = 90
+          Width = 180
           Height = 21
           MaxLength = 50
           ReadOnly = True
           TabOrder = 5
+          OnExit = txtNumeroExit
           OnKeyDown = SendTab
         end
         object txtTerminal: TEdit
           Left = 113
-          Top = 123
-          Width = 120
+          Top = 115
+          Width = 180
           Height = 21
           ReadOnly = True
           TabOrder = 6
@@ -810,8 +785,8 @@ object frmVentas: TfrmVentas
         end
         object txtRecibido: TEdit
           Left = 112
-          Top = 153
-          Width = 121
+          Top = 141
+          Width = 180
           Height = 21
           ReadOnly = True
           TabOrder = 8
@@ -819,8 +794,8 @@ object frmVentas: TfrmVentas
         end
         object cmbEmpleados: TComboBox
           Left = 112
-          Top = 216
-          Width = 212
+          Top = 192
+          Width = 180
           Height = 21
           Enabled = False
           ItemHeight = 13
@@ -830,8 +805,8 @@ object frmVentas: TfrmVentas
           OnKeyDown = SendTab
         end
         object chkAprobacion: TCheckBox
-          Left = 330
-          Top = 216
+          Left = 389
+          Top = 192
           Width = 137
           Height = 17
           Caption = 'Aprobacion de Proceso'
@@ -841,8 +816,8 @@ object frmVentas: TfrmVentas
         end
         object txtUnitario: TEdit
           Left = 112
-          Top = 248
-          Width = 121
+          Top = 217
+          Width = 180
           Height = 21
           ReadOnly = True
           TabOrder = 13
@@ -852,28 +827,28 @@ object frmVentas: TfrmVentas
         end
         object txtObservaciones: TMemo
           Left = 112
-          Top = 280
+          Top = 383
           Width = 457
           Height = 65
           MaxLength = 1000
           ReadOnly = True
-          TabOrder = 16
+          TabOrder = 27
         end
         object txtOtras: TMemo
           Left = 112
-          Top = 360
+          Top = 452
           Width = 457
           Height = 41
           Lines.Strings = (
             '')
           MaxLength = 500
           ReadOnly = True
-          TabOrder = 17
+          TabOrder = 28
         end
         object txtOrden: TMaskEdit
           Left = 112
-          Top = 24
-          Width = 116
+          Top = 40
+          Width = 180
           Height = 21
           EditMask = '000-000-00;1;_'
           MaxLength = 10
@@ -881,12 +856,12 @@ object frmVentas: TfrmVentas
           TabOrder = 0
           Text = '   -   -  '
           OnChange = txtOrdenChange
-          OnKeyDown = SendTab
+          OnKeyDown = txtOrdenKeyDown
         end
         object txtOrdenada: TEdit
-          Left = 321
-          Top = 58
-          Width = 120
+          Left = 389
+          Top = 65
+          Width = 180
           Height = 21
           ReadOnly = True
           TabOrder = 3
@@ -894,8 +869,8 @@ object frmVentas: TfrmVentas
           OnKeyPress = txtRequeridaKeyPress
         end
         object txtTotal: TEdit
-          Left = 281
-          Top = 248
+          Left = 389
+          Top = 217
           Width = 121
           Height = 21
           ReadOnly = True
@@ -904,7 +879,7 @@ object frmVentas: TfrmVentas
         end
         object Nuevo: TButton
           Left = 143
-          Top = 435
+          Top = 507
           Width = 49
           Height = 25
           Caption = '&Nuevo'
@@ -914,12 +889,12 @@ object frmVentas: TfrmVentas
           Font.Name = 'Tahoma'
           Font.Style = []
           ParentFont = False
-          TabOrder = 20
+          TabOrder = 31
           OnClick = NuevoClick
         end
         object Editar: TButton
           Left = 198
-          Top = 435
+          Top = 507
           Width = 49
           Height = 25
           Caption = '&Editar'
@@ -929,12 +904,12 @@ object frmVentas: TfrmVentas
           Font.Name = 'Tahoma'
           Font.Style = []
           ParentFont = False
-          TabOrder = 21
+          TabOrder = 32
           OnClick = EditarClick
         end
         object Borrar: TButton
           Left = 253
-          Top = 435
+          Top = 507
           Width = 49
           Height = 25
           Caption = '&Borrar'
@@ -944,12 +919,12 @@ object frmVentas: TfrmVentas
           Font.Name = 'Tahoma'
           Font.Style = []
           ParentFont = False
-          TabOrder = 22
+          TabOrder = 33
           OnClick = BorrarClick
         end
         object Buscar: TButton
           Left = 309
-          Top = 435
+          Top = 507
           Width = 49
           Height = 25
           Caption = 'B&uscar'
@@ -959,12 +934,12 @@ object frmVentas: TfrmVentas
           Font.Name = 'Tahoma'
           Font.Style = []
           ParentFont = False
-          TabOrder = 23
+          TabOrder = 34
           OnClick = BuscarClick
         end
         object btnAceptar: TButton
           Left = 468
-          Top = 435
+          Top = 507
           Width = 49
           Height = 25
           Caption = '&Aceptar'
@@ -977,12 +952,12 @@ object frmVentas: TfrmVentas
           ParentFont = False
           ParentShowHint = False
           ShowHint = True
-          TabOrder = 18
+          TabOrder = 29
           OnClick = btnAceptarClick
         end
         object btnCancelar: TButton
           Left = 522
-          Top = 435
+          Top = 507
           Width = 49
           Height = 25
           Caption = 'Cance&lar'
@@ -995,85 +970,13 @@ object frmVentas: TfrmVentas
           ParentFont = False
           ParentShowHint = False
           ShowHint = True
-          TabOrder = 19
+          TabOrder = 30
           OnClick = btnCancelarClick
         end
-        object Button1: TButton
-          Left = 8
-          Top = 435
-          Width = 25
-          Height = 25
-          Hint = 'Primer Empleado'
-          Caption = '| <'
-          Font.Charset = ANSI_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = []
-          ParentFont = False
-          ParentShowHint = False
-          ShowHint = True
-          TabOrder = 24
-          OnClick = Button1Click
-        end
-        object Button2: TButton
-          Left = 32
-          Top = 435
-          Width = 25
-          Height = 25
-          Hint = 'Previo'
-          Caption = '<'
-          Font.Charset = ANSI_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = []
-          ParentFont = False
-          ParentShowHint = False
-          ShowHint = True
-          TabOrder = 25
-          OnClick = Button2Click
-        end
-        object Button3: TButton
-          Left = 56
-          Top = 435
-          Width = 25
-          Height = 25
-          Hint = 'Siguiente'
-          Caption = '>'
-          Font.Charset = ANSI_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = []
-          ParentFont = False
-          ParentShowHint = False
-          ShowHint = True
-          TabOrder = 26
-          OnClick = Button3Click
-        end
-        object Button4: TButton
-          Left = 80
-          Top = 435
-          Width = 25
-          Height = 25
-          Hint = 'Ultimo Empleado'
-          Caption = '> |'
-          Font.Charset = ANSI_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = []
-          ParentFont = False
-          ParentShowHint = False
-          ShowHint = True
-          TabOrder = 27
-          OnClick = Button4Click
-        end
         object deInterna: TDateEditor
-          Left = 321
-          Top = 152
-          Width = 121
+          Left = 389
+          Top = 140
+          Width = 180
           Height = 20
           Alignment = taLeftJustify
           BorderStyle = bsSingle
@@ -1093,8 +996,8 @@ object frmVentas: TfrmVentas
         end
         object deEntrega: TDateEditor
           Left = 112
-          Top = 185
-          Width = 121
+          Top = 167
+          Width = 180
           Height = 20
           Alignment = taLeftJustify
           BorderStyle = bsSingle
@@ -1112,9 +1015,9 @@ object frmVentas: TfrmVentas
           Date = 38818
         end
         object txtCompra: TEdit
-          Left = 321
-          Top = 123
-          Width = 121
+          Left = 389
+          Top = 115
+          Width = 180
           Height = 21
           MaxLength = 50
           ReadOnly = True
@@ -1122,9 +1025,9 @@ object frmVentas: TfrmVentas
           OnKeyDown = SendTab
         end
         object chkDlls: TCheckBox
-          Left = 410
-          Top = 250
-          Width = 105
+          Left = 513
+          Top = 219
+          Width = 63
           Height = 17
           Caption = 'Dolares'
           Enabled = False
@@ -1133,7 +1036,7 @@ object frmVentas: TfrmVentas
         end
         object Button5: TButton
           Left = 365
-          Top = 435
+          Top = 507
           Width = 49
           Height = 25
           Caption = '&Imprimir'
@@ -1143,17 +1046,967 @@ object frmVentas: TfrmVentas
           Font.Name = 'Tahoma'
           Font.Style = []
           ParentFont = False
-          TabOrder = 28
+          TabOrder = 35
           OnClick = Button5Click
         end
         object chkStock: TCheckBox
-          Left = 330
-          Top = 184
-          Width = 55
+          Left = 304
+          Top = 246
+          Width = 49
           Height = 17
           Caption = 'Stock'
           Enabled = False
-          TabOrder = 29
+          TabOrder = 18
+        end
+        object chkPlano: TCheckBox
+          Left = 50
+          Top = 244
+          Width = 55
+          Height = 17
+          Caption = 'Plano'
+          Enabled = False
+          TabOrder = 16
+          OnClick = chkPlanoClick
+        end
+        object cmbPlanos: TComboBox
+          Left = 113
+          Top = 242
+          Width = 180
+          Height = 21
+          Enabled = False
+          ItemHeight = 13
+          TabOrder = 17
+          OnDropDown = cmbPlanosDropDown
+          OnExit = cmbPlanosChange
+          OnKeyDown = SendTab
+        end
+        object Panel1: TPanel
+          Left = 7
+          Top = 507
+          Width = 114
+          Height = 27
+          TabOrder = 36
+          object Primero: TButton
+            Left = 8
+            Top = 4
+            Width = 25
+            Height = 19
+            Hint = 'Primero'
+            Caption = '| <'
+            Font.Charset = ANSI_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = []
+            ParentFont = False
+            ParentShowHint = False
+            ShowHint = True
+            TabOrder = 0
+            OnClick = PrimeroClick
+          end
+          object Anterior: TButton
+            Left = 32
+            Top = 4
+            Width = 25
+            Height = 19
+            Hint = 'Previo'
+            Caption = '<'
+            Font.Charset = ANSI_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = []
+            ParentFont = False
+            ParentShowHint = False
+            ShowHint = True
+            TabOrder = 1
+            OnClick = PrimeroClick
+          end
+          object Ultimo: TButton
+            Left = 80
+            Top = 4
+            Width = 25
+            Height = 19
+            Hint = 'Ultimo'
+            Caption = '> |'
+            Font.Charset = ANSI_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = []
+            ParentFont = False
+            ParentShowHint = False
+            ShowHint = True
+            TabOrder = 3
+            OnClick = PrimeroClick
+          end
+          object Siguiente: TButton
+            Left = 56
+            Top = 4
+            Width = 25
+            Height = 19
+            Hint = 'Siguiente'
+            Caption = '>'
+            Font.Charset = ANSI_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'MS Sans Serif'
+            Font.Style = []
+            ParentFont = False
+            ParentShowHint = False
+            ShowHint = True
+            TabOrder = 2
+            OnClick = PrimeroClick
+          end
+        end
+        object chkStockParcial: TCheckBox
+          Left = 360
+          Top = 246
+          Width = 89
+          Height = 17
+          Caption = 'Stock Parcial'
+          Enabled = False
+          TabOrder = 19
+        end
+        object txtStockParcial: TEdit
+          Left = 448
+          Top = 243
+          Width = 121
+          Height = 21
+          MaxLength = 50
+          ReadOnly = True
+          TabOrder = 20
+          OnKeyDown = SendTab
+        end
+        object chkMezclar: TCheckBox
+          Left = 50
+          Top = 274
+          Width = 57
+          Height = 17
+          Caption = 'Mezclar'
+          Enabled = False
+          TabOrder = 21
+        end
+        object GridView1: TGridView
+          Left = 112
+          Top = 300
+          Width = 241
+          Height = 73
+          BorderStyle = bsSingle
+          GridStyle = gsReport
+          GridLinesStyle = lsNormal
+          HeaderSize = 18
+          HeaderStyle = hsAuto
+          HideScrollBar = True
+          InputSize = 16
+          Options = [goHeader, goHighlightTextSelection, goSelectFullRow]
+          RowSize = 16
+          ParentColor = False
+          SelectionMoveDirection = mdDown
+          SlideSize = 80
+          TabOrder = 26
+          TabStop = True
+          WantReturns = False
+          object TTextualColumn
+            Alignment = taLeftJustify
+            Color = clWindow
+            Cursor = crDefault
+            DrawingOptions = doNormal
+            DefaultWidth = 94
+            Font.Charset = ANSI_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'Tahoma'
+            Font.Style = []
+            Footer.Color = clWindow
+            Footer.FormulaKind = fkNone
+            Header.Color = clBtnFace
+            Header.Caption = 'Orden'
+            Header.DisplayMode = dmTextOnly
+            Options = [coCanClick, coCanSort, coEditorAutoSelect, coPublicUsing]
+            Position = 0
+            SlideBounds.Height = 0
+            SlideBounds.Left = 0
+            SlideBounds.Top = 0
+            SlideBounds.Width = 0
+            Sorted = False
+            SortType = stAlphabetic
+            VerticalAlignment = vaMiddle
+            Visible = True
+            Width = 94
+            WrapKind = wkEllipsis
+            AutoExecute = False
+          end
+          object TTextualColumn
+            Alignment = taLeftJustify
+            Color = clWindow
+            Cursor = crDefault
+            DrawingOptions = doNormal
+            DefaultWidth = 94
+            Font.Charset = ANSI_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'Tahoma'
+            Font.Style = []
+            Footer.Color = clWindow
+            Footer.FormulaKind = fkNone
+            Header.Color = clBtnFace
+            Header.Caption = 'Cantidad'
+            Header.DisplayMode = dmTextOnly
+            Options = [coCanClick, coCanSort, coEditorAutoSelect, coPublicUsing]
+            Position = 1
+            SlideBounds.Height = 0
+            SlideBounds.Left = 0
+            SlideBounds.Top = 0
+            SlideBounds.Width = 0
+            Sorted = True
+            SortType = stAlphabetic
+            VerticalAlignment = vaMiddle
+            Visible = True
+            Width = 94
+            WrapKind = wkEllipsis
+            AutoExecute = False
+          end
+        end
+        object MaskEdit1: TMaskEdit
+          Left = 112
+          Top = 272
+          Width = 92
+          Height = 21
+          EditMask = '000-000-00;1;_'
+          MaxLength = 10
+          ReadOnly = True
+          TabOrder = 22
+          Text = '   -   -  '
+        end
+        object Edit1: TEdit
+          Left = 206
+          Top = 273
+          Width = 94
+          Height = 21
+          ReadOnly = True
+          TabOrder = 23
+          OnKeyPress = txtRequeridaKeyPress
+        end
+        object DeleteInternos: TButton
+          Left = 328
+          Top = 274
+          Width = 21
+          Height = 20
+          Hint = 'Borrar Nombre Interno'
+          Caption = '-'
+          Enabled = False
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 25
+        end
+        object AddInternos: TButton
+          Left = 304
+          Top = 274
+          Width = 21
+          Height = 20
+          Hint = 'Agreagar Nombre Interno'
+          Caption = '+'
+          Enabled = False
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 24
+        end
+      end
+      object GroupBox1: TGroupBox
+        Left = 587
+        Top = -1
+        Width = 309
+        Height = 544
+        Caption = ' Informaci'#243'n Adicional '
+        TabOrder = 1
+        object Label22: TLabel
+          Left = 8
+          Top = 24
+          Width = 163
+          Height = 13
+          Caption = 'Popularidad por Numero de Parte.'
+        end
+        object Label23: TLabel
+          Left = 8
+          Top = 88
+          Width = 163
+          Height = 13
+          Caption = 'Popularidad por Numero de Plano.'
+        end
+        object Label19: TLabel
+          Left = 10
+          Top = 160
+          Width = 218
+          Height = 13
+          Caption = 'Ordenes en Produccion por Numero de Parte.'
+        end
+        object Label20: TLabel
+          Left = 10
+          Top = 288
+          Width = 218
+          Height = 13
+          Caption = 'Ordenes en produccion por Numero de Plano.'
+        end
+        object gvNumParte: TGridView
+          Left = 8
+          Top = 40
+          Width = 290
+          Height = 41
+          Cursor = 3000
+          BorderStyle = bsSingle
+          GridStyle = gsReport
+          GridLinesStyle = lsNormal
+          HeaderSize = 18
+          HeaderStyle = hsAuto
+          HideScrollBar = True
+          InputSize = 16
+          Options = [goHeader, goHighlightTextSelection, goSelectFullRow]
+          RowSize = 16
+          ParentColor = False
+          SelectionMoveDirection = mdDown
+          SlideSize = 80
+          TabOrder = 0
+          TabStop = True
+          WantReturns = False
+          object TTextualColumn
+            Alignment = taLeftJustify
+            Color = clWindow
+            Cursor = crDefault
+            DrawingOptions = doNormal
+            DefaultWidth = 94
+            Font.Charset = ANSI_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'Tahoma'
+            Font.Style = []
+            Footer.Color = clWindow
+            Footer.FormulaKind = fkNone
+            Header.Color = clBtnFace
+            Header.Caption = 'Ordenes'
+            Header.DisplayMode = dmTextOnly
+            Options = [coCanClick, coCanSort, coEditorAutoSelect, coPublicUsing]
+            Position = 0
+            SlideBounds.Height = 0
+            SlideBounds.Left = 0
+            SlideBounds.Top = 0
+            SlideBounds.Width = 0
+            Sorted = True
+            SortType = stAlphabetic
+            VerticalAlignment = vaMiddle
+            Visible = True
+            Width = 94
+            WrapKind = wkEllipsis
+            AutoExecute = False
+          end
+          object TTextualColumn
+            Alignment = taLeftJustify
+            Color = clWindow
+            Cursor = crDefault
+            DrawingOptions = doNormal
+            DefaultWidth = 94
+            Font.Charset = ANSI_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'Tahoma'
+            Font.Style = []
+            Footer.Color = clWindow
+            Footer.FormulaKind = fkNone
+            Header.Color = clBtnFace
+            Header.Caption = 'Piezas'
+            Header.DisplayMode = dmTextOnly
+            Options = [coCanClick, coCanSort, coEditorAutoSelect, coPublicUsing]
+            Position = 1
+            SlideBounds.Height = 0
+            SlideBounds.Left = 0
+            SlideBounds.Top = 0
+            SlideBounds.Width = 0
+            Sorted = False
+            SortType = stAlphabetic
+            VerticalAlignment = vaMiddle
+            Visible = True
+            Width = 94
+            WrapKind = wkEllipsis
+            AutoExecute = False
+          end
+          object TTextualColumn
+            Alignment = taLeftJustify
+            Color = clWindow
+            Cursor = crDefault
+            DrawingOptions = doNormal
+            DefaultWidth = 94
+            Font.Charset = ANSI_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'Tahoma'
+            Font.Style = []
+            Footer.Color = clWindow
+            Footer.FormulaKind = fkNone
+            Header.Color = clBtnFace
+            Header.Caption = 'En Stock'
+            Header.DisplayMode = dmTextOnly
+            Options = [coCanClick, coCanSort, coEditorAutoSelect, coPublicUsing]
+            Position = 2
+            SlideBounds.Height = 0
+            SlideBounds.Left = 0
+            SlideBounds.Top = 0
+            SlideBounds.Width = 0
+            Sorted = False
+            SortType = stAlphabetic
+            VerticalAlignment = vaMiddle
+            Visible = True
+            Width = 94
+            WrapKind = wkEllipsis
+            AutoExecute = False
+          end
+        end
+        object gvNumPlano: TGridView
+          Left = 8
+          Top = 104
+          Width = 290
+          Height = 41
+          BorderStyle = bsSingle
+          GridStyle = gsReport
+          GridLinesStyle = lsNormal
+          HeaderSize = 18
+          HeaderStyle = hsAuto
+          HideScrollBar = True
+          InputSize = 16
+          Options = [goHeader, goHighlightTextSelection, goSelectFullRow]
+          RowSize = 16
+          ParentColor = False
+          SelectionMoveDirection = mdDown
+          SlideSize = 80
+          TabOrder = 1
+          TabStop = True
+          WantReturns = False
+          object TTextualColumn
+            Alignment = taLeftJustify
+            Color = clWindow
+            Cursor = crDefault
+            DrawingOptions = doNormal
+            DefaultWidth = 94
+            Font.Charset = ANSI_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'Tahoma'
+            Font.Style = []
+            Footer.Color = clWindow
+            Footer.FormulaKind = fkNone
+            Header.Color = clBtnFace
+            Header.Caption = 'Ordenes'
+            Header.DisplayMode = dmTextOnly
+            Options = [coCanClick, coCanSort, coEditorAutoSelect, coPublicUsing]
+            Position = 0
+            SlideBounds.Height = 0
+            SlideBounds.Left = 0
+            SlideBounds.Top = 0
+            SlideBounds.Width = 0
+            Sorted = True
+            SortType = stAlphabetic
+            VerticalAlignment = vaMiddle
+            Visible = True
+            Width = 94
+            WrapKind = wkEllipsis
+            AutoExecute = False
+          end
+          object TTextualColumn
+            Alignment = taLeftJustify
+            Color = clWindow
+            Cursor = crDefault
+            DrawingOptions = doNormal
+            DefaultWidth = 94
+            Font.Charset = ANSI_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'Tahoma'
+            Font.Style = []
+            Footer.Color = clWindow
+            Footer.FormulaKind = fkNone
+            Header.Color = clBtnFace
+            Header.Caption = 'Piezas'
+            Header.DisplayMode = dmTextOnly
+            Options = [coCanClick, coCanSort, coEditorAutoSelect, coPublicUsing]
+            Position = 1
+            SlideBounds.Height = 0
+            SlideBounds.Left = 0
+            SlideBounds.Top = 0
+            SlideBounds.Width = 0
+            Sorted = False
+            SortType = stAlphabetic
+            VerticalAlignment = vaMiddle
+            Visible = True
+            Width = 94
+            WrapKind = wkEllipsis
+            AutoExecute = False
+          end
+          object TTextualColumn
+            Alignment = taLeftJustify
+            Color = clWindow
+            Cursor = crDefault
+            DrawingOptions = doNormal
+            DefaultWidth = 94
+            Font.Charset = ANSI_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'Tahoma'
+            Font.Style = []
+            Footer.Color = clWindow
+            Footer.FormulaKind = fkNone
+            Header.Color = clBtnFace
+            Header.Caption = 'En Stock'
+            Header.DisplayMode = dmTextOnly
+            Options = [coCanClick, coCanSort, coEditorAutoSelect, coPublicUsing]
+            Position = 2
+            SlideBounds.Height = 0
+            SlideBounds.Left = 0
+            SlideBounds.Top = 0
+            SlideBounds.Width = 0
+            Sorted = False
+            SortType = stAlphabetic
+            VerticalAlignment = vaMiddle
+            Visible = True
+            Width = 94
+            WrapKind = wkEllipsis
+            AutoExecute = False
+          end
+        end
+        object gvProdNumero: TGridView
+          Left = 8
+          Top = 176
+          Width = 290
+          Height = 105
+          BorderStyle = bsSingle
+          GridStyle = gsReport
+          GridLinesStyle = lsNormal
+          HeaderSize = 18
+          HeaderStyle = hsAuto
+          HideScrollBar = True
+          InputSize = 16
+          Options = [goHeader, goHighlightTextSelection, goSelectFullRow]
+          RowSize = 16
+          ParentColor = False
+          SelectionMoveDirection = mdDown
+          SlideSize = 80
+          TabOrder = 2
+          TabStop = True
+          WantReturns = False
+          object TTextualColumn
+            Alignment = taLeftJustify
+            Color = clWindow
+            Cursor = crDefault
+            DrawingOptions = doNormal
+            DefaultWidth = 70
+            Font.Charset = ANSI_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'Tahoma'
+            Font.Style = []
+            Footer.Color = clWindow
+            Footer.FormulaKind = fkNone
+            Header.Color = clBtnFace
+            Header.Caption = 'Orden'
+            Header.DisplayMode = dmTextOnly
+            Options = [coCanClick, coCanSort, coEditorAutoSelect, coPublicUsing]
+            Position = 0
+            SlideBounds.Height = 0
+            SlideBounds.Left = 0
+            SlideBounds.Top = 0
+            SlideBounds.Width = 0
+            Sorted = True
+            SortType = stAlphabetic
+            VerticalAlignment = vaMiddle
+            Visible = True
+            Width = 70
+            WrapKind = wkEllipsis
+            AutoExecute = False
+          end
+          object TTextualColumn
+            Alignment = taLeftJustify
+            Color = clWindow
+            Cursor = crDefault
+            DrawingOptions = doNormal
+            DefaultWidth = 40
+            Font.Charset = ANSI_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'Tahoma'
+            Font.Style = []
+            Footer.Color = clWindow
+            Footer.FormulaKind = fkNone
+            Header.Color = clBtnFace
+            Header.Caption = 'Larco'
+            Header.DisplayMode = dmTextOnly
+            Options = [coCanClick, coCanSort, coEditorAutoSelect, coPublicUsing]
+            Position = 1
+            SlideBounds.Height = 0
+            SlideBounds.Left = 0
+            SlideBounds.Top = 0
+            SlideBounds.Width = 0
+            Sorted = False
+            SortType = stAlphabetic
+            VerticalAlignment = vaMiddle
+            Visible = True
+            Width = 40
+            WrapKind = wkEllipsis
+            AutoExecute = False
+          end
+          object TTextualColumn
+            Alignment = taLeftJustify
+            Color = clWindow
+            Cursor = crDefault
+            DrawingOptions = doNormal
+            DefaultWidth = 40
+            Font.Charset = ANSI_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'Tahoma'
+            Font.Style = []
+            Footer.Color = clWindow
+            Footer.FormulaKind = fkNone
+            Header.Color = clBtnFace
+            Header.Caption = 'Cliente'
+            Header.DisplayMode = dmTextOnly
+            Options = [coCanClick, coCanSort, coEditorAutoSelect, coPublicUsing]
+            Position = 2
+            SlideBounds.Height = 0
+            SlideBounds.Left = 0
+            SlideBounds.Top = 0
+            SlideBounds.Width = 0
+            Sorted = False
+            SortType = stAlphabetic
+            VerticalAlignment = vaMiddle
+            Visible = True
+            Width = 40
+            WrapKind = wkEllipsis
+            AutoExecute = False
+          end
+          object TTextualColumn
+            Alignment = taLeftJustify
+            Color = clWindow
+            Cursor = crDefault
+            DrawingOptions = doNormal
+            DefaultWidth = 60
+            Font.Charset = ANSI_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'Tahoma'
+            Font.Style = []
+            Footer.Color = clWindow
+            Footer.FormulaKind = fkNone
+            Header.Color = clBtnFace
+            Header.Caption = 'Tarea'
+            Header.DisplayMode = dmTextOnly
+            Options = [coCanClick, coCanSort, coEditorAutoSelect, coPublicUsing]
+            Position = 3
+            SlideBounds.Height = 0
+            SlideBounds.Left = 0
+            SlideBounds.Top = 0
+            SlideBounds.Width = 0
+            Sorted = False
+            SortType = stAlphabetic
+            VerticalAlignment = vaMiddle
+            Visible = True
+            Width = 60
+            WrapKind = wkEllipsis
+            AutoExecute = False
+          end
+          object TTextualColumn
+            Alignment = taLeftJustify
+            Color = clWindow
+            Cursor = crDefault
+            DrawingOptions = doNormal
+            DefaultWidth = 60
+            Font.Charset = ANSI_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'Tahoma'
+            Font.Style = []
+            Footer.Color = clWindow
+            Footer.FormulaKind = fkNone
+            Header.Color = clBtnFace
+            Header.Caption = 'Status'
+            Header.DisplayMode = dmTextOnly
+            Options = [coCanClick, coCanSort, coEditorAutoSelect, coPublicUsing]
+            Position = 4
+            SlideBounds.Height = 0
+            SlideBounds.Left = 0
+            SlideBounds.Top = 0
+            SlideBounds.Width = 0
+            Sorted = False
+            SortType = stAlphabetic
+            VerticalAlignment = vaMiddle
+            Visible = True
+            Width = 60
+            WrapKind = wkEllipsis
+            AutoExecute = False
+          end
+        end
+        object gvProdPlano: TGridView
+          Left = 8
+          Top = 304
+          Width = 290
+          Height = 105
+          BorderStyle = bsSingle
+          GridStyle = gsReport
+          GridLinesStyle = lsNormal
+          HeaderSize = 18
+          HeaderStyle = hsAuto
+          HideScrollBar = True
+          InputSize = 16
+          Options = [goHeader, goHighlightTextSelection, goSelectFullRow]
+          RowSize = 16
+          ParentColor = False
+          SelectionMoveDirection = mdDown
+          SlideSize = 80
+          TabOrder = 3
+          TabStop = True
+          WantReturns = False
+          object TTextualColumn
+            Alignment = taLeftJustify
+            Color = clWindow
+            Cursor = crDefault
+            DrawingOptions = doNormal
+            DefaultWidth = 69
+            Font.Charset = ANSI_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'Tahoma'
+            Font.Style = []
+            Footer.Color = clWindow
+            Footer.FormulaKind = fkNone
+            Header.Color = clBtnFace
+            Header.Caption = 'Orden'
+            Header.DisplayMode = dmTextOnly
+            Options = [coCanClick, coCanSort, coEditorAutoSelect, coPublicUsing]
+            Position = 0
+            SlideBounds.Height = 0
+            SlideBounds.Left = 0
+            SlideBounds.Top = 0
+            SlideBounds.Width = 0
+            Sorted = False
+            SortType = stAlphabetic
+            VerticalAlignment = vaMiddle
+            Visible = True
+            Width = 69
+            WrapKind = wkEllipsis
+            AutoExecute = False
+          end
+          object TTextualColumn
+            Alignment = taLeftJustify
+            Color = clWindow
+            Cursor = crDefault
+            DrawingOptions = doNormal
+            DefaultWidth = 40
+            Font.Charset = ANSI_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'Tahoma'
+            Font.Style = []
+            Footer.Color = clWindow
+            Footer.FormulaKind = fkNone
+            Header.Color = clBtnFace
+            Header.Caption = 'Larco'
+            Header.DisplayMode = dmTextOnly
+            Options = [coCanClick, coCanSort, coEditorAutoSelect, coPublicUsing]
+            Position = 1
+            SlideBounds.Height = 0
+            SlideBounds.Left = 0
+            SlideBounds.Top = 0
+            SlideBounds.Width = 0
+            Sorted = True
+            SortType = stAlphabetic
+            VerticalAlignment = vaMiddle
+            Visible = True
+            Width = 40
+            WrapKind = wkEllipsis
+            AutoExecute = False
+          end
+          object TTextualColumn
+            Alignment = taLeftJustify
+            Color = clWindow
+            Cursor = crDefault
+            DrawingOptions = doNormal
+            DefaultWidth = 40
+            Font.Charset = ANSI_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'Tahoma'
+            Font.Style = []
+            Footer.Color = clWindow
+            Footer.FormulaKind = fkNone
+            Header.Color = clBtnFace
+            Header.Caption = 'Cliente'
+            Header.DisplayMode = dmTextOnly
+            Options = [coCanClick, coCanSort, coEditorAutoSelect, coPublicUsing]
+            Position = 2
+            SlideBounds.Height = 0
+            SlideBounds.Left = 0
+            SlideBounds.Top = 0
+            SlideBounds.Width = 0
+            Sorted = False
+            SortType = stAlphabetic
+            VerticalAlignment = vaMiddle
+            Visible = True
+            Width = 40
+            WrapKind = wkEllipsis
+            AutoExecute = False
+          end
+          object TTextualColumn
+            Alignment = taLeftJustify
+            Color = clWindow
+            Cursor = crDefault
+            DrawingOptions = doNormal
+            DefaultWidth = 60
+            Font.Charset = ANSI_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'Tahoma'
+            Font.Style = []
+            Footer.Color = clWindow
+            Footer.FormulaKind = fkNone
+            Header.Color = clBtnFace
+            Header.Caption = 'Tarea'
+            Header.DisplayMode = dmTextOnly
+            Options = [coCanClick, coCanSort, coEditorAutoSelect, coPublicUsing]
+            Position = 3
+            SlideBounds.Height = 0
+            SlideBounds.Left = 0
+            SlideBounds.Top = 0
+            SlideBounds.Width = 0
+            Sorted = False
+            SortType = stAlphabetic
+            VerticalAlignment = vaMiddle
+            Visible = True
+            Width = 60
+            WrapKind = wkEllipsis
+            AutoExecute = False
+          end
+          object TTextualColumn
+            Alignment = taLeftJustify
+            Color = clWindow
+            Cursor = crDefault
+            DrawingOptions = doNormal
+            DefaultWidth = 60
+            Font.Charset = ANSI_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'Tahoma'
+            Font.Style = []
+            Footer.Color = clWindow
+            Footer.FormulaKind = fkNone
+            Header.Color = clBtnFace
+            Header.Caption = 'Status'
+            Header.DisplayMode = dmTextOnly
+            Options = [coCanClick, coCanSort, coEditorAutoSelect, coPublicUsing]
+            Position = 4
+            SlideBounds.Height = 0
+            SlideBounds.Left = 0
+            SlideBounds.Top = 0
+            SlideBounds.Width = 0
+            Sorted = False
+            SortType = stAlphabetic
+            VerticalAlignment = vaMiddle
+            Visible = True
+            Width = 60
+            WrapKind = wkEllipsis
+            AutoExecute = False
+          end
+        end
+        object GroupBox2: TGroupBox
+          Left = 8
+          Top = 149
+          Width = 293
+          Height = 7
+          TabOrder = 4
+        end
+        object GroupBox3: TGroupBox
+          Left = 8
+          Top = 413
+          Width = 293
+          Height = 7
+          TabOrder = 5
+        end
+        object gvStatus: TGridView
+          Left = 8
+          Top = 424
+          Width = 290
+          Height = 41
+          BorderStyle = bsSingle
+          GridStyle = gsReport
+          GridLinesStyle = lsNormal
+          HeaderSize = 18
+          HeaderStyle = hsAuto
+          HideScrollBar = True
+          InputSize = 16
+          Options = [goHeader, goHighlightTextSelection, goSelectFullRow]
+          RowSize = 16
+          ParentColor = False
+          SelectionMoveDirection = mdDown
+          SlideSize = 80
+          TabOrder = 6
+          TabStop = True
+          WantReturns = False
+          object TTextualColumn
+            Alignment = taLeftJustify
+            Color = clWindow
+            Cursor = crDefault
+            DrawingOptions = doNormal
+            DefaultWidth = 140
+            Font.Charset = ANSI_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'Tahoma'
+            Font.Style = []
+            Footer.Color = clWindow
+            Footer.FormulaKind = fkNone
+            Header.Color = clBtnFace
+            Header.Caption = 'Tarea'
+            Header.DisplayMode = dmTextOnly
+            Options = [coCanClick, coCanSort, coEditorAutoSelect, coPublicUsing]
+            Position = 0
+            SlideBounds.Height = 0
+            SlideBounds.Left = 0
+            SlideBounds.Top = 0
+            SlideBounds.Width = 0
+            Sorted = True
+            SortType = stAlphabetic
+            VerticalAlignment = vaMiddle
+            Visible = True
+            Width = 140
+            WrapKind = wkEllipsis
+            AutoExecute = False
+          end
+          object TTextualColumn
+            Alignment = taLeftJustify
+            Color = clWindow
+            Cursor = crDefault
+            DrawingOptions = doNormal
+            DefaultWidth = 140
+            Font.Charset = ANSI_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'Tahoma'
+            Font.Style = []
+            Footer.Color = clWindow
+            Footer.FormulaKind = fkNone
+            Header.Color = clBtnFace
+            Header.Caption = 'Status'
+            Header.DisplayMode = dmTextOnly
+            Options = [coCanClick, coCanSort, coEditorAutoSelect, coPublicUsing]
+            Position = 1
+            SlideBounds.Height = 0
+            SlideBounds.Left = 0
+            SlideBounds.Top = 0
+            SlideBounds.Width = 0
+            Sorted = False
+            SortType = stAlphabetic
+            VerticalAlignment = vaMiddle
+            Visible = True
+            Width = 140
+            WrapKind = wkEllipsis
+            AutoExecute = False
+          end
         end
       end
     end
@@ -1164,8 +2017,8 @@ object frmVentas: TfrmVentas
       object gvVentas: TGridView
         Left = 5
         Top = 7
-        Width = 583
-        Height = 402
+        Width = 868
+        Height = 490
         BorderStyle = bsSingle
         GridStyle = gsReport
         GridLinesStyle = lsNormal
@@ -1483,8 +2336,8 @@ object frmVentas: TfrmVentas
         end
       end
       object btnExport: TButton
-        Left = 528
-        Top = 416
+        Left = 816
+        Top = 504
         Width = 59
         Height = 25
         Hint = 'Export to Excel'

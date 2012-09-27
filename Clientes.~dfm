@@ -810,33 +810,33 @@ object frmClientes: TfrmClientes
   PixelsPerInch = 96
   TextHeight = 13
   object gbButtons: TGroupBox
-    Left = 8
-    Top = 8
-    Width = 497
-    Height = 353
+    Left = 4
+    Top = -1
+    Width = 503
+    Height = 370
     TabOrder = 0
     object Label1: TLabel
-      Left = 20
-      Top = 24
-      Width = 43
+      Left = 21
+      Top = 25
+      Width = 40
       Height = 13
       Alignment = taRightJustify
-      Caption = 'Codigo : '
+      Caption = 'Codigo :'
     end
     object Label2: TLabel
-      Left = 20
-      Top = 56
-      Width = 43
+      Left = 21
+      Top = 51
+      Width = 40
       Height = 13
       Alignment = taRightJustify
-      Caption = 'Cliente : '
+      Caption = 'Cliente :'
     end
     object Label3: TLabel
       Left = 162
-      Top = 171
+      Top = 153
       Width = 42
       Height = 13
-      Caption = 'Colonia: '
+      Caption = 'Colonia :'
     end
     object lblId: TLabel
       Left = 8
@@ -847,88 +847,102 @@ object frmClientes: TfrmClientes
       Visible = False
     end
     object Label4: TLabel
-      Left = 9
-      Top = 88
-      Width = 54
+      Left = 10
+      Top = 77
+      Width = 51
       Height = 13
       Alignment = taRightJustify
-      Caption = 'Contacto : '
+      Caption = 'Contacto :'
     end
     object Label5: TLabel
-      Left = 30
-      Top = 141
-      Width = 33
+      Left = 31
+      Top = 129
+      Width = 30
       Height = 13
       Alignment = taRightJustify
-      Caption = 'Calle : '
+      Caption = 'Calle :'
     end
     object Label6: TLabel
-      Left = 20
-      Top = 228
-      Width = 43
+      Left = 21
+      Top = 204
+      Width = 40
       Height = 13
       Alignment = taRightJustify
-      Caption = 'Estado : '
+      Caption = 'Estado :'
     end
     object Label7: TLabel
-      Left = 18
-      Top = 171
+      Left = 17
+      Top = 152
       Width = 44
       Height = 13
       Alignment = taRightJustify
       Caption = 'Numero :'
     end
-    object Label8: TLabel
-      Left = 160
-      Top = 147
-      Width = 45
-      Height = 13
-      Caption = 'Colonia : '
-    end
     object Label9: TLabel
-      Left = 42
-      Top = 199
+      Left = 41
+      Top = 178
       Width = 20
       Height = 13
       Alignment = taRightJustify
       Caption = 'CP :'
     end
     object Label11: TLabel
-      Left = 255
-      Top = 228
-      Width = 52
+      Left = 260
+      Top = 205
+      Width = 49
       Height = 13
-      Caption = 'Telefono : '
+      Caption = 'Telefono :'
     end
     object Label12: TLabel
-      Left = 22
-      Top = 256
+      Left = 21
+      Top = 230
       Width = 40
       Height = 13
       Alignment = taRightJustify
       Caption = 'Celular :'
     end
     object Label13: TLabel
-      Left = 280
-      Top = 256
+      Left = 284
+      Top = 231
       Width = 25
       Height = 13
       Caption = 'Fax :'
     end
     object Label10: TLabel
-      Left = 33
-      Top = 114
-      Width = 30
+      Left = 34
+      Top = 102
+      Width = 27
       Height = 13
       Alignment = taRightJustify
-      Caption = 'RFC : '
+      Caption = 'RFC :'
     end
     object Label14: TLabel
-      Left = 162
-      Top = 199
-      Width = 43
+      Left = 164
+      Top = 178
+      Width = 40
       Height = 13
-      Caption = 'Ciudad : '
+      Caption = 'Ciudad :'
+    end
+    object Label8: TLabel
+      Left = 30
+      Top = 255
+      Width = 31
+      Height = 13
+      Caption = 'Email :'
+    end
+    object Label15: TLabel
+      Left = 10
+      Top = 281
+      Width = 51
+      Height = 13
+      Caption = 'Recordar :'
+    end
+    object Label16: TLabel
+      Left = 164
+      Top = 283
+      Width = 16
+      Height = 13
+      Caption = 'Hrs'
     end
     object txtClave: TEdit
       Left = 64
@@ -943,7 +957,7 @@ object frmClientes: TfrmClientes
     end
     object txtNombre: TEdit
       Left = 64
-      Top = 54
+      Top = 49
       Width = 425
       Height = 21
       MaxLength = 150
@@ -953,7 +967,7 @@ object frmClientes: TfrmClientes
     end
     object txtCiudad: TEdit
       Left = 208
-      Top = 196
+      Top = 175
       Width = 281
       Height = 21
       MaxLength = 50
@@ -961,83 +975,11 @@ object frmClientes: TfrmClientes
       TabOrder = 8
       OnKeyDown = SendTab
     end
-    object Button1: TButton
-      Left = 16
-      Top = 288
-      Width = 25
-      Height = 25
-      Hint = 'Primer Empleado'
-      Caption = '| <'
-      Font.Charset = ANSI_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'MS Sans Serif'
-      Font.Style = []
-      ParentFont = False
-      ParentShowHint = False
-      ShowHint = True
-      TabOrder = 19
-      OnClick = Button1Click
-    end
-    object Button2: TButton
-      Left = 40
-      Top = 288
-      Width = 25
-      Height = 25
-      Hint = 'Previo'
-      Caption = '<'
-      Font.Charset = ANSI_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'MS Sans Serif'
-      Font.Style = []
-      ParentFont = False
-      ParentShowHint = False
-      ShowHint = True
-      TabOrder = 20
-      OnClick = Button2Click
-    end
-    object Button3: TButton
-      Left = 64
-      Top = 288
-      Width = 25
-      Height = 25
-      Hint = 'Siguiente'
-      Caption = '>'
-      Font.Charset = ANSI_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'MS Sans Serif'
-      Font.Style = []
-      ParentFont = False
-      ParentShowHint = False
-      ShowHint = True
-      TabOrder = 21
-      OnClick = Button3Click
-    end
-    object Button4: TButton
-      Left = 88
-      Top = 288
-      Width = 25
-      Height = 25
-      Hint = 'Ultimo Empleado'
-      Caption = '> |'
-      Font.Charset = ANSI_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'MS Sans Serif'
-      Font.Style = []
-      ParentFont = False
-      ParentShowHint = False
-      ShowHint = True
-      TabOrder = 22
-      OnClick = Button4Click
-    end
     object Nuevo: TButton
       Left = 15
-      Top = 320
+      Top = 340
       Width = 49
-      Height = 25
+      Height = 22
       Caption = 'Nuevo'
       Font.Charset = ANSI_CHARSET
       Font.Color = clWindowText
@@ -1050,9 +992,9 @@ object frmClientes: TfrmClientes
     end
     object Editar: TButton
       Left = 67
-      Top = 320
+      Top = 340
       Width = 49
-      Height = 25
+      Height = 22
       Caption = 'Editar'
       Font.Charset = ANSI_CHARSET
       Font.Color = clWindowText
@@ -1065,9 +1007,9 @@ object frmClientes: TfrmClientes
     end
     object Borrar: TButton
       Left = 119
-      Top = 320
+      Top = 340
       Width = 49
-      Height = 25
+      Height = 22
       Caption = 'Borrar'
       Font.Charset = ANSI_CHARSET
       Font.Color = clWindowText
@@ -1080,9 +1022,9 @@ object frmClientes: TfrmClientes
     end
     object Buscar: TButton
       Left = 171
-      Top = 320
+      Top = 340
       Width = 49
-      Height = 25
+      Height = 22
       Caption = 'Buscar'
       Font.Charset = ANSI_CHARSET
       Font.Color = clWindowText
@@ -1095,9 +1037,9 @@ object frmClientes: TfrmClientes
     end
     object btnAceptar: TButton
       Left = 384
-      Top = 320
+      Top = 340
       Width = 49
-      Height = 25
+      Height = 22
       Caption = 'Aceptar'
       Enabled = False
       Font.Charset = ANSI_CHARSET
@@ -1113,9 +1055,9 @@ object frmClientes: TfrmClientes
     end
     object btnCancelar: TButton
       Left = 438
-      Top = 320
+      Top = 340
       Width = 49
-      Height = 25
+      Height = 22
       Caption = 'Cancelar'
       Enabled = False
       Font.Charset = ANSI_CHARSET
@@ -1131,7 +1073,7 @@ object frmClientes: TfrmClientes
     end
     object txtContacto: TEdit
       Left = 64
-      Top = 83
+      Top = 74
       Width = 425
       Height = 21
       MaxLength = 150
@@ -1140,7 +1082,7 @@ object frmClientes: TfrmClientes
     end
     object txtCalle: TEdit
       Left = 64
-      Top = 137
+      Top = 125
       Width = 425
       Height = 21
       MaxLength = 150
@@ -1149,7 +1091,7 @@ object frmClientes: TfrmClientes
     end
     object txtEstado: TEdit
       Left = 64
-      Top = 224
+      Top = 201
       Width = 175
       Height = 21
       MaxLength = 50
@@ -1158,7 +1100,7 @@ object frmClientes: TfrmClientes
     end
     object txtNumero: TEdit
       Left = 64
-      Top = 168
+      Top = 150
       Width = 89
       Height = 21
       MaxLength = 50
@@ -1167,7 +1109,7 @@ object frmClientes: TfrmClientes
     end
     object txtColonia: TEdit
       Left = 208
-      Top = 168
+      Top = 150
       Width = 281
       Height = 21
       MaxLength = 75
@@ -1176,7 +1118,7 @@ object frmClientes: TfrmClientes
     end
     object txtCP: TEdit
       Left = 64
-      Top = 196
+      Top = 175
       Width = 89
       Height = 21
       MaxLength = 10
@@ -1185,7 +1127,7 @@ object frmClientes: TfrmClientes
     end
     object txtTelefono: TEdit
       Left = 312
-      Top = 224
+      Top = 201
       Width = 175
       Height = 21
       MaxLength = 25
@@ -1194,7 +1136,7 @@ object frmClientes: TfrmClientes
     end
     object txtCelular: TEdit
       Left = 64
-      Top = 252
+      Top = 227
       Width = 175
       Height = 21
       MaxLength = 25
@@ -1203,7 +1145,7 @@ object frmClientes: TfrmClientes
     end
     object txtFax: TEdit
       Left = 312
-      Top = 252
+      Top = 227
       Width = 175
       Height = 21
       MaxLength = 25
@@ -1212,12 +1154,112 @@ object frmClientes: TfrmClientes
     end
     object txtRFC: TEdit
       Left = 64
-      Top = 111
+      Top = 99
       Width = 175
       Height = 21
       MaxLength = 20
       ReadOnly = True
       TabOrder = 3
+    end
+    object Panel1: TPanel
+      Left = 15
+      Top = 307
+      Width = 114
+      Height = 27
+      TabOrder = 19
+      object Primero: TButton
+        Left = 8
+        Top = 4
+        Width = 25
+        Height = 19
+        Hint = 'Primero'
+        Caption = '| <'
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = []
+        ParentFont = False
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 0
+        OnClick = PrimeroClick
+      end
+      object Anterior: TButton
+        Left = 32
+        Top = 4
+        Width = 25
+        Height = 19
+        Hint = 'Previo'
+        Caption = '<'
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = []
+        ParentFont = False
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 1
+        OnClick = PrimeroClick
+      end
+      object Ultimo: TButton
+        Left = 80
+        Top = 4
+        Width = 25
+        Height = 19
+        Hint = 'Ultimo'
+        Caption = '> |'
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = []
+        ParentFont = False
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 3
+        OnClick = PrimeroClick
+      end
+      object Siguiente: TButton
+        Left = 56
+        Top = 4
+        Width = 25
+        Height = 19
+        Hint = 'Siguiente'
+        Caption = '>'
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = []
+        ParentFont = False
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 2
+        OnClick = PrimeroClick
+      end
+    end
+    object txtEmail: TEdit
+      Left = 64
+      Top = 252
+      Width = 425
+      Height = 21
+      MaxLength = 150
+      ReadOnly = True
+      TabOrder = 20
+      OnKeyDown = SendTab
+    end
+    object txtRecordar: TEdit
+      Left = 64
+      Top = 277
+      Width = 97
+      Height = 21
+      MaxLength = 3
+      ReadOnly = True
+      TabOrder = 21
+      OnKeyDown = SendTab
+      OnKeyPress = txtClaveKeyPress
     end
   end
 end

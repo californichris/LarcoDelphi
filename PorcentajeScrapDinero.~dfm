@@ -1,6 +1,6 @@
 object frmScrapDinero: TfrmScrapDinero
-  Left = 0
-  Top = 184
+  Left = 195
+  Top = 112
   Width = 1018
   Height = 536
   Caption = 'Reporte de Scrap en Dinero'
@@ -970,6 +970,143 @@ object frmScrapDinero: TfrmScrapDinero
     Height = 13
     Caption = 'lblLiberadas'
   end
+  object GroupBox2: TGroupBox
+    Left = 11
+    Top = 85
+    Width = 989
+    Height = 540
+    TabOrder = 1
+    object lblCLiberadas: TLabel
+      Left = 57
+      Top = 94
+      Width = 97
+      Height = 13
+      Caption = 'Ordenes Liberadas :'
+    end
+    object lblCScrap: TLabel
+      Left = 47
+      Top = 138
+      Width = 107
+      Height = 13
+      Caption = 'Ordenes Scrapeadas :'
+    end
+    object lblCTotal: TLabel
+      Left = 64
+      Top = 184
+      Width = 90
+      Height = 13
+      Caption = 'Total de Ordenes :'
+    end
+    object lblLiberadas: TLabel
+      Left = 164
+      Top = 94
+      Width = 56
+      Height = 13
+      Caption = 'lblLiberadas'
+    end
+    object lblScrap: TLabel
+      Left = 164
+      Top = 138
+      Width = 37
+      Height = 13
+      Caption = 'lblScrap'
+    end
+    object lblTotal: TLabel
+      Left = 165
+      Top = 184
+      Width = 34
+      Height = 13
+      Caption = 'lblTotal'
+    end
+    object lblCPorcentaje: TLabel
+      Left = 95
+      Top = 227
+      Width = 59
+      Height = 13
+      Caption = 'Porcentaje :'
+    end
+    object lblPorcentaje: TLabel
+      Left = 165
+      Top = 227
+      Width = 62
+      Height = 13
+      Caption = 'lblPorcentaje'
+    end
+    object Label5: TLabel
+      Left = 60
+      Top = 116
+      Width = 94
+      Height = 13
+      Caption = 'Cantidad Liberada :'
+    end
+    object lblDineroLib: TLabel
+      Left = 164
+      Top = 116
+      Width = 54
+      Height = 13
+      Caption = 'lblDineroLib'
+    end
+    object Label6: TLabel
+      Left = 50
+      Top = 160
+      Width = 104
+      Height = 13
+      Caption = 'Cantidad Scrapeada :'
+    end
+    object lblDineroScrap: TLabel
+      Left = 164
+      Top = 160
+      Width = 68
+      Height = 13
+      Caption = 'lblDineroScrap'
+    end
+    object Label10: TLabel
+      Left = 77
+      Top = 206
+      Width = 77
+      Height = 13
+      Caption = 'Cantidad Total :'
+    end
+    object lblDineroTotal: TLabel
+      Left = 165
+      Top = 206
+      Width = 65
+      Height = 13
+      Caption = 'lblDineroTotal'
+    end
+    object Chart1: TChart
+      Left = 365
+      Top = 23
+      Width = 556
+      Height = 306
+      AllowPanning = pmNone
+      AllowZoom = False
+      BackWall.Brush.Color = clWhite
+      BackWall.Brush.Style = bsClear
+      BackWall.Pen.Visible = False
+      Title.Text.Strings = (
+        'Porcentaje de Scrap en Dinero')
+      AxisVisible = False
+      ClipPoints = False
+      Frame.Visible = False
+      View3DOptions.Elevation = 315
+      View3DOptions.Orthogonal = False
+      View3DOptions.Perspective = 0
+      View3DOptions.Rotation = 360
+      View3DWalls = False
+      TabOrder = 0
+      object Series1: TPieSeries
+        Marks.ArrowLength = 8
+        Marks.Visible = True
+        SeriesColor = clRed
+        OtherSlice.Text = 'Other'
+        PieValues.DateTime = False
+        PieValues.Name = 'Pie'
+        PieValues.Multiplier = 1
+        PieValues.Order = loNone
+      end
+    end
+  end
   object GroupBox3: TGroupBox
     Left = 11
     Top = 85
@@ -1790,7 +1927,7 @@ object frmScrapDinero: TfrmScrapDinero
         Footer.Color = clWindow
         Footer.FormulaKind = fkNone
         Header.Color = clBtnFace
-        Header.Caption = 'Detectado Por'
+        Header.Caption = 'Area Responsable'
         Header.DisplayMode = dmTextOnly
         Options = [coCanClick, coCanSort, coEditorAutoSelect, coPublicUsing]
         Position = 9
@@ -2076,142 +2213,65 @@ object frmScrapDinero: TfrmScrapDinero
         WrapKind = wkEllipsis
         AutoExecute = False
       end
-    end
-  end
-  object GroupBox2: TGroupBox
-    Left = 11
-    Top = 85
-    Width = 989
-    Height = 540
-    TabOrder = 1
-    object lblCLiberadas: TLabel
-      Left = 57
-      Top = 94
-      Width = 97
-      Height = 13
-      Caption = 'Ordenes Liberadas :'
-    end
-    object lblCScrap: TLabel
-      Left = 47
-      Top = 138
-      Width = 107
-      Height = 13
-      Caption = 'Ordenes Scrapeadas :'
-    end
-    object lblCTotal: TLabel
-      Left = 64
-      Top = 184
-      Width = 90
-      Height = 13
-      Caption = 'Total de Ordenes :'
-    end
-    object lblLiberadas: TLabel
-      Left = 164
-      Top = 94
-      Width = 56
-      Height = 13
-      Caption = 'lblLiberadas'
-    end
-    object lblScrap: TLabel
-      Left = 164
-      Top = 138
-      Width = 37
-      Height = 13
-      Caption = 'lblScrap'
-    end
-    object lblTotal: TLabel
-      Left = 165
-      Top = 184
-      Width = 34
-      Height = 13
-      Caption = 'lblTotal'
-    end
-    object lblCPorcentaje: TLabel
-      Left = 95
-      Top = 227
-      Width = 59
-      Height = 13
-      Caption = 'Porcentaje :'
-    end
-    object lblPorcentaje: TLabel
-      Left = 165
-      Top = 227
-      Width = 62
-      Height = 13
-      Caption = 'lblPorcentaje'
-    end
-    object Label5: TLabel
-      Left = 60
-      Top = 116
-      Width = 94
-      Height = 13
-      Caption = 'Cantidad Liberada :'
-    end
-    object lblDineroLib: TLabel
-      Left = 164
-      Top = 116
-      Width = 54
-      Height = 13
-      Caption = 'lblDineroLib'
-    end
-    object Label6: TLabel
-      Left = 50
-      Top = 160
-      Width = 104
-      Height = 13
-      Caption = 'Cantidad Scrapeada :'
-    end
-    object lblDineroScrap: TLabel
-      Left = 164
-      Top = 160
-      Width = 68
-      Height = 13
-      Caption = 'lblDineroScrap'
-    end
-    object Label10: TLabel
-      Left = 77
-      Top = 206
-      Width = 77
-      Height = 13
-      Caption = 'Cantidad Total :'
-    end
-    object lblDineroTotal: TLabel
-      Left = 165
-      Top = 206
-      Width = 65
-      Height = 13
-      Caption = 'lblDineroTotal'
-    end
-    object Chart1: TChart
-      Left = 365
-      Top = 23
-      Width = 556
-      Height = 306
-      AllowPanning = pmNone
-      AllowZoom = False
-      BackWall.Brush.Color = clWhite
-      BackWall.Brush.Style = bsClear
-      BackWall.Pen.Visible = False
-      Title.Text.Strings = (
-        'Porcentaje de Scrap en Dinero')
-      AxisVisible = False
-      ClipPoints = False
-      Frame.Visible = False
-      View3DOptions.Elevation = 315
-      View3DOptions.Orthogonal = False
-      View3DOptions.Perspective = 0
-      View3DOptions.Rotation = 360
-      View3DWalls = False
-      TabOrder = 0
-      object Series1: TPieSeries
-        Marks.ArrowLength = 8
-        Marks.Visible = True
-        SeriesColor = clRed
-        OtherSlice.Text = 'Other'
-        PieValues.DateTime = False
-        PieValues.Name = 'Pie'
-        PieValues.Multiplier = 1
-        PieValues.Order = loNone
+      object TTextualColumn
+        Alignment = taLeftJustify
+        Color = clWindow
+        Cursor = crDefault
+        DrawingOptions = doNormal
+        DefaultWidth = 80
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'Tahoma'
+        Font.Style = []
+        Footer.Color = clWindow
+        Footer.FormulaKind = fkNone
+        Header.Color = clBtnFace
+        Header.Caption = 'Area Detectado'
+        Header.DisplayMode = dmTextOnly
+        Options = [coCanClick, coCanSort, coEditorAutoSelect, coPublicUsing]
+        Position = 19
+        SlideBounds.Height = 0
+        SlideBounds.Left = 0
+        SlideBounds.Top = 0
+        SlideBounds.Width = 0
+        Sorted = False
+        SortType = stAlphabetic
+        VerticalAlignment = vaMiddle
+        Visible = True
+        Width = 80
+        WrapKind = wkEllipsis
+        AutoExecute = False
+      end
+      object TTextualColumn
+        Alignment = taLeftJustify
+        Color = clWindow
+        Cursor = crDefault
+        DrawingOptions = doNormal
+        DefaultWidth = 80
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'Tahoma'
+        Font.Style = []
+        Footer.Color = clWindow
+        Footer.FormulaKind = fkNone
+        Header.Color = clBtnFace
+        Header.Caption = 'Empleado Detecto'
+        Header.DisplayMode = dmTextOnly
+        Options = [coCanClick, coCanSort, coEditorAutoSelect, coPublicUsing]
+        Position = 20
+        SlideBounds.Height = 0
+        SlideBounds.Left = 0
+        SlideBounds.Top = 0
+        SlideBounds.Width = 0
+        Sorted = False
+        SortType = stAlphabetic
+        VerticalAlignment = vaMiddle
+        Visible = True
+        Width = 80
+        WrapKind = wkEllipsis
+        AutoExecute = False
       end
     end
   end

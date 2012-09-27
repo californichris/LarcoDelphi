@@ -1,6 +1,6 @@
 object frmMain: TfrmMain
-  Left = 473
-  Top = 96
+  Left = 382
+  Top = 144
   Width = 696
   Height = 478
   Caption = 'Larco'

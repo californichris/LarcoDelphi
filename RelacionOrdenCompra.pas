@@ -62,6 +62,10 @@ type
     deRecibido1: TDateEditor;
     deRecibido2: TDateEditor;
     chkRecibido: TCheckBox;
+    Label7: TLabel;
+    cmbProductos: TComboBox;
+    cmbPlanos: TComboBox;
+    Label8: TLabel;
     procedure IdleLoop; virtual;
     function FormIsRunning(FormName: String):Boolean;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
@@ -96,6 +100,8 @@ type
     procedure btnOK2Click(Sender: TObject);
     procedure btnTodos2Click(Sender: TObject);
     procedure chkRecibidoClick(Sender: TObject);
+    procedure cmbPartesKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
   private
     { Private declarations }
   public
@@ -153,6 +159,8 @@ begin
     cmbOrdenes.Text := 'Todos';
     cmbPartes.Text := 'Todos';
     cmbCompra.Text := 'Todos';
+    cmbProductos.Text := 'Todos';
+    cmbPlanos.Text := 'Todos';
     deRecibido1.Date := Now;
     deRecibido2.Date := Now;
 
@@ -178,7 +186,8 @@ begin
 
     SQLStr := 'Relacion_Orden_Compra ' + QuotedStr(txtCliente.Text) + ','
               + QuotedStr(txtOrden.Text) + ',' + QuotedStr(cmbCompra.Text) + ','
-              + QuotedStr(cmbPartes.Text);
+              + QuotedStr(cmbPartes.Text) + ',' + QuotedStr(cmbProductos.Text) + ','
+              + QuotedStr(cmbPlanos.Text) ;
 
     if bFirst = False then begin
         SQLStr := SQLStr + ',1,' + QuotedStr(RightStr(ddlAnio.Text,2)) + ',' + QuotedStr(additionalWhere);
@@ -206,6 +215,17 @@ begin
     cmbPartes.Clear;
     cmbPartes.Sorted := True;
     cmbPartes.Text := sOrden;
+
+    sOrden := cmbProductos.Text;
+    cmbProductos.Clear;
+    cmbProductos.Sorted := True;
+    cmbProductos.Text := sOrden;
+
+    sOrden := cmbPlanos.Text;
+    cmbPlanos.Clear;
+    cmbPlanos.Sorted := True;
+    cmbPlanos.Text := sOrden;
+
     GridView1.ClearRows;
 
     lblStep.Visible := True;
@@ -227,31 +247,40 @@ begin
         giCantCliente := giCantCliente + StrToInt(GridView1.Cells[4,GridView1.RowCount -1]);
 
         GridView1.Cells[5,GridView1.RowCount -1] := VarToStr(Qry['Descripcion']);
-        GridView1.Cells[6,GridView1.RowCount -1] := VarToStr(Qry['Numero']);
-        GridView1.Cells[7,GridView1.RowCount -1] := VarToStr(Qry['Entrega']);
-        GridView1.Cells[8,GridView1.RowCount -1] := VarToStr(Qry['Interna']);
-        GridView1.Cells[9,GridView1.RowCount -1] := VarToStr(Qry['Tarea']);
-        GridView1.Cells[10,GridView1.RowCount -1] := VarToStr(Qry['Status']);
-        GridView1.Cells[11,GridView1.RowCount -1] := VarToStr(Qry['Total']);
-        GridView1.Cells[12,GridView1.RowCount -1] := VarToStr(Qry['Dolares']);
-        GridView1.Cells[13,GridView1.RowCount -1] := VarToStr(Qry['FileName']);
-        GridView1.Cells[14,GridView1.RowCount -1] := VarToStr(Qry['Stock']);
-        GridView1.Cells[15,GridView1.RowCount -1] := VarToStr(Qry['Programado']);
+        GridView1.Cells[6,GridView1.RowCount -1] := VarToStr(Qry['Plano']);
+        GridView1.Cells[7,GridView1.RowCount -1] := VarToStr(Qry['Numero']);
+        GridView1.Cells[8,GridView1.RowCount -1] := VarToStr(Qry['Entrega']);
+        GridView1.Cells[9,GridView1.RowCount -1] := VarToStr(Qry['Interna']);
+        GridView1.Cells[10,GridView1.RowCount -1] := VarToStr(Qry['Tarea']);
+        GridView1.Cells[11,GridView1.RowCount -1] := VarToStr(Qry['Status']);
+        GridView1.Cells[12,GridView1.RowCount -1] := VarToStr(Qry['Total']);
+        GridView1.Cells[13,GridView1.RowCount -1] := VarToStr(Qry['Dolares']);
+        GridView1.Cells[14,GridView1.RowCount -1] := VarToStr(Qry['FileName']);
+        GridView1.Cells[15,GridView1.RowCount -1] := VarToStr(Qry['Stock']);
+        GridView1.Cells[16,GridView1.RowCount -1] := VarToStr(Qry['Programado']);
 
-        if (GridView1.Cells[9,GridView1.RowCount -1] = 'VentasFinal') and (GridView1.Cells[10,GridView1.RowCount -1] = 'Terminado') then
+        if (GridView1.Cells[10,GridView1.RowCount -1] = 'VentasFinal') and (GridView1.Cells[11,GridView1.RowCount -1] = 'Terminado') then
            begin
                 for Col := 0 to GridView1.Columns.Count - 1 do
                         GridView1.Cell[Col, GridView1.RowCount -1].Color := clYellow;
 
            end;
 
-        if GridView1.Cells[14,GridView1.RowCount -1] = '1' then  //stock
+        if (GridView1.Cells[10,GridView1.RowCount -1] = 'Ventas') and (GridView1.Cells[11,GridView1.RowCount -1] = 'Activo') then
+           begin
+                for Col := 0 to GridView1.Columns.Count - 1 do
+                        GridView1.Cell[Col, GridView1.RowCount -1].Color := clSkyBlue;
+
+           end;
+
+
+        if GridView1.Cells[15,GridView1.RowCount -1] = '1' then  //stock
            begin
                 for Col := 0 to GridView1.Columns.Count - 1 do
                         GridView1.Cell[Col, GridView1.RowCount -1].Color := clBlue;
 
            end
-        Else If GridView1.Cells[13,GridView1.RowCount -1] <> '' then  //filename
+        Else If GridView1.Cells[14,GridView1.RowCount -1] <> '' then  //filename
            begin
                 for Col := 0 to GridView1.Columns.Count - 1 do
                         GridView1.Cell[Col, GridView1.RowCount -1].Color := clLime;
@@ -271,9 +300,21 @@ begin
         end;
 
         sItem := Trim(GridView1.Cells[6,GridView1.RowCount -1]);
+        if ( (cmbPlanos.Items.IndexOf(sItem) = -1) and (sItem <> '') ) then
+        begin
+                cmbPlanos.Items.Add(sItem);
+        end;
+
+        sItem := Trim(GridView1.Cells[7,GridView1.RowCount -1]);
         if ( (cmbPartes.Items.IndexOf(sItem) = -1) and (sItem <> '') ) then
         begin
                 cmbPartes.Items.Add(sItem);
+        end;
+
+        sItem := Trim(GridView1.Cells[5,GridView1.RowCount -1]);
+        if ( (cmbProductos.Items.IndexOf(sItem) = -1) and (sItem <> '') ) then
+        begin
+                cmbProductos.Items.Add(sItem);
         end;
 
         Qry.Next;
@@ -284,6 +325,8 @@ begin
 
     cmbPartes.Items.Insert(0,'Todos');
     cmbCompra.Items.Insert(0,'Todos');
+    cmbProductos.Items.Insert(0, 'Todos');
+    cmbPlanos.Items.Insert(0, 'Todos');
 
     gvOrdenes.ClearRows;
     for i:= 0 to cmbOrdenes.Items.Count - 1 do begin
@@ -622,19 +665,20 @@ begin
                                   GridView1.Cells[3,GridView1.RowCount -1] := VarToStr(QryFile['Requerida']);
                                   GridView1.Cells[4,GridView1.RowCount -1] := VarToStr(QryFile['Ordenada']);
                                   GridView1.Cells[5,GridView1.RowCount -1] := VarToStr(QryFile['Producto']);
-                                  GridView1.Cells[6,GridView1.RowCount -1] := VarToStr(QryFile['Numero']);
-                                  GridView1.Cells[7,GridView1.RowCount -1] := VarToStr(QryFile['Terminal']);
-                                  GridView1.Cells[8,GridView1.RowCount -1] := VarToStr(QryFile['OrdenCompra']);
-                                  GridView1.Cells[9,GridView1.RowCount -1] := VarToStr(QryFile['Recibido']);
-                                  GridView1.Cells[10,GridView1.RowCount -1] := VarToStr(QryFile['Interna']);
-                                  GridView1.Cells[11,GridView1.RowCount -1] := VarToStr(QryFile['Entrega']);
-                                  GridView1.Cells[12,GridView1.RowCount -1] := VarToStr(QryFile['Nombre']);
-                                  GridView1.Cells[13,GridView1.RowCount -1] := VarToStr(QryFile['Aprobacion']);
-                                  GridView1.Cells[14,GridView1.RowCount -1] := VarToStr(QryFile['Unitario']);
-                                  GridView1.Cells[15,GridView1.RowCount -1] := VarToStr(QryFile['Total']);
-                                  GridView1.Cells[16,GridView1.RowCount -1] := VarToStr(QryFile['Dolares']);
-                                  GridView1.Cells[17,GridView1.RowCount -1] := VarToStr(QryFile['Observaciones']);
-                                  GridView1.Cells[18,GridView1.RowCount -1] := VarToStr(QryFile['Otras']);
+
+                                  GridView1.Cells[7,GridView1.RowCount -1] := VarToStr(QryFile['Numero']);
+                                  GridView1.Cells[8,GridView1.RowCount -1] := VarToStr(QryFile['Terminal']);
+                                  GridView1.Cells[9,GridView1.RowCount -1] := VarToStr(QryFile['OrdenCompra']);
+                                  GridView1.Cells[10,GridView1.RowCount -1] := VarToStr(QryFile['Recibido']);
+                                  GridView1.Cells[11,GridView1.RowCount -1] := VarToStr(QryFile['Interna']);
+                                  GridView1.Cells[12,GridView1.RowCount -1] := VarToStr(QryFile['Entrega']);
+                                  GridView1.Cells[13,GridView1.RowCount -1] := VarToStr(QryFile['Nombre']);
+                                  GridView1.Cells[14,GridView1.RowCount -1] := VarToStr(QryFile['Aprobacion']);
+                                  GridView1.Cells[15,GridView1.RowCount -1] := VarToStr(QryFile['Unitario']);
+                                  GridView1.Cells[16,GridView1.RowCount -1] := VarToStr(QryFile['Total']);
+                                  GridView1.Cells[17,GridView1.RowCount -1] := VarToStr(QryFile['Dolares']);
+                                  GridView1.Cells[18,GridView1.RowCount -1] := VarToStr(QryFile['Observaciones']);
+                                  GridView1.Cells[19,GridView1.RowCount -1] := VarToStr(QryFile['Otras']);
                                   QryFile.Next;
                               end;
                         end;
@@ -677,7 +721,7 @@ procedure TfrmRelacionOC.GridView1SelectCell(Sender: TObject; ACol,
   ARow: Integer);
 begin
 
-If (GridView1.Cells[10,ARow] <> '') and (GridView1.Cells[13,ARow] = '0' ) Then
+If (GridView1.Cells[11,ARow] <> '') and (GridView1.Cells[14,ARow] = '0' ) Then
 Begin
         Stock.Enabled := True;
         Imprimir.Enabled := True;
@@ -1263,6 +1307,15 @@ procedure TfrmRelacionOC.chkRecibidoClick(Sender: TObject);
 begin
 deRecibido1.Enabled := chkRecibido.Checked;
 deRecibido2.Enabled := chkRecibido.Checked;
+end;
+
+procedure TfrmRelacionOC.cmbPartesKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  If Key = vk_return then
+  begin
+      BindGrid();
+  end
 end;
 
 end.

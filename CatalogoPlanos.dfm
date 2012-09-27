@@ -954,6 +954,7 @@ object frmCatalogoPlanos: TfrmCatalogoPlanos
   Visible = True
   OnClose = FormClose
   OnCreate = FormCreate
+  OnKeyDown = FormKeyDown
   PixelsPerInch = 96
   TextHeight = 13
   object gbButtons: TGroupBox
@@ -973,7 +974,7 @@ object frmCatalogoPlanos: TfrmCatalogoPlanos
       Left = 53
       Top = 75
       Width = 48
-      Height = 15
+      Height = 13
       Caption = 'Cantidad :'
       Visible = False
     end
@@ -1020,7 +1021,9 @@ object frmCatalogoPlanos: TfrmCatalogoPlanos
       Height = 21
       MaxLength = 50
       TabOrder = 0
+      OnExit = txtPlanoExit
       OnKeyDown = SendTab
+      OnKeyPress = txtPlanoKeyPress
     end
     object txtDescripcion: TEdit
       Left = 112
@@ -1044,7 +1047,7 @@ object frmCatalogoPlanos: TfrmCatalogoPlanos
       Top = 433
       Width = 45
       Height = 22
-      Hint = 'Nueva Factura'
+      Hint = 'Ctrl + N'
       Caption = 'Nuevo'
       Font.Charset = ANSI_CHARSET
       Font.Color = clWindowText
@@ -1052,6 +1055,8 @@ object frmCatalogoPlanos: TfrmCatalogoPlanos
       Font.Name = 'Tahoma'
       Font.Style = []
       ParentFont = False
+      ParentShowHint = False
+      ShowHint = True
       TabOrder = 9
       OnClick = NuevoClick
       OnKeyDown = ButtonKeyDown
@@ -1061,7 +1066,7 @@ object frmCatalogoPlanos: TfrmCatalogoPlanos
       Top = 433
       Width = 45
       Height = 22
-      Hint = 'Editar Factura'
+      Hint = 'Ctrl + E'
       Caption = 'Editar'
       Font.Charset = ANSI_CHARSET
       Font.Color = clWindowText
@@ -1080,7 +1085,7 @@ object frmCatalogoPlanos: TfrmCatalogoPlanos
       Top = 433
       Width = 45
       Height = 22
-      Hint = 'Borrar Factura'
+      Hint = 'Ctrl + D'
       Caption = 'Borrar'
       Font.Charset = ANSI_CHARSET
       Font.Color = clWindowText
@@ -1099,7 +1104,7 @@ object frmCatalogoPlanos: TfrmCatalogoPlanos
       Top = 433
       Width = 45
       Height = 22
-      Hint = 'Buscar Factura'
+      Hint = 'Ctrl + B'
       Caption = 'Buscar'
       Font.Charset = ANSI_CHARSET
       Font.Color = clWindowText
@@ -1118,7 +1123,7 @@ object frmCatalogoPlanos: TfrmCatalogoPlanos
       Top = 433
       Width = 45
       Height = 22
-      Hint = 'Aceptar Operacion'
+      Hint = 'Ctrl + S'
       Caption = 'Grabar'
       Enabled = False
       Font.Charset = ANSI_CHARSET
@@ -1137,7 +1142,7 @@ object frmCatalogoPlanos: TfrmCatalogoPlanos
       Top = 433
       Width = 48
       Height = 22
-      Hint = 'Cancelar Operacion'
+      Hint = 'Esc'
       Caption = 'Cancelar'
       Enabled = False
       Font.Charset = ANSI_CHARSET
@@ -1174,6 +1179,7 @@ object frmCatalogoPlanos: TfrmCatalogoPlanos
         ShowHint = True
         TabOrder = 0
         OnClick = PrimeroClick
+        OnKeyDown = PrimeroKeyDown
       end
       object Anterior: TButton
         Left = 32
@@ -1192,6 +1198,7 @@ object frmCatalogoPlanos: TfrmCatalogoPlanos
         ShowHint = True
         TabOrder = 1
         OnClick = PrimeroClick
+        OnKeyDown = PrimeroKeyDown
       end
       object Ultimo: TButton
         Left = 80
@@ -1210,6 +1217,7 @@ object frmCatalogoPlanos: TfrmCatalogoPlanos
         ShowHint = True
         TabOrder = 3
         OnClick = PrimeroClick
+        OnKeyDown = PrimeroKeyDown
       end
       object Siguiente: TButton
         Left = 56
@@ -1228,6 +1236,7 @@ object frmCatalogoPlanos: TfrmCatalogoPlanos
         ShowHint = True
         TabOrder = 2
         OnClick = PrimeroClick
+        OnKeyDown = PrimeroKeyDown
       end
     end
     object gvInternos: TGridView
@@ -1338,6 +1347,7 @@ object frmCatalogoPlanos: TfrmCatalogoPlanos
       MaxLength = 50
       TabOrder = 3
       OnKeyDown = txtInternoKeyDown
+      OnKeyPress = txtInternoKeyPress
     end
     object AddInternos: TButton
       Left = 133
@@ -1373,6 +1383,7 @@ object frmCatalogoPlanos: TfrmCatalogoPlanos
       MaxLength = 50
       TabOrder = 6
       OnKeyDown = txtInternoKeyDown
+      OnKeyPress = txtAliasKeyPress
     end
     object AddAlias: TButton
       Left = 316
@@ -1399,6 +1410,215 @@ object frmCatalogoPlanos: TfrmCatalogoPlanos
       TabOrder = 8
       OnClick = DeleteAliasClick
       OnKeyDown = ButtonKeyDown
+    end
+  end
+  object gbBuscar: TGroupBox
+    Left = 7
+    Top = 8
+    Width = 379
+    Height = 0
+    TabOrder = 1
+    object Label8: TLabel
+      Left = 8
+      Top = 16
+      Width = 88
+      Height = 13
+      Caption = 'Numero de Plano :'
+    end
+    object lblTotal: TLabel
+      Left = 392
+      Top = 280
+      Width = 34
+      Height = 13
+      Alignment = taRightJustify
+      Caption = 'lblTotal'
+    end
+    object txtBuscarPlano: TEdit
+      Left = 104
+      Top = 13
+      Width = 161
+      Height = 21
+      MaxLength = 50
+      TabOrder = 0
+      OnExit = txtBuscarPlanoExit
+      OnKeyDown = txtBuscarPlanoKeyDown
+    end
+    object Button1: TButton
+      Left = 270
+      Top = 12
+      Width = 44
+      Height = 22
+      Caption = 'Buscar'
+      TabOrder = 1
+      OnClick = Button1Click
+    end
+    object gvResults: TGridView
+      Left = 8
+      Top = 40
+      Width = 361
+      Height = 417
+      Cursor = 3000
+      BorderStyle = bsSingle
+      GridStyle = gsReport
+      GridLinesStyle = lsNormal
+      HeaderSize = 18
+      HeaderStyle = hsAuto
+      HideScrollBar = True
+      InputSize = 16
+      Options = [goHeader, goHighlightTextSelection, goSelectFullRow]
+      RowSize = 16
+      ParentColor = False
+      PopupMenu = PopupMenu2
+      SelectionMoveDirection = mdDown
+      SlideSize = 80
+      TabOrder = 2
+      TabStop = True
+      WantReturns = False
+      OnDblClick = gvResultsDblClick
+      object TTextualColumn
+        Alignment = taLeftJustify
+        Color = clWindow
+        Cursor = crDefault
+        DrawingOptions = doNormal
+        DefaultWidth = 80
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = []
+        Footer.Color = clWindow
+        Footer.FormulaKind = fkNone
+        Header.Color = clBtnFace
+        Header.Caption = 'Id'
+        Header.DisplayMode = dmTextOnly
+        Options = [coCanClick, coCanSort, coEditorAutoSelect, coPublicUsing]
+        Position = 0
+        SlideBounds.Height = 0
+        SlideBounds.Left = 0
+        SlideBounds.Top = 0
+        SlideBounds.Width = 0
+        Sorted = False
+        SortType = stAlphabetic
+        VerticalAlignment = vaMiddle
+        Visible = False
+        Width = 80
+        WrapKind = wkEllipsis
+        AutoExecute = False
+      end
+      object Interno: TTextualColumn
+        Alignment = taLeftJustify
+        Color = clWindow
+        Cursor = crDefault
+        DrawingOptions = doNormal
+        DefaultWidth = 100
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = []
+        Footer.Color = clWindow
+        Footer.FormulaKind = fkNone
+        Header.Color = clBtnFace
+        Header.Caption = 'No.Plano'
+        Header.DisplayMode = dmTextOnly
+        Options = [coCanClick, coCanSort, coEditorAutoSelect, coPublicUsing]
+        Position = 1
+        SlideBounds.Height = 0
+        SlideBounds.Left = 0
+        SlideBounds.Top = 0
+        SlideBounds.Width = 0
+        Sorted = False
+        SortType = stAlphabetic
+        VerticalAlignment = vaMiddle
+        Visible = True
+        Width = 100
+        WrapKind = wkEllipsis
+        AutoExecute = False
+      end
+      object TTextualColumn
+        Alignment = taLeftJustify
+        Color = clWindow
+        Cursor = crDefault
+        DrawingOptions = doNormal
+        DefaultWidth = 160
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = []
+        Footer.Color = clWindow
+        Footer.FormulaKind = fkNone
+        Header.Color = clBtnFace
+        Header.Caption = 'Descripcion'
+        Header.DisplayMode = dmTextOnly
+        Options = [coCanClick, coCanSort, coEditorAutoSelect, coPublicUsing]
+        Position = 2
+        SlideBounds.Height = 0
+        SlideBounds.Left = 0
+        SlideBounds.Top = 0
+        SlideBounds.Width = 0
+        Sorted = False
+        SortType = stAlphabetic
+        VerticalAlignment = vaMiddle
+        Visible = True
+        Width = 160
+        WrapKind = wkEllipsis
+        AutoExecute = False
+      end
+      object TTextualColumn
+        Alignment = taLeftJustify
+        Color = clWindow
+        Cursor = crDefault
+        DrawingOptions = doNormal
+        DefaultWidth = 80
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'MS Sans Serif'
+        Font.Style = []
+        Footer.Color = clWindow
+        Footer.FormulaKind = fkNone
+        Header.Color = clBtnFace
+        Header.Caption = 'Cantidad'
+        Header.DisplayMode = dmTextOnly
+        Options = [coCanClick, coCanSort, coEditorAutoSelect, coPublicUsing]
+        Position = 3
+        SlideBounds.Height = 0
+        SlideBounds.Left = 0
+        SlideBounds.Top = 0
+        SlideBounds.Width = 0
+        Sorted = False
+        SortType = stAlphabetic
+        VerticalAlignment = vaMiddle
+        Visible = True
+        Width = 80
+        WrapKind = wkEllipsis
+        AutoExecute = False
+      end
+    end
+    object Button2: TButton
+      Left = 318
+      Top = 12
+      Width = 51
+      Height = 22
+      Caption = 'Cancelar'
+      TabOrder = 3
+      OnClick = Button2Click
+    end
+  end
+  object SaveDialog1: TSaveDialog
+    Left = 8
+  end
+  object PopupMenu2: TPopupMenu
+    Left = 48
+    Top = 1
+    object MenuItem1: TMenuItem
+      Caption = 'Exportar'
+      OnClick = MenuItem1Click
+    end
+    object CopiarOrden1: TMenuItem
+      Caption = 'Copiar'
+      OnClick = CopiarOrden1Click
     end
   end
 end

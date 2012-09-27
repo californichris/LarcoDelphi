@@ -32,6 +32,8 @@ type
     Buscar: TButton;
     btnAceptar: TButton;
     btnCancelar: TButton;
+    Label6: TLabel;
+    cmbEmpleadoDetecto: TComboBox;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure BindEmpleados();
@@ -123,13 +125,17 @@ begin
 
         cmbEmpleados.Items.Clear;
         cmbEmpleados.Items.Add('000 - Desconocido');
+        cmbEmpleadoDetecto.Items.Clear;
+        cmbEmpleadoDetecto.Items.Add('000 - Desconocido');
         While not Qry2.Eof do
         Begin
             cmbEmpleados.Items.Add(FormatFloat('000',Qry2['ID']) + ' - ' + Qry2['Nombre']);
+            cmbEmpleadoDetecto.Items.Add(FormatFloat('000',Qry2['ID']) + ' - ' + Qry2['Nombre']);
             Qry2.Next;
         End;
 
         cmbEmpleados.Text := '';
+        cmbEmpleadoDetecto.Text := '';
     except
           on e : EOleException do
                 ShowMessage('La base de datos no esta disponible. Por favor verifique que exista conectividad al servidor.');
@@ -192,6 +198,7 @@ begin
     cmbTareas.Text := VarToStr(Qry['RET_Area']);
     cmbEmpleados.Text := VarToStr(Qry['Responsable']);
     cmbDetectado.Text := VarToStr(Qry['RET_Detectado']);
+    cmbEmpleadoDetecto.Text := VarToStr(Qry['Detectado']);
 end;
 
 procedure TfrmEditorRetrabajo.ClearData();
@@ -201,6 +208,7 @@ begin
     cmbTareas.Text := '';
     cmbEmpleados.Text := '';
     cmbDetectado.Text := '';
+    cmbEmpleadoDetecto.Text := '';
 end;
 
 procedure TfrmEditorRetrabajo.EnableControls(Value:Boolean);
@@ -211,6 +219,7 @@ begin
     cmbTareas.Enabled := not Value;
     cmbEmpleados.Enabled := not Value;
     cmbDetectado.Enabled := not Value;
+    cmbEmpleadoDetecto.Enabled := not Value;
 
     btnAceptar.Enabled := not Value;
     btnCancelar.Enabled := not Value;
@@ -325,6 +334,9 @@ begin
         Qry['RET_Area'] := cmbTareas.Text;
         Qry['RET_Empleado'] := LeftStr(cmbEmpleados.Text,3);
         Qry['RET_Detectado'] := cmbDetectado.Text;
+        Qry['RET_EmpleadoDetectado'] := LeftStr(cmbEmpleadoDetecto.Text,3);
+        Qry['Update_Date'] := DateTimeToStr(Now);
+        Qry['Update_User'] := frmMain.sUserLogin;
         Qry.Post;
 
         LoadData();
@@ -378,8 +390,6 @@ begin
 end;
 
 function TfrmEditorRetrabajo.ValidateData():Boolean;
-var i:Integer;
-bfound : boolean;
 begin
         result := True;
 
@@ -407,56 +417,35 @@ begin
             result :=  False;
           end;
 
-        bfound := False;
-        for i:= 0 to cmbTareas.Items.Count do
-        begin
-                if cmbTareas.Text = cmbTareas.Items[i] then
-                begin
-                     bfound := True;
-                     break;
-                end;
-        end;
-
-        if bfound = false then
+        if UT(cmbEmpleadoDetecto.Text) = '' then
           begin
+            MessageDlg('Por favor Seleccione un Empleado que lo detecto.', mtInformation,[mbOk], 0);
+            result :=  False;
+          end;
+
+        if (cmbTareas.Items.IndexOf(cmbTareas.Text) = -1) then begin
             MessageDlg('Area Responsable Incorrecta : ' + cmbTareas.Text +
                        '. Seleccionelo de la lista.', mtInformation,[mbOk], 0);
             result :=  False;
-          end;
-
-        bfound := False;
-        for i:= 0 to cmbEmpleados.Items.Count do
-        begin
-                if cmbEmpleados.Text = cmbEmpleados.Items[i] then
-                begin
-                     bfound := True;
-                     break;
-                end;
         end;
 
-        if bfound = false then
-          begin
+        if (cmbEmpleados.Items.IndexOf(cmbEmpleados.Text) = -1) then begin
             MessageDlg('Empleado Responsable Incorrecto : ' + cmbEmpleados.Text +
                        '. Seleccionelo de la lista.' , mtInformation,[mbOk], 0);
             result :=  False;
-          end;
-
-        bfound := False;
-        for i:= 0 to cmbDetectado.Items.Count do
-        begin
-                if cmbDetectado.Text = cmbDetectado.Items[i] then
-                begin
-                     bfound := True;
-                     break;
-                end;
         end;
 
-        if bfound = false then
-          begin
-            MessageDlg('Detectado por Incorrecto : ' + cmbDetectado.Text +
+        if (cmbDetectado.Items.IndexOf(cmbDetectado.Text) = -1) then begin
+            MessageDlg('Area Detectado Incorrecto : ' + cmbDetectado.Text +
                        '. Seleccionelo de la lista.' , mtInformation,[mbOk], 0);
             result :=  False;
-          end;
+        end;
+
+        if (cmbEmpleadoDetecto.Items.IndexOf(cmbEmpleadoDetecto.Text) = -1) then begin
+            MessageDlg('Empleado que lo detecto Incorrecto : ' + cmbEmpleadoDetecto.Text +
+                       '. Seleccionelo de la lista.' , mtInformation,[mbOk], 0);
+            result :=  False;
+        end;
 
 end;
 
@@ -465,9 +454,11 @@ begin
     Qry.SQL.Clear;
     Qry.SQL.Text := 'SELECT R.*,' +
                     'CASE WHEN R.RET_Empleado IS NULL THEN ''000 - Desconocido'' ELSE ' +
-                    'R.RET_Empleado + '' - '' + E.Nombre END AS Responsable ' +
+                    'Right(''000'' + R.RET_Empleado, 3) + '' - '' + E.Nombre END AS Responsable, ' +
+                    'CASE WHEN R.RET_EmpleadoDetectado IS NULL THEN ''000 - Desconocido'' ELSE Right(''000'' + CAST(R.RET_EmpleadoDetectado AS Varchar(3)), 3) + '' - '' + D.Nombre END AS Detectado ' +
                     'FROM tblRetrabajo R ' +
                     'LEFT OUTER JOIN tblEmpleados E ON R.RET_Empleado = E.ID ' +
+                    'LEFT OUTER JOIN tblEmpleados D ON R.RET_EmpleadoDetectado = D.ID ' +
                     'WHERE Left(R.ITE_Nombre,2) = ' + QuotedStr(gsYear) + ' ' +
                     'ORDER BY R.ITE_Nombre ';
 

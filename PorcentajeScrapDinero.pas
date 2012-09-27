@@ -230,15 +230,18 @@ begin
     SQLStr := 'SELECT RIGHT(S.ITE_Nombre,LEN(S.ITE_Nombre) - 3) AS Orden,O.Ordenada As Cantidad,S.SCR_Cantidad, ' +
               'O.Producto As Descripcion,O.Numero,O.Terminal,Interna As Fecha, ' +
               'RIGHT(S.SCR_NewItem,LEN(S.SCR_NewItem) - 3) AS NewOrden, ' +
-              'S.SCR_Fecha,S.SCR_Detectado AS Area,E.Nombre As EmpleadoRes,SCR_Motivo,SCR_Parcial, ' +
+              'S.SCR_Fecha,E.Nombre As EmpleadoRes,SCR_Motivo,SCR_Parcial, ' +
               'O.Unitario,CASE WHEN O.Dolares = 0 THEN ''No'' ELSE ''Si'' END AS DllText, ' +
-              'CASE WHEN A.[Value] IS NULL THEN 1.00 ELSE A.[Value] END AS Value ' +
+              'CASE WHEN A.[Value] IS NULL THEN 1.00 ELSE A.[Value] END AS Value, ' +
+              'SCR_Tarea, SCR_Detectado, SCR_EmpleadoDetectado, D.Nombre As EmpleadoDetectado, ' +
+              'CASE WHEN SCR_Parcial = 0 THEN ''No'' ELSE ''Si'' END AS Parcial ' +
               'FROM tblScrap S ' +
               'INNER JOIN tblOrdenes O ON S.ITE_Nombre  = O.ITE_Nombre ' +
               'INNER JOIN tblTareas T ON S.SCR_Detectado = T.Nombre ' +
               'INNER JOIN tblProductos P on P.Nombre = O.Producto ' +
               'INNER JOIN tblAggregateValue A ON P.[ID] = A.Product_ID AND A.Task_ID = T.[ID] ' +
               'LEFT OUTER JOIN tblEmpleados E ON E.[Id] = S.SCR_EmpleadoRes ' +
+              'LEFT OUTER JOIN tblEmpleados D ON D.[Id] = S.SCR_EmpleadoDetectado ' +
               'WHERE SCR_Fecha >= ' + QuotedStr(deFrom.Text) +
               ' AND SCR_Fecha <= ' + QuotedStr(deTo.Text + ' 23:59:59.99' );
 
@@ -279,7 +282,7 @@ begin
 
         GridView2.Cells[6,GridView2.RowCount -1] := VarToStr(Qry['DllText']);
         GridView2.Cells[8,GridView2.RowCount -1] := VarToStr(Qry['Descripcion']);
-        GridView2.Cells[9,GridView2.RowCount -1] := VarToStr(Qry['Area']);
+        GridView2.Cells[9,GridView2.RowCount -1] := VarToStr(Qry['SCR_Tarea']);
         GridView2.Cells[10,GridView2.RowCount -1] := VarToStr(Qry['Value']);
         dValorAgregado := StrToFloat(GridView2.Cells[10,GridView2.RowCount -1]);
 
@@ -325,7 +328,9 @@ begin
         GridView2.Cells[15,GridView2.RowCount -1] := VarToStr(Qry['SCR_Fecha']);
         GridView2.Cells[16,GridView2.RowCount -1] := VarToStr(Qry['EmpleadoRes']);
         GridView2.Cells[17,GridView2.RowCount -1] := VarToStr(Qry['SCR_Motivo']);
-        GridView2.Cells[18,GridView2.RowCount -1] := VarToStr(Qry['SCR_Parcial']);
+        GridView2.Cells[18,GridView2.RowCount -1] := VarToStr(Qry['Parcial']);
+        GridView2.Cells[19,GridView2.RowCount -1] := VarToStr(Qry['SCR_Detectado']);
+        GridView2.Cells[20,GridView2.RowCount -1] := VarToStr(Qry['EmpleadoDetectado']);
 
         giScrap := giScrap + StrToInt(GridView2.Cells[2,GridView2.RowCount -1]);
         gdScrap := gdScrap + StrToFloat(GridView2.Cells[4,GridView2.RowCount -1]);

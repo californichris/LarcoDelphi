@@ -6,7 +6,7 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, ExtCtrls, DBCtrls, StdCtrls, ComCtrls, ADODB,DB,IniFiles,All_Functions,chris_Functions,
   ScrollView, CustomGridViewControl, CustomGridView, GridView,StrUtils,sndkey32,
-  CellEditors, Larco_functions, Math, Mask;
+  CellEditors, Larco_functions, Math, Mask, Menus, ComObj,Clipbrd;
 
 type
   TfrmESStock = class(TForm)
@@ -15,7 +15,6 @@ type
     Label2: TLabel;
     Label3: TLabel;
     lblId: TLabel;
-    lblAnio: TLabel;
     txtPlano: TEdit;
     txtCantidad: TEdit;
     Nuevo: TButton;
@@ -38,6 +37,20 @@ type
     lblPNId: TLabel;
     lblValidOrden: TLabel;
     ddlAnio: TComboBox;
+    txtNumero: TEdit;
+    Label6: TLabel;
+    Label7: TLabel;
+    gbBuscar: TGroupBox;
+    Label8: TLabel;
+    txtBuscarPlano: TEdit;
+    Button1: TButton;
+    gvResults: TGridView;
+    Button2: TButton;
+    lblTotal: TLabel;
+    PopupMenu2: TPopupMenu;
+    MenuItem1: TMenuItem;
+    CopiarOrden1: TMenuItem;
+    SaveDialog1: TSaveDialog;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure NuevoClick(Sender: TObject);
     procedure EditarClick(Sender: TObject);
@@ -60,6 +73,21 @@ type
     function ValidatePlano():Boolean;
     function ValidateOrden():Boolean;
     procedure txtCantidadKeyPress(Sender: TObject; var Key: Char);
+    procedure FormKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure PrimeroKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure Button1Click(Sender: TObject);
+    procedure txtBuscarPlanoExit(Sender: TObject);
+    procedure txtBuscarPlanoKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure Button2Click(Sender: TObject);
+    procedure gvResultsDblClick(Sender: TObject);
+    function FormIsRunning(FormName: String):Boolean;
+    procedure MenuItem1Click(Sender: TObject);
+    procedure ExportGrid(Grid: TGridView;sFileName: String);
+    procedure CopiarOrden1Click(Sender: TObject);
+    procedure txtPlanoKeyPress(Sender: TObject; var Key: Char);
   private
     { Private declarations }
   public
@@ -72,7 +100,6 @@ var
   Qry : TADOQuery;
   sPermits : String;
   giOpcion : Integer;  //0= nada, 1 Nuevo, 2, editar, 3 borrar, 4 buscar
-  gsYear,gsOYear : String;
 
 implementation
 
@@ -113,13 +140,14 @@ end;
 
 procedure TfrmESStock.BuscarClick(Sender: TObject);
 begin
-  ShowMessage('No esta implementado todavia!!');
-  Exit;
+  gbButtons.Height := 0;
+  gbBuscar.Height := 302;
 
-  ClearData();
+  txtBuscarPlano.Text := '';
+  gvResults.ClearRows;
+  txtBuscarPlano.SetFocus();
+
   giOpcion := 4;
-
-  EnableButtons();
 end;
 
 procedure TfrmESStock.btnCancelarClick(Sender: TObject);
@@ -141,9 +169,11 @@ begin
   txtOrden.Text := '';
   txtCantidad.Text := '';
   deFecha.Text := '';
-  cmbTipo.Text := '';
+  cmbTipo.Text := 'Entrada';
   lblValidOrden.Caption := '';
   lblPNId.Caption := '';
+  txtNumero.Text := '';
+  ddlAnio.Text := '';
 end;
 
 procedure TfrmESStock.EnableControls(Value:Boolean);
@@ -208,6 +238,7 @@ begin
 end;
 
 procedure TfrmESStock.BindData();
+var year : String;
 begin
     if Qry.RecordCount <= 0 Then
     begin
@@ -222,6 +253,12 @@ begin
     deFecha.Text := VarToStr(Qry['ST_Fecha']);
     txtCantidad.Text := VarToStr(Qry['ST_Cantidad']);
     cmbTipo.Text := VarToStr(Qry['ST_Tipo']);
+
+    year := '20' +  LeftStr(VarToStr(Qry['ITE_Nombre']), 2);
+    ddlAnio.ItemIndex := ddlAnio.Items.IndexOf(year);
+    ddlAnio.Text := year;
+    ValidateOrden();
+
 end;
 
 procedure TfrmESStock.PrimeroClick(Sender: TObject);
@@ -244,20 +281,17 @@ begin
 end;
 
 procedure TfrmESStock.FormCreate(Sender: TObject);
+var year: String;
+iYear, i : integer;
 begin
-  lblAnio.Caption := getFormYear(frmMain.sConnString, Self.Name);
-  gsOYear := RightStr(lblAnio.Caption,2);
-  gsYear := gsOYear + '-';
-
   ddlAnio.Clear;
-  ddlAnio.Items.Add('2006');
-  ddlAnio.Items.Add('2007');
-  ddlAnio.Items.Add('2008');
-  ddlAnio.Items.Add('2009');
-  ddlAnio.Items.Add('2010');
-  ddlAnio.Items.Add('2011');
-  ddlAnio.Items.Add('2012');
-  ddlAnio.ItemIndex := 6;
+  year := FormatDateTime( 'yyyy', Now);
+  iYear := StrToInt(year);
+  for i := 2000 to iYear do begin
+    ddlAnio.Items.Add(IntToStr(i));
+  end;
+
+  ddlAnio.ItemIndex := ddlAnio.Items.IndexOf(getFormYear(frmMain.sConnString, Self.Name));
 
   //Create Connection
   Conn := TADOConnection.Create(nil);
@@ -267,8 +301,7 @@ begin
   Qry.Connection :=Conn;
 
   Qry.SQL.Clear;
-  Qry.SQL.Text := 'SELECT * FROM tblStock S WHERE YEAR(ST_Fecha) = ' +
-                  QuotedStr(lblAnio.Caption) + ' ORDER BY ST_Fecha Desc, ST_ID Desc';
+  Qry.SQL.Text := 'SELECT * FROM tblStock ORDER BY ST_Fecha Desc, ST_ID Desc';
   Qry.Open;
 
   if Qry.RecordCount > 0 then begin
@@ -280,6 +313,7 @@ begin
 
   EnableControls(True);
   EnableButtons();
+  lblTotal.Caption := '';
 end;
 
 procedure TfrmESStock.txtPlanoExit(Sender: TObject);
@@ -288,13 +322,20 @@ begin
   if (giOpcion = 0) or (Trim(txtPlano.Text) = '') then
     Exit;
 
+  txtPlano.Text := UpperCase(Trim(txtPlano.Text));
   found := ValidatePlano();
 
   if not found then begin
     if MessageDlg('El Numero de Plano no existe, deseas agregarlo?',
               mtConfirmation, [mbYes, mbNo], 0) = mrYes then
     begin
-      Application.CreateForm(TfrmCatalogoPlanos,frmCatalogoPlanos);
+      if FormIsRunning('frmCatalogoPlanos') Then
+      begin
+        setActiveWindow(frmCatalogoPlanos.Handle);
+      end
+      else begin
+        Application.CreateForm(TfrmCatalogoPlanos, frmCatalogoPlanos);
+      end;
       frmCatalogoPlanos.NuevoClick(nil);
       frmCatalogoPlanos.txtPlano.Text := txtPlano.Text;
       frmCatalogoPlanos.Show();
@@ -313,11 +354,11 @@ begin
   Qry2 := TADOQuery.Create(nil);
   Qry2.Connection :=Conn;
 
-  //SQLStr := 'SELECT ITE_Id,Numero FROM tblOrdenes WHERE ITE_Nombre = ' + QuotedStr(gsYear + txtOrden.Text);
   SQLStr := 'SELECT ITE_ID,ITE_Nombre,O.Numero,PA.*,P.* FROM tblOrdenes O ' +
             'LEFT OUTER JOIN tblPlanoAlias PA ON O.Numero = PA.PA_Alias ' +
             'LEFT OUTER JOIN tblPlano P ON PA.PN_Id = P.PN_Id ' +
-            'WHERE ITE_Nombre = ' + QuotedStr(gsYear + txtOrden.Text);
+            'WHERE ITE_Nombre = ' + QuotedStr(RightStr(ddlAnio.Text, 2) + '-' + txtOrden.Text);
+
 
   Qry2.SQL.Clear;
   Qry2.SQL.Text := SQLStr;
@@ -330,12 +371,22 @@ begin
     sNoParte := VarToStr(Qry2['Numero']);
     sAlias := VarToStr(Qry2['PA_Alias']);
     sPlano := VarToStr(Qry2['PN_Numero']);
+    txtNumero.Text := sNoParte;
 
-    if (Trim(sNoParte) <> Trim(txtPlano.Text)) and (sAlias = '') then begin
+    //Removed validation ask by Edgar. The Part Number does not need to be an alias of a blueprint we already
+    //have the link using the ITE_Nombre.
+
+    {if (Trim(sNoParte) <> Trim(txtPlano.Text)) and (sAlias = '') then begin
       if MessageDlg('El Numero de Parte [' + sNoParte + '] de esta orden no es un Nombre Interno o Alias de este numero de Plano, deseas agregarlo?',
                 mtConfirmation, [mbYes, mbNo], 0) = mrYes then
       begin
-        Application.CreateForm(TfrmCatalogoPlanos,frmCatalogoPlanos);
+        if FormIsRunning('frmCatalogoPlanos') Then
+        begin
+          setActiveWindow(frmCatalogoPlanos.Handle);
+        end
+        else begin
+          Application.CreateForm(TfrmCatalogoPlanos, frmCatalogoPlanos);
+        end;
         if lblPNId.Caption <> '' then begin
           frmCatalogoPlanos.EditarPlano(lblPNId.Caption);
           frmCatalogoPlanos.txtInterno.Text := sNoParte;
@@ -343,8 +394,9 @@ begin
         end;
 
         frmCatalogoPlanos.Show();
+
       end;
-    end;
+    end;}
 
   end
   else begin
@@ -364,10 +416,10 @@ begin
 
         Qry.Insert;
         Qry['PN_Id'] := lblPNId.Caption;
-        Qry['ITE_Nombre'] := gsYear + txtOrden.Text;
+        Qry['ITE_Nombre'] := RightStr(ddlAnio.Text, 2) + '-' + txtOrden.Text;
         Qry['ST_Cantidad'] := txtCantidad.Text;
         Qry['ST_Fecha'] := deFecha.Text;
-        Qry['ST_Tipo'] := 'Entrada';
+        Qry['ST_Tipo'] := cmbTipo.Text;
         Qry['Update_Date'] := DateTimeToStr(Now);
         Qry['Update_User'] := frmMain.sUserLogin;
         Qry.Post;
@@ -380,10 +432,10 @@ begin
 
         Qry.Edit;
         Qry['PN_Id'] := lblPNId.Caption;
-        Qry['ITE_Nombre'] := gsYear + txtOrden.Text;
+        Qry['ITE_Nombre'] := RightStr(ddlAnio.Text, 2) + '-' + txtOrden.Text;
         Qry['ST_Cantidad'] := txtCantidad.Text;
         Qry['ST_Fecha'] := deFecha.Text;
-        Qry['ST_Tipo'] := 'Entrada';
+        Qry['ST_Tipo'] := cmbTipo.Text;
         Qry['Update_Date'] := DateTimeToStr(Now);
         Qry['Update_User'] := frmMain.sUserLogin;
         Qry.Post;
@@ -421,6 +473,8 @@ end;
 function TfrmESStock.ValidateData():Boolean;
 var sOrden: String;
 begin
+  txtPlano.Text := UpperCase(Trim(txtPlano.Text));
+
   ValidateData := True;
   sOrden := TrimRight( StringReplace(txtOrden.Text,'-','',[rfReplaceAll, rfIgnoreCase]) );
   if Trim(txtPlano.Text) = '' Then
@@ -477,14 +531,17 @@ begin
     Exit;
   end;
 
-
-  {
   if Trim(cmbTipo.Text) = '' Then
   begin
     MessageDlg('Por favor seleccione el Tipo.', mtInformation,[mbOk], 0);
     result :=  False;
   end;
-  }
+
+  if cmbTipo.Items.IndexOf(cmbTipo.Text) = -1 then
+  begin
+      MessageDlg('Tipo incorrecto, por favor seleccionelo de la lista.', mtInformation,[mbOk], 0);
+      result :=  False;
+  end;
 
 end;
 
@@ -520,17 +577,18 @@ begin
   Qry2 := TADOQuery.Create(nil);
   Qry2.Connection :=Conn;
 
-  //SQLStr := 'SELECT ITE_Id,Numero FROM tblOrdenes WHERE ITE_Nombre = ' + QuotedStr(gsYear + txtOrden.Text);
   SQLStr := 'SELECT ITE_ID,ITE_Nombre,O.Numero,PA.*,P.* FROM tblOrdenes O ' +
             'LEFT OUTER JOIN tblPlanoAlias PA ON O.Numero = PA.PA_Alias ' +
             'LEFT OUTER JOIN tblPlano P ON PA.PN_Id = P.PN_Id ' +
-            'WHERE ITE_Nombre = ' + QuotedStr(gsYear + txtOrden.Text);
+            'WHERE ITE_Nombre = ' + QuotedStr(RightStr(ddlAnio.Text, 2) + '-' + txtOrden.Text);
 
   Qry2.SQL.Clear;
   Qry2.SQL.Text := SQLStr;
   Qry2.Open;
 
   if Qry2.RecordCount > 0 then begin
+    txtNumero.Text := VarToStr(Qry2['Numero']);
+    lblValidOrden.Caption := VarToStr(Qry2['ITE_Id']);
     result := True;
   end;
 
@@ -601,9 +659,14 @@ end;
 
 procedure TfrmESStock.AddPlanoClick(Sender: TObject);
 begin
-  Application.CreateForm(TfrmCatalogoPlanos,frmCatalogoPlanos);
-  //frmCatalogoPlanos.NuevoClick(nil);
-  //frmCatalogoPlanos.txtPlano.Text := txtPlano.Text;
+  if FormIsRunning('frmCatalogoPlanos') Then
+  begin
+    setActiveWindow(frmCatalogoPlanos.Handle);
+  end
+  else begin
+    Application.CreateForm(TfrmCatalogoPlanos, frmCatalogoPlanos);
+  end;
+
   frmCatalogoPlanos.Show();
 end;
 
@@ -617,6 +680,239 @@ begin
             end
        else
                 Key := #0;
+end;
+
+procedure TfrmESStock.FormKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  if giOpcion = 0 then begin
+    if (Key = 78) and (ssCtrl in Shift)then
+    begin
+        NuevoClick(nil);
+    end
+    else if (Key = 69) and (ssCtrl in Shift)then
+    begin
+        EditarClick(nil);
+    end
+    else if (Key = 68) and (ssCtrl in Shift)then
+    begin
+        BorrarClick(nil);
+    end
+    else if (Key = 66) and (ssCtrl in Shift)then
+    begin
+        BuscarClick(nil);
+    end;
+  end;
+end;
+
+procedure TfrmESStock.PrimeroKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  if giOpcion = 0 then begin
+    if (Key = 78) and (ssCtrl in Shift)then
+    begin
+        NuevoClick(nil);
+    end
+    else if (Key = 69) and (ssCtrl in Shift)then
+    begin
+        EditarClick(nil);
+    end
+    else if (Key = 68) and (ssCtrl in Shift)then
+    begin
+        BorrarClick(nil);
+    end
+    else if (Key = 66) and (ssCtrl in Shift)then
+    begin
+        BuscarClick(nil);
+    end;
+  end;
+end;
+
+procedure TfrmESStock.Button1Click(Sender: TObject);
+var SQLStr, SQLWhere, year: String;
+Qry2 : TADOQuery;
+entradas, salidas : integer;
+doCount : boolean;
+begin
+  gvResults.ClearRows;
+  lblTotal.Caption := '';
+  if Trim(txtBuscarPlano.Text) = '' then begin
+    ShowMessage('Numero de Plano es requerido.');
+    Exit;
+  end;
+
+  txtBuscarPlano.Text := UpperCase(Trim(txtBuscarPlano.Text));
+  SQLWhere := txtBuscarPlano.Text;
+
+  Qry2 := TADOQuery.Create(nil);
+  Qry2.Connection :=Conn;
+
+  SQLStr := 'SELECT * FROM tblStock S INNER JOIN tblPlano P ON S.PN_Id = P.PN_Id WHERE P.PN_Numero ';
+  if Pos('*', txtBuscarPlano.Text) <> 0 then begin
+    SQLWhere := ' LIKE ' + QuotedStr(StringReplace(SQLWhere, '*', '%', [rfReplaceAll, rfIgnoreCase]));
+    doCount := false;
+  end
+  else begin
+    SQLWhere := ' = ' + QuotedStr(SQLWhere);
+    doCount := true;
+  end;
+
+  Qry2.SQL.Clear;
+  Qry2.SQL.Text := SQLStr + SQLWhere;
+  Qry2.Open;
+
+  entradas := 0;
+  salidas := 0;
+  While not Qry2.Eof do
+  Begin
+      gvResults.AddRow(1);
+      gvResults.Cells[0,gvResults.RowCount -1] := VarToStr(Qry2['ST_Id']);
+      gvResults.Cells[1,gvResults.RowCount -1] := VarToStr(Qry2['PN_Numero']);
+      year := '20' +  LeftStr(VarToStr(Qry['ITE_Nombre']), 2);
+      gvResults.Cells[2,gvResults.RowCount -1] := year;
+      gvResults.Cells[3,gvResults.RowCount -1] := VarToStr(Qry2['ST_Fecha']);
+      gvResults.Cells[4,gvResults.RowCount -1] := RightStr( VarToStr(Qry['ITE_Nombre']), Length(VarToStr(Qry['ITE_Nombre']))-3 );
+      gvResults.Cells[5,gvResults.RowCount -1] := VarToStr(Qry2['ST_Tipo']);
+      gvResults.Cells[6,gvResults.RowCount -1] := VarToStr(Qry2['ST_Cantidad']);
+
+      if doCount then begin
+        if 'Entrada' = VarToStr(Qry2['ST_Tipo']) then begin
+          entradas := entradas + StrToInt(VarToStr(Qry2['ST_Cantidad']));
+        end
+        else begin
+          salidas := salidas + StrToInt(VarToStr(Qry2['ST_Cantidad']));
+        end;
+        lblTotal.Caption := 'En Stock : '+ IntToStr(entradas - salidas);
+      end;
+      
+      Qry2.Next;
+  End;
+
+end;
+
+procedure TfrmESStock.txtBuscarPlanoExit(Sender: TObject);
+begin
+  txtBuscarPlano.Text := UpperCase(Trim(txtBuscarPlano.Text));
+end;
+
+procedure TfrmESStock.txtBuscarPlanoKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  if Key = vk_return then
+  begin
+    Button1Click(nil);
+  end
+
+end;
+
+procedure TfrmESStock.Button2Click(Sender: TObject);
+begin
+  gbButtons.Height := 302;
+  gbBuscar.Height := 0;
+end;
+
+procedure TfrmESStock.gvResultsDblClick(Sender: TObject);
+var id : String;
+begin
+  id := gvResults.Cell[0,gvResults.SelectedRow].AsString;
+  Qry.Locate('ST_Id', id, [loPartialKey] );
+
+  giOpcion := 0;
+  ClearData();
+  BindData();
+  //EnableButtons();
+
+  gbButtons.Height := 302;
+  gbBuscar.Height := 0;
+end;
+
+function TfrmESStock.FormIsRunning(FormName: String):Boolean;
+var i:Integer;
+begin
+  Result := False;
+
+  for  i := 0 to Screen.FormCount - 1 do
+  begin
+        if Screen.Forms[i].Name = FormName Then
+          begin
+                Result:= True;
+                Break;
+          end;
+  end;
+
+end;
+
+procedure TfrmESStock.MenuItem1Click(Sender: TObject);
+var sFileName: String;
+begin
+  if gvResults.RowCount = 0 then
+  begin
+          ShowMessage('No hay informacion que exportar.');
+          Exit;
+  end;
+
+  SaveDialog1.Filter := 'Excel files (*.xls)|*.XLS';
+  if SaveDialog1.Execute then
+  begin
+    sFileName := SaveDialog1.FileName;
+    if UpperCase(Trim(rightStr(sFileName,4))) <> '.XLS' Then
+          sFileName := sFileName + '.xls';
+
+    ExportGrid(gvResults,sFileName);
+
+  end;
+end;
+
+procedure TfrmESStock.ExportGrid(Grid: TGridView;sFileName: String);
+const
+  xlWorkSheet = -4167;
+var XApp : Variant;
+Sheet : Variant;
+Row,col :Integer;
+begin
+      Try //Create the excel object
+      Begin
+            XApp:= CreateOleObject('Excel.Application');
+            //XApp.Visible := True;
+            XApp.Visible := False;
+            XApp.DisplayAlerts := False;
+      end;
+      except
+       showmessage('No se pudo abrir Microsoft Excel,  parece que no esta instalado en el sistema.');
+       exit;
+      end;
+
+      XApp.Workbooks.Add(xlWorkSheet);
+      Sheet := XApp.Workbooks[1].WorkSheets[1];
+      Sheet.Name := 'Scrap';
+
+      for Col := 1 to Grid.Columns.Count do
+              Sheet.Cells[1,Col] := Grid.Columns[Col - 1].Header.Caption;
+
+      for Row := 1 to Grid.RowCount do
+                for Col := 1 to Grid.Columns.Count do
+                        Sheet.Cells[Row + 1,Col] := Grid.Cells[Col - 1,Row - 1];
+
+
+      Sheet.Cells.Select;
+      Sheet.Cells.EntireColumn.AutoFit;
+
+      XApp.ActiveWorkBook.SaveAs(sFileName);
+      Sheet := Unassigned;
+      XApp.Quit;
+      XApp := Unassigned;
+
+       showmessage('El archivo se creo exitosamente.');
+end;
+
+procedure TfrmESStock.CopiarOrden1Click(Sender: TObject);
+begin
+  Clipboard.AsText := gvResults.Cells[1,gvResults.SelectedRow]
+end;
+
+procedure TfrmESStock.txtPlanoKeyPress(Sender: TObject; var Key: Char);
+begin
+  Key := upcase(Key);
 end;
 
 end.

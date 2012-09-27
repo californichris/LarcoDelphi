@@ -181,10 +181,12 @@ begin
 
     SQLStr := 'SELECT RIGHT(S.ITE_Nombre,LEN(S.ITE_Nombre) - 3) AS Orden,O.Ordenada As Cantidad, ' +
               'O.Producto As Descripcion,O.Numero,O.Terminal,Interna As Fecha, ' +
-              'S.RET_Start,S.RET_Stop,S.RET_Area AS Area,E.Nombre As EmpleadoRes,RET_Motivo ' +
+              'S.RET_Start,S.RET_Stop,S.RET_Area AS Area,E.Nombre As EmpleadoRes,RET_Motivo, ' +
+              'S.RET_Detectado, D.Nombre As EmpleadoDetectado ' +
               'FROM tblRetrabajo S ' +
               'INNER JOIN tblOrdenes O ON S.ITE_Nombre  = O.ITE_Nombre ' +
               'LEFT OUTER JOIN tblEmpleados E ON E.[Id] = S.RET_Empleado ' +
+              'LEFT OUTER JOIN tblEmpleados D ON D.[Id] = S.RET_EmpleadoDetectado ' +
               'WHERE RET_Start >= ' + QuotedStr(deFrom.Text) +
               ' AND RET_Start <= ' + QuotedStr(deTo.Text + ' 23:59:59.99' );
 
@@ -229,7 +231,9 @@ begin
         GridView2.Cells[7,GridView2.RowCount -1] := VarToStr(Qry['RET_Stop']);
         GridView2.Cells[8,GridView2.RowCount -1] := VarToStr(Qry['Area']);
         GridView2.Cells[9,GridView2.RowCount -1] := VarToStr(Qry['EmpleadoRes']);
-        GridView2.Cells[10,GridView2.RowCount -1] := VarToStr(Qry['RET_Motivo']);
+        GridView2.Cells[10,GridView2.RowCount -1] := VarToStr(Qry['RET_Detectado']);
+        GridView2.Cells[11,GridView2.RowCount -1] := VarToStr(Qry['EmpleadoDetectado']);
+        GridView2.Cells[12,GridView2.RowCount -1] := VarToStr(Qry['RET_Motivo']);
         Qry.Next;
     End;
 

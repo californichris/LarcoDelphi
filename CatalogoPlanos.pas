@@ -6,7 +6,7 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, ExtCtrls, DBCtrls, StdCtrls, ComCtrls, ADODB,DB,IniFiles,All_Functions,chris_Functions,
   ScrollView, CustomGridViewControl, CustomGridView, GridView,StrUtils,sndkey32,
-  CellEditors, Larco_functions, Math;
+  CellEditors, Larco_functions, Math, Menus, ComObj,Clipbrd;
 
 type
   TfrmCatalogoPlanos = class(TForm)
@@ -40,6 +40,17 @@ type
     txtAlias: TEdit;
     AddAlias: TButton;
     DeleteAlias: TButton;
+    gbBuscar: TGroupBox;
+    Label8: TLabel;
+    lblTotal: TLabel;
+    txtBuscarPlano: TEdit;
+    Button1: TButton;
+    gvResults: TGridView;
+    Button2: TButton;
+    SaveDialog1: TSaveDialog;
+    PopupMenu2: TPopupMenu;
+    MenuItem1: TMenuItem;
+    CopiarOrden1: TMenuItem;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     Procedure ClearData();
     procedure FormCreate(Sender: TObject);
@@ -65,6 +76,23 @@ type
     procedure ActualizarDetalle(plano: String);
     function ValidatePlanoToBeDeleted(plano: String):Boolean;
     procedure EditarPlano(PlanoId: String);
+    procedure txtPlanoExit(Sender: TObject);
+    procedure FormKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure PrimeroKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure Button2Click(Sender: TObject);
+    procedure Button1Click(Sender: TObject);
+    procedure txtBuscarPlanoExit(Sender: TObject);
+    procedure txtBuscarPlanoKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure gvResultsDblClick(Sender: TObject);
+    procedure MenuItem1Click(Sender: TObject);
+    procedure ExportGrid(Grid: TGridView;sFileName: String);
+    procedure CopiarOrden1Click(Sender: TObject);
+    procedure txtPlanoKeyPress(Sender: TObject; var Key: Char);
+    procedure txtInternoKeyPress(Sender: TObject; var Key: Char);
+    procedure txtAliasKeyPress(Sender: TObject; var Key: Char);
   private
     { Private declarations }
   public
@@ -219,14 +247,14 @@ end;
 
 procedure TfrmCatalogoPlanos.BuscarClick(Sender: TObject);
 begin
-  ShowMessage('No esta implementado todavia!!');
-  Exit;
+  gbButtons.Height := 0;
+  gbBuscar.Height := 465;
 
-  
-  ClearData();
+  txtBuscarPlano.Text := '';
+  gvResults.ClearRows;
+  txtBuscarPlano.SetFocus();
+
   giOpcion := 4;
-
-  EnableButtons();
 end;
 
 procedure TfrmCatalogoPlanos.btnCancelarClick(Sender: TObject);
@@ -550,7 +578,8 @@ var i : Integer;
 SQLStr: String;
 Qry2 : TADOQuery;
 begin
-  if txtInterno.Text = '' then begin
+  txtInterno.Text := UpperCase(txtInterno.Text);
+  if Trim(txtInterno.Text) = '' then begin
       ShowMessage('Nombre Interno es requerido.');
       Exit;
   end;
@@ -606,7 +635,8 @@ var i : Integer;
 SQLStr: String;
 Qry2 : TADOQuery;
 begin
-  if txtAlias.Text = '' then begin
+  txtAlias.Text := UpperCase(txtAlias.Text);
+  if Trim(txtAlias.Text) = '' then begin
       ShowMessage('Alias es requerido.');
       Exit;
   end;
@@ -728,8 +758,223 @@ end;
 procedure TfrmCatalogoPlanos.EditarPlano(PlanoId: String);
 begin
     if Qry.Locate('PN_ID',PlanoId ,[loPartialKey] ) then begin
+      BindData();
       EditarClick(nil);
     end;
+end;
+
+procedure TfrmCatalogoPlanos.txtPlanoExit(Sender: TObject);
+begin
+txtPlano.Text := UpperCase(txtPlano.Text);
+end;
+
+procedure TfrmCatalogoPlanos.FormKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  if giOpcion = 0 then begin
+    if (Key = 78) and (ssCtrl in Shift)then
+    begin
+        NuevoClick(nil);
+    end
+    else if (Key = 69) and (ssCtrl in Shift)then
+    begin
+        EditarClick(nil);
+    end
+    else if (Key = 68) and (ssCtrl in Shift)then
+    begin
+        BorrarClick(nil);
+    end
+    else if (Key = 66) and (ssCtrl in Shift)then
+    begin
+        BuscarClick(nil);
+    end;
+  end;
+end;
+
+procedure TfrmCatalogoPlanos.PrimeroKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  if giOpcion = 0 then begin
+    if (Key = 78) and (ssCtrl in Shift)then
+    begin
+        NuevoClick(nil);
+    end
+    else if (Key = 69) and (ssCtrl in Shift)then
+    begin
+        EditarClick(nil);
+    end
+    else if (Key = 68) and (ssCtrl in Shift)then
+    begin
+        BorrarClick(nil);
+    end
+    else if (Key = 66) and (ssCtrl in Shift)then
+    begin
+        BuscarClick(nil);
+    end;
+  end;
+end;
+
+procedure TfrmCatalogoPlanos.Button2Click(Sender: TObject);
+begin
+  gbButtons.Height := 465;
+  gbBuscar.Height := 0;
+end;
+
+procedure TfrmCatalogoPlanos.Button1Click(Sender: TObject);
+var SQLStr, SQLWhere: String;
+Qry2 : TADOQuery;
+begin
+  gvResults.ClearRows;
+  lblTotal.Caption := '';
+  if Trim(txtBuscarPlano.Text) = '' then begin
+    ShowMessage('Numero de Plano es requerido.');
+    Exit;
+  end;
+
+  txtBuscarPlano.Text := UpperCase(Trim(txtBuscarPlano.Text));
+  SQLWhere := txtBuscarPlano.Text;
+
+  Qry2 := TADOQuery.Create(nil);
+  Qry2.Connection :=Conn;
+
+  SQLStr := 'SELECT P.PN_Id, P.PN_Numero,P.PN_Descripcion, SUM(CASE WHEN ST_TIPO = ''Entrada'' Then ST_Cantidad ELSE 0 END) - ' +
+            'SUM(CASE WHEN ST_TIPO = ''Salida'' Then ST_Cantidad ELSE 0 END) AS Cantidad ' +
+            'FROM tblPlano P LEFT OUTER JOIN tblStock S ON S.PN_Id = P.PN_Id WHERE P.PN_Numero ';
+  if Pos('*', txtBuscarPlano.Text) <> 0 then begin
+    SQLWhere := ' LIKE ' + QuotedStr(StringReplace(SQLWhere, '*', '%', [rfReplaceAll, rfIgnoreCase]));
+  end
+  else begin
+    SQLWhere := ' = ' + QuotedStr(SQLWhere);
+  end;
+
+  Qry2.SQL.Clear;
+  Qry2.SQL.Text := SQLStr + SQLWhere + ' GROUP BY P.PN_Id, P.PN_Numero, P.PN_Descripcion';
+  Qry2.Open;
+
+  while not Qry2.Eof do begin
+      gvResults.AddRow(1);
+      gvResults.Cells[0,gvResults.RowCount -1] := VarToStr(Qry2['PN_Id']);
+      gvResults.Cells[1,gvResults.RowCount -1] := VarToStr(Qry2['PN_Numero']);
+      gvResults.Cells[2,gvResults.RowCount -1] := VarToStr(Qry2['PN_Descripcion']);
+      gvResults.Cells[3,gvResults.RowCount -1] := VarToStr(Qry2['Cantidad']);
+      Qry2.Next;
+  end;
+
+end;
+
+procedure TfrmCatalogoPlanos.txtBuscarPlanoExit(Sender: TObject);
+begin
+  txtBuscarPlano.Text := UpperCase(Trim(txtBuscarPlano.Text));
+end;
+
+procedure TfrmCatalogoPlanos.txtBuscarPlanoKeyDown(Sender: TObject;
+  var Key: Word; Shift: TShiftState);
+begin
+  if Key = vk_return then
+  begin
+    Button1Click(nil);
+  end
+
+end;
+
+procedure TfrmCatalogoPlanos.gvResultsDblClick(Sender: TObject);
+var id : String;
+begin
+  id := gvResults.Cell[0,gvResults.SelectedRow].AsString;
+  Qry.Locate('PN_Id', id, [loPartialKey] );
+
+  giOpcion := 0;
+  ClearData();
+  BindData();
+
+  gbButtons.Height := 465;
+  gbBuscar.Height := 0;
+end;
+
+procedure TfrmCatalogoPlanos.MenuItem1Click(Sender: TObject);
+var sFileName: String;
+begin
+  if gvResults.RowCount = 0 then
+  begin
+          ShowMessage('No hay informacion que exportar.');
+          Exit;
+  end;
+
+  SaveDialog1.Filter := 'Excel files (*.xls)|*.XLS';
+  if SaveDialog1.Execute then
+  begin
+    sFileName := SaveDialog1.FileName;
+    if UpperCase(Trim(rightStr(sFileName,4))) <> '.XLS' Then
+          sFileName := sFileName + '.xls';
+
+    ExportGrid(gvResults,sFileName);
+
+  end;
+end;
+
+procedure TfrmCatalogoPlanos.ExportGrid(Grid: TGridView;sFileName: String);
+const
+  xlWorkSheet = -4167;
+var XApp : Variant;
+Sheet : Variant;
+Row,col :Integer;
+begin
+      Try //Create the excel object
+      Begin
+            XApp:= CreateOleObject('Excel.Application');
+            //XApp.Visible := True;
+            XApp.Visible := False;
+            XApp.DisplayAlerts := False;
+      end;
+      except
+       showmessage('No se pudo abrir Microsoft Excel,  parece que no esta instalado en el sistema.');
+       exit;
+      end;
+
+      XApp.Workbooks.Add(xlWorkSheet);
+      Sheet := XApp.Workbooks[1].WorkSheets[1];
+      Sheet.Name := 'Scrap';
+
+      for Col := 1 to Grid.Columns.Count do
+              Sheet.Cells[1,Col] := Grid.Columns[Col - 1].Header.Caption;
+
+      for Row := 1 to Grid.RowCount do
+                for Col := 1 to Grid.Columns.Count do
+                        Sheet.Cells[Row + 1,Col] := Grid.Cells[Col - 1,Row - 1];
+
+
+      Sheet.Cells.Select;
+      Sheet.Cells.EntireColumn.AutoFit;
+
+      XApp.ActiveWorkBook.SaveAs(sFileName);
+      Sheet := Unassigned;
+      XApp.Quit;
+      XApp := Unassigned;
+
+       showmessage('El archivo se creo exitosamente.');
+end;
+
+procedure TfrmCatalogoPlanos.CopiarOrden1Click(Sender: TObject);
+begin
+  Clipboard.AsText := gvResults.Cells[1,gvResults.SelectedRow]
+end;
+
+procedure TfrmCatalogoPlanos.txtPlanoKeyPress(Sender: TObject;
+  var Key: Char);
+begin
+  Key := upcase(Key);
+end;
+
+procedure TfrmCatalogoPlanos.txtInternoKeyPress(Sender: TObject;
+  var Key: Char);
+begin
+  Key := upcase(Key);
+end;
+
+procedure TfrmCatalogoPlanos.txtAliasKeyPress(Sender: TObject;
+  var Key: Char);
+begin
+  Key := upcase(Key);
 end;
 
 end.
