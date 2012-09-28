@@ -1,6 +1,6 @@
 object frmVentas: TfrmVentas
-  Left = 205
-  Top = 104
+  Left = 202
+  Top = 102
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
   Caption = 'Ventas'
@@ -710,7 +710,7 @@ object frmVentas: TfrmVentas
         object lblStock: TLabel
           Left = 304
           Top = 232
-          Width = 33
+          Width = 6
           Height = 13
           Caption = '0'
           Visible = False
@@ -727,6 +727,22 @@ object frmVentas: TfrmVentas
           Font.Name = 'Tahoma'
           Font.Style = [fsBold]
           ParentFont = False
+        end
+        object lblStockParcial: TLabel
+          Left = 440
+          Top = 272
+          Width = 83
+          Height = 13
+          Caption = 'lblStockParcialOld'
+          Visible = False
+        end
+        object lblRequerida: TLabel
+          Left = 440
+          Top = 296
+          Width = 75
+          Height = 13
+          Caption = 'lblRequeridaOld'
+          Visible = False
         end
         object txtProceso: TEdit
           Left = 389
@@ -1167,16 +1183,18 @@ object frmVentas: TfrmVentas
           Caption = 'Stock Parcial'
           Enabled = False
           TabOrder = 19
+          OnClick = chkStockParcialClick
         end
         object txtStockParcial: TEdit
           Left = 448
           Top = 243
           Width = 121
           Height = 21
+          Enabled = False
           MaxLength = 50
-          ReadOnly = True
           TabOrder = 20
           OnKeyDown = SendTab
+          OnKeyPress = txtRequeridaKeyPress
         end
         object chkMezclar: TCheckBox
           Left = 50
@@ -1186,20 +1204,22 @@ object frmVentas: TfrmVentas
           Caption = 'Mezclar'
           Enabled = False
           TabOrder = 21
+          OnClick = chkMezclarClick
         end
-        object GridView1: TGridView
+        object gvMezclado: TGridView
           Left = 112
           Top = 300
           Width = 241
           Height = 73
           BorderStyle = bsSingle
+          Enabled = False
           GridStyle = gsReport
           GridLinesStyle = lsNormal
           HeaderSize = 18
           HeaderStyle = hsAuto
           HideScrollBar = True
           InputSize = 16
-          Options = [goHeader, goHighlightTextSelection, goSelectFullRow]
+          Options = [goDissableColumnMoving, goHeader, goHighlightTextSelection, goSelectFullRow]
           RowSize = 16
           ParentColor = False
           SelectionMoveDirection = mdDown
@@ -1229,7 +1249,7 @@ object frmVentas: TfrmVentas
             SlideBounds.Left = 0
             SlideBounds.Top = 0
             SlideBounds.Width = 0
-            Sorted = False
+            Sorted = True
             SortType = stAlphabetic
             VerticalAlignment = vaMiddle
             Visible = True
@@ -1259,7 +1279,7 @@ object frmVentas: TfrmVentas
             SlideBounds.Left = 0
             SlideBounds.Top = 0
             SlideBounds.Width = 0
-            Sorted = True
+            Sorted = False
             SortType = stAlphabetic
             VerticalAlignment = vaMiddle
             Visible = True
@@ -1268,27 +1288,29 @@ object frmVentas: TfrmVentas
             AutoExecute = False
           end
         end
-        object MaskEdit1: TMaskEdit
+        object txtOrdenMezclar: TMaskEdit
           Left = 112
           Top = 272
           Width = 92
           Height = 21
+          Enabled = False
           EditMask = '000-000-00;1;_'
           MaxLength = 10
-          ReadOnly = True
           TabOrder = 22
           Text = '   -   -  '
+          OnKeyDown = SendTab
         end
-        object Edit1: TEdit
+        object txtCantidadMezclar: TEdit
           Left = 206
           Top = 273
           Width = 94
           Height = 21
-          ReadOnly = True
+          Enabled = False
           TabOrder = 23
+          OnKeyDown = txtCantidadMezclarKeyDown
           OnKeyPress = txtRequeridaKeyPress
         end
-        object DeleteInternos: TButton
+        object DeleteOrden: TButton
           Left = 328
           Top = 274
           Width = 21
@@ -1299,18 +1321,20 @@ object frmVentas: TfrmVentas
           ParentShowHint = False
           ShowHint = True
           TabOrder = 25
+          OnClick = DeleteOrdenClick
         end
-        object AddInternos: TButton
+        object AddOrden: TButton
           Left = 304
           Top = 274
           Width = 21
           Height = 20
-          Hint = 'Agreagar Nombre Interno'
+          Hint = 'Agreagar Orden'
           Caption = '+'
           Enabled = False
           ParentShowHint = False
           ShowHint = True
           TabOrder = 24
+          OnClick = AddOrdenClick
         end
       end
       object GroupBox1: TGroupBox
@@ -1586,6 +1610,7 @@ object frmVentas: TfrmVentas
           Options = [goHeader, goHighlightTextSelection, goSelectFullRow]
           RowSize = 16
           ParentColor = False
+          PopupMenu = PopupMenu1
           SelectionMoveDirection = mdDown
           SlideSize = 80
           TabOrder = 2
@@ -1784,7 +1809,7 @@ object frmVentas: TfrmVentas
             SlideBounds.Left = 0
             SlideBounds.Top = 0
             SlideBounds.Width = 0
-            Sorted = False
+            Sorted = True
             SortType = stAlphabetic
             VerticalAlignment = vaMiddle
             Visible = True
@@ -1814,7 +1839,7 @@ object frmVentas: TfrmVentas
             SlideBounds.Left = 0
             SlideBounds.Top = 0
             SlideBounds.Width = 0
-            Sorted = True
+            Sorted = False
             SortType = stAlphabetic
             VerticalAlignment = vaMiddle
             Visible = True
@@ -2351,5 +2376,29 @@ object frmVentas: TfrmVentas
   end
   object SaveDialog1: TSaveDialog
     Left = 576
+  end
+  object PopupMenu1: TPopupMenu
+    Left = 608
+    Top = 241
+    object MenuItem2: TMenuItem
+      Caption = 'Mezclar'
+      OnClick = MenuItem2Click
+    end
+    object MenuItem3: TMenuItem
+      Caption = 'Copiar'
+      OnClick = CopiarOrden1Click
+    end
+  end
+  object PopupMenu2: TPopupMenu
+    Left = 608
+    Top = 368
+    object Mezclar1: TMenuItem
+      Caption = 'Mezclar'
+      OnClick = Mezclar1Click
+    end
+    object Copiar1: TMenuItem
+      Caption = 'Copiar'
+      OnClick = Copiar1Click
+    end
   end
 end

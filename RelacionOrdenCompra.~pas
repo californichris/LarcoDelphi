@@ -66,14 +66,17 @@ type
     cmbProductos: TComboBox;
     cmbPlanos: TComboBox;
     Label8: TLabel;
+    ExportROC: TButton;
     procedure IdleLoop; virtual;
     function FormIsRunning(FormName: String):Boolean;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    function getBitVal(value : String):String;
     procedure FormCreate(Sender: TObject);
     procedure BindClientes();
     Procedure BindOrdenes(Query: String);
     procedure BindGrid();
     procedure ExportGrid(Grid:TGridView;sFileName: String);
+    procedure ExportGridROC(Grid: TGridView;sFileName: String);
     function BitToBoolean(Value:String):Boolean;
     procedure Copiar1Click(Sender: TObject);
     procedure btnBuscarClick(Sender: TObject);
@@ -102,6 +105,9 @@ type
     procedure chkRecibidoClick(Sender: TObject);
     procedure cmbPartesKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
+    procedure cmbCompraKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure ExportROCClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -172,7 +178,7 @@ begin
 end;
 
 procedure TfrmRelacionOC.BindGrid();
-var SQLStr,SQLWhere,sItem,sOrden,additionalWhere : String;
+var SQLStr,SQLWhere,sItem,sOrden,additionalWhere, mezclado, prevOrden : String;
 Col,i : Integer;
 begin
     lblCount.Caption := '';
@@ -192,7 +198,7 @@ begin
     if bFirst = False then begin
         SQLStr := SQLStr + ',1,' + QuotedStr(RightStr(ddlAnio.Text,2)) + ',' + QuotedStr(additionalWhere);
         bFirst := True;
-    end          ?
+    end
     else begin
         SQLStr := SQLStr + ',0,' + QuotedStr(RightStr(ddlAnio.Text,2)) + ',' + QuotedStr(additionalWhere);
     end;
@@ -235,8 +241,20 @@ begin
     ProgressBar1.Step := 1;
     application.ProcessMessages;
 
-    While not Qry.Eof do
-    Begin
+    prevOrden := '';
+    while not Qry.Eof do
+    begin
+        mezclado := VarToStr(Qry['Mezclado']);
+        sOrden := VarToStr(Qry['Orden']);
+        if (mezclado = '1') and (prevOrden = sOrden) then begin
+          GridView1.Cells[18,GridView1.RowCount -1] := GridView1.Cells[18,GridView1.RowCount -1] + ',' + VarToStr(Qry['MO_ITE_NOmbre']);
+
+          Qry.Next;
+          prevOrden := sOrden;
+          Continue;
+        end;
+        prevOrden := sOrden;
+
         GridView1.AddRow(1);
         GridView1.Cells[0,GridView1.RowCount -1] := VarToStr(Qry['Orden']);
         GridView1.Cells[1,GridView1.RowCount -1] := VarToStr(Qry['Recibido']);
@@ -254,10 +272,12 @@ begin
         GridView1.Cells[10,GridView1.RowCount -1] := VarToStr(Qry['Tarea']);
         GridView1.Cells[11,GridView1.RowCount -1] := VarToStr(Qry['Status']);
         GridView1.Cells[12,GridView1.RowCount -1] := VarToStr(Qry['Total']);
-        GridView1.Cells[13,GridView1.RowCount -1] := VarToStr(Qry['Dolares']);
-        GridView1.Cells[14,GridView1.RowCount -1] := VarToStr(Qry['FileName']);
-        GridView1.Cells[15,GridView1.RowCount -1] := VarToStr(Qry['Stock']);
-        GridView1.Cells[16,GridView1.RowCount -1] := VarToStr(Qry['Programado']);
+        GridView1.Cells[13,GridView1.RowCount -1] := getBitVal(VarToStr(Qry['Dolares']));
+        GridView1.Cells[14,GridView1.RowCount -1] := getBitVal(VarToStr(Qry['Stock']));
+        GridView1.Cells[15,GridView1.RowCount -1] := getBitVal(VarToStr(Qry['StockParcial']));
+        GridView1.Cells[16,GridView1.RowCount -1] := VarToStr(Qry['StockParcialCantidad']);
+        GridView1.Cells[17,GridView1.RowCount -1] := getBitVal(VarToStr(Qry['Mezclado']));
+        GridView1.Cells[18,GridView1.RowCount -1] := VarToStr(Qry['MO_ITE_NOmbre']);
 
         if (GridView1.Cells[10,GridView1.RowCount -1] = 'VentasFinal') and (GridView1.Cells[11,GridView1.RowCount -1] = 'Terminado') then
            begin
@@ -274,16 +294,24 @@ begin
            end;
 
 
-        if GridView1.Cells[15,GridView1.RowCount -1] = '1' then  //stock
+        if GridView1.Cells[14,GridView1.RowCount -1] = 'Si' then  //stock
            begin
                 for Col := 0 to GridView1.Columns.Count - 1 do
                         GridView1.Cell[Col, GridView1.RowCount -1].Color := clBlue;
 
-           end
-        Else If GridView1.Cells[14,GridView1.RowCount -1] <> '' then  //filename
+           end;
+
+        if GridView1.Cells[15,GridView1.RowCount -1] = 'Si' then  //Stock Parcial
            begin
                 for Col := 0 to GridView1.Columns.Count - 1 do
                         GridView1.Cell[Col, GridView1.RowCount -1].Color := clLime;
+
+           end;
+
+        if GridView1.Cells[17,GridView1.RowCount -1] = 'Si' then  //Mezclado
+           begin
+                for Col := 0 to GridView1.Columns.Count - 1 do
+                        GridView1.Cell[Col, GridView1.RowCount -1].Color := clSilver;
 
            end;
 
@@ -406,47 +434,6 @@ begin
     Qry2.Close;
 end;
 
-procedure TfrmRelacionOC.ExportGrid(Grid: TGridView;sFileName: String);
-const
-  xlWorkSheet = -4167;
-  xlCSV = 6;
-var XApp : Variant;
-Sheet : Variant;
-Row,col :Integer;
-begin
-      Try //Create the excel object
-      Begin
-            XApp:= CreateOleObject('Excel.Application');
-            //XApp.Visible := True;
-            XApp.Visible := False;
-            XApp.DisplayAlerts := False;
-      end;
-      except
-       showmessage('No se pudo abrir Microsoft Excel,  parece que no esta instalado en el sistema.');
-       exit;
-      end;
-
-      XApp.Workbooks.Add(xlWorkSheet);
-      Sheet := XApp.Workbooks[1].WorkSheets[1];
-      Sheet.Name := 'Ordenes de Compra';
-
-      for Col := 1 to Grid.Columns.Count - 3 do
-              Sheet.Cells[1,Col] := Grid.Columns[Col - 1].Header.Caption;
-
-      for Row := 1 to Grid.RowCount do
-                for Col := 1 to Grid.Columns.Count - 3 do
-                        Sheet.Cells[Row + 1,Col] := Grid.Cells[Col - 1,Row - 1];
-
-
-
-      XApp.ActiveWorkBook.SaveAs(sFileName);
-      Sheet := Unassigned;
-      XApp.Quit;
-      XApp := Unassigned;
-
-       showmessage('El archivo se exporto exitosamente.');
-end;
-
 function TfrmRelacionOC.BitToBoolean(Value:String):Boolean;
 begin
         Result := False;
@@ -471,11 +458,11 @@ end;
 procedure TfrmRelacionOC.Button1Click(Sender: TObject);
 var sFileName: String;
 begin
-if GridView1.RowCount = 0 then
-begin
-        ShowMessage('No hay informacion que exportar.');
-        Exit;
-end;
+  if GridView1.RowCount = 0 then
+  begin
+          ShowMessage('No hay informacion que exportar.');
+          Exit;
+  end;
 
   SaveDialog1.Filter := 'Excel files (*.xls)|*.XLS';
   if SaveDialog1.Execute then
@@ -673,8 +660,8 @@ begin
                                   GridView1.Cells[11,GridView1.RowCount -1] := VarToStr(QryFile['Interna']);
                                   GridView1.Cells[12,GridView1.RowCount -1] := VarToStr(QryFile['Entrega']);
                                   GridView1.Cells[13,GridView1.RowCount -1] := VarToStr(QryFile['Nombre']);
-                                  GridView1.Cells[14,GridView1.RowCount -1] := VarToStr(QryFile['Aprobacion']);
-                                  GridView1.Cells[15,GridView1.RowCount -1] := VarToStr(QryFile['Unitario']);
+                                  GridView1.Cells[14,GridView1.RowCount -1] := VarToStr(QryFile['Unitario']);
+                                  GridView1.Cells[15,GridView1.RowCount -1] := VarToStr(QryFile['Aprobacion']);
                                   GridView1.Cells[16,GridView1.RowCount -1] := VarToStr(QryFile['Total']);
                                   GridView1.Cells[17,GridView1.RowCount -1] := VarToStr(QryFile['Dolares']);
                                   GridView1.Cells[18,GridView1.RowCount -1] := VarToStr(QryFile['Observaciones']);
@@ -720,8 +707,8 @@ End;
 procedure TfrmRelacionOC.GridView1SelectCell(Sender: TObject; ACol,
   ARow: Integer);
 begin
-
-If (GridView1.Cells[11,ARow] <> '') and (GridView1.Cells[14,ARow] = '0' ) Then
+//Comente este codigo por que no lo estan usando era para la importacion de excel
+{If (GridView1.Cells[11,ARow] <> '') and (GridView1.Cells[15,ARow] = '0' ) Then
 Begin
         Stock.Enabled := True;
         Imprimir.Enabled := True;
@@ -735,13 +722,15 @@ Begin
         Editar.Enabled := False;
         Borrar.Enabled := False;
 End;
+}
 
 end;
 
 procedure TfrmRelacionOC.BorrarClick(Sender: TObject);
-var SQLStr : String;
+//var SQLStr : String;
 begin
-    if MessageDlg('Estas seguro que quieres borrar la orden : ' +
+//Comente este codigo por que no lo estan usando era para la importacion de excel
+{    if MessageDlg('Estas seguro que quieres borrar la orden : ' +
                   GridView1.Cells[0,GridView1.SelectedRow] + '?',mtConfirmation, [mbYes, mbNo], 0) = mrNo then
         Exit;
 
@@ -755,11 +744,13 @@ begin
     Editar.Enabled := False;
     Borrar.Enabled := False;
     BindGrid();
+    }
 end;
 
 procedure TfrmRelacionOC.StockClick(Sender: TObject);
 begin
-    if MessageDlg('Estas seguro que quieres marcar la orden : ' +
+//Comente este codigo por que no lo estan usando era para la importacion de excel
+{    if MessageDlg('Estas seguro que quieres marcar la orden : ' +
                   GridView1.Cells[0,GridView1.SelectedRow] + ' como tomada del stock?',mtConfirmation, [mbYes, mbNo], 0) = mrNo then
         Exit;
 
@@ -772,14 +763,15 @@ begin
     Imprimir.Enabled := False;
     Editar.Enabled := False;
     Borrar.Enabled := False;
-
+}
 end;
 
 procedure TfrmRelacionOC.ImprimirClick(Sender: TObject);
-var SQLStr,sOrden : String;
-Qry2,Qry3 : TADOQuery;
+//var SQLStr,sOrden : String;
+//Qry2,Qry3 : TADOQuery;
 begin
-    if MessageDlg('Estas seguro que quieres Imprimir la orden : ' +
+//Comente este codigo por que no lo estan usando era para la importacion de excel
+{    if MessageDlg('Estas seguro que quieres Imprimir la orden : ' +
                   GridView1.Cells[0,GridView1.SelectedRow] +
                   ', al imprimirla se va a meter al sistema la cantidad completa?',mtConfirmation, [mbYes, mbNo], 0) = mrNo then
         Exit;
@@ -860,26 +852,29 @@ begin
 
     Qry2.Close;
 
-    BindGrid();
+    BindGrid();}
 end;
 
 procedure TfrmRelacionOC.CancelClick(Sender: TObject);
 begin
-    GroupBox2.Visible := False;
+//Comente este codigo por que no lo estan usando era para la importacion de excel
+{    GroupBox2.Visible := False;
 
 
     Stock.Enabled := True;
     Imprimir.Enabled := True;
     Editar.Enabled := True;
     Borrar.Enabled := True;
+}
 end;
 
 procedure TfrmRelacionOC.OKClick(Sender: TObject);
-var SQLStr,sOrden : String;
-iCant : Integer;
-Qry2,Qry3 : TADOQuery;
+//var SQLStr,sOrden : String;
+//iCant : Integer;
+//Qry2,Qry3 : TADOQuery;
 begin
-    if MessageDlg('Estas seguro que quieres tomar del stock ' + txtCantidad.Text + ' piezas para la orden ' +
+//Comente este codigo por que no lo estan usando era para la importacion de excel
+{    if MessageDlg('Estas seguro que quieres tomar del stock ' + txtCantidad.Text + ' piezas para la orden ' +
                   GridView1.Cells[0,GridView1.SelectedRow] + '?',mtConfirmation, [mbYes, mbNo], 0) = mrNo then
         Exit;
 
@@ -1000,7 +995,7 @@ begin
 
         Qry2.Close;
     end;
-
+}
 end;
 
 procedure TfrmRelacionOC.chkTotalClick(Sender: TObject);
@@ -1009,10 +1004,11 @@ txtCantidad.Enabled := Not chkTotal.Checked;
 end;
 
 procedure TfrmRelacionOC.EditarClick(Sender: TObject);
-var SQLStr,sOrden : String;
-Qry2 : TADOQuery;
+//var SQLStr,sOrden : String;
+//Qry2 : TADOQuery;
 begin
-if GridView1.Cells[0,GridView1.SelectedRow] = '' then
+//Comente este codigo por que no lo estan usando era para la importacion de excel
+{if GridView1.Cells[0,GridView1.SelectedRow] = '' then
     exit;
 
 
@@ -1065,6 +1061,7 @@ frmVentas.lblStock.Caption := '1';
 
 Qry2.Close;
 frmVentas.txtOrden.SetFocus;
+}
 end;
 
 function TfrmRelacionOC.FormIsRunning(FormName: String):Boolean;
@@ -1316,6 +1313,134 @@ begin
   begin
       BindGrid();
   end
+end;
+
+procedure TfrmRelacionOC.cmbCompraKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  If Key = vk_return then
+  begin
+      BindGrid();
+  end
+end;
+
+procedure TfrmRelacionOC.ExportROCClick(Sender: TObject);
+var sFileName: String;
+begin
+  if GridView1.RowCount = 0 then
+  begin
+          ShowMessage('No hay informacion que exportar.');
+          Exit;
+  end;
+
+  SaveDialog1.Filter := 'Excel files (*.xls)|*.XLS';
+  if SaveDialog1.Execute then
+  begin
+    sFileName := SaveDialog1.FileName;
+    if UpperCase(Trim(rightStr(sFileName,4))) <> '.XLS' Then
+          sFileName := sFileName + '.xls';
+
+    ExportGridROC(GridView1,sFileName);
+
+  end;
+
+end;
+
+procedure TfrmRelacionOC.ExportGrid(Grid: TGridView;sFileName: String);
+const
+  xlWorkSheet = -4167;
+  xlCSV = 6;
+var XApp : Variant;
+Sheet : Variant;
+Row,col :Integer;
+begin
+      Try //Create the excel object
+      Begin
+            XApp:= CreateOleObject('Excel.Application');
+            //XApp.Visible := True;
+            XApp.Visible := False;
+            XApp.DisplayAlerts := False;
+      end;
+      except
+       showmessage('No se pudo abrir Microsoft Excel,  parece que no esta instalado en el sistema.');
+       exit;
+      end;
+
+      XApp.Workbooks.Add(xlWorkSheet);
+      Sheet := XApp.Workbooks[1].WorkSheets[1];
+      Sheet.Name := 'Ordenes de Compra';
+
+      for Col := 1 to Grid.Columns.Count do
+              Sheet.Cells[1,Col] := Grid.Columns[Col - 1].Header.Caption;
+
+      for Row := 1 to Grid.RowCount do
+                for Col := 1 to Grid.Columns.Count do
+                        Sheet.Cells[Row + 1,Col] := Grid.Cells[Col - 1,Row - 1];
+
+
+
+      XApp.ActiveWorkBook.SaveAs(sFileName);
+      Sheet := Unassigned;
+      XApp.Quit;
+      XApp := Unassigned;
+
+       showmessage('El archivo se exporto exitosamente.');
+end;
+
+procedure TfrmRelacionOC.ExportGridROC(Grid: TGridView;sFileName: String);
+const
+  xlWorkSheet = -4167;
+  xlCSV = 6;
+var XApp : Variant;
+Sheet : Variant;
+Row :Integer;
+StartDDir : String;
+begin
+      try //Create the excel object
+      begin
+          XApp:= CreateOleObject('Excel.Application');
+          XApp.Workbooks.Add(xlWorkSheet);
+          StartDDir := ExtractFileDir(ParamStr(0)) + '\';
+          XApp.WorkBooks.Open(StartDDir + 'RelacionOrdenCompra.xls');
+          XApp.Visible := False;
+          XApp.DisplayAlerts := False;
+      end;
+      except
+          showmessage('No se pudo abrir Microsoft Excel,  parece que no esta instalado en el sistema.');
+          exit;
+      end;
+
+
+      //Sheet := XApp.Workbooks[1].WorkSheets[1];
+      //Sheet := XApp.ActiveWorkbook.ActiveSheet;
+      Sheet := XApp.ActiveWorkbook.WorkSheets['PAGE 1'];
+
+      //Sheet.Name := 'Ordenes de Compra';
+      Sheet.Cells[5, 3] := cmbCompra.Text;
+      for Row := 1 to Grid.RowCount do begin
+        Sheet.Cells[Row + 7, 1] := Grid.Cells[0, Row - 1];
+        Sheet.Cells[Row + 7, 2] := Grid.Cells[1, Row - 1];
+        //Sheet.Cells[Row + 7, 3] := Grid.Cells[1, Row - 1];
+        Sheet.Cells[Row + 7, 4] := Grid.Cells[4, Row - 1];
+        Sheet.Cells[Row + 7, 5] := Grid.Cells[5, Row - 1];
+        Sheet.Cells[Row + 7, 6] := Grid.Cells[7, Row - 1];
+        //Sheet.Cells[Row + 7, 7] := Grid.Cells[4, Row - 1];
+        Sheet.Cells[Row + 7, 8] := Grid.Cells[8, Row - 1];
+      end;
+
+
+      XApp.ActiveWorkBook.SaveAs(sFileName);
+      Sheet := Unassigned;
+      XApp.Quit;
+      XApp := Unassigned;
+
+      ShowMessage('El archivo se exporto exitosamente.');
+end;
+
+function TfrmRelacionOC.getBitVal(value : String):String;
+begin
+  result := 'No';
+  if(value = '1') then result := 'Si';
 end;
 
 end.

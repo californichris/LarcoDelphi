@@ -6,7 +6,7 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs,ADODB,DB,IniFiles,All_Functions,StrUtils,chris_Functions, Mask, StdCtrls,sndkey32,
   ScrollView, CustomGridViewControl, CustomGridView, GridView, ComCtrls,ComObj,
-  CellEditors,ImpresionOrden,Larco_Functions, ExtCtrls;
+  CellEditors,ImpresionOrden,Larco_Functions, ExtCtrls, Menus,Clipbrd;
 
 type
   TfrmVentas = class(TForm)
@@ -84,17 +84,25 @@ type
     chkStockParcial: TCheckBox;
     txtStockParcial: TEdit;
     chkMezclar: TCheckBox;
-    GridView1: TGridView;
-    MaskEdit1: TMaskEdit;
-    Edit1: TEdit;
+    gvMezclado: TGridView;
+    txtOrdenMezclar: TMaskEdit;
+    txtCantidadMezclar: TEdit;
     DeleteOrden: TButton;
     AddOrden: TButton;
+    lblStockParcial: TLabel;
+    lblRequerida: TLabel;
+    PopupMenu1: TPopupMenu;
+    MenuItem2: TMenuItem;
+    MenuItem3: TMenuItem;
+    PopupMenu2: TPopupMenu;
+    Mezclar1: TMenuItem;
+    Copiar1: TMenuItem;
     function FormIsRunning(FormName: String):Boolean;
     procedure ExportGrid(Grid:TGridView;sFileName: String);
     procedure BindGrid();
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure BindProductos();
-    procedure BindPlanos();    
+    procedure BindPlanos();
     procedure BindEmpleados();
     Procedure BindOrden();
     procedure FormCreate(Sender: TObject);
@@ -140,6 +148,18 @@ type
     procedure txtNumeroExit(Sender: TObject);
     procedure txtOrdenKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
+    procedure chkStockParcialClick(Sender: TObject);
+    procedure chkMezclarClick(Sender: TObject);
+    procedure DeleteOrdenClick(Sender: TObject);
+    procedure txtCantidadMezclarKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure AddOrdenClick(Sender: TObject);
+    procedure CopiarOrden1Click(Sender: TObject);
+    procedure Copiar1Click(Sender: TObject);
+    procedure MenuItem2Click(Sender: TObject);
+    procedure Mezclar1Click(Sender: TObject);
+    procedure InsertOrdenesMezclar();
+    procedure BindOrdenesMezclar();
   private
     { Private declarations }
   public
@@ -295,6 +315,7 @@ begin
     txtOrden.Text := '';
     txtProceso.Text := '';
     txtRequerida.Text := '';
+    lblRequerida.Caption := '';
     txtNumero.Text := '';
     txtTerminal.Text := '';
     deEntrega.Text := DateToStr(Now);
@@ -313,6 +334,15 @@ begin
     chkStock.Checked := False;
     chkPlano.Checked := False;
     cmbPlanos.Text := '';
+
+    chkStockParcial.Checked := false;
+    txtStockParcial.Text := '';
+    lblStockParcial.Caption := '';
+
+    chkMezclar.Checked := False;
+    txtOrdenMezclar.Text := '';
+    txtCantidadMezclar.Text := '';
+    gvMezclado.ClearRows;
 
     gvNumParte.ClearRows;
     gvNumPlano.ClearRows;
@@ -388,6 +418,28 @@ begin
       cmbPlanos.Enabled := chkPlano.Checked;
     end;
 
+    chkStockParcial.Enabled := not Value;
+    if giOpcion = 0 then begin
+      txtStockParcial.Enabled := not Value;
+    end else begin
+      txtStockParcial.Enabled := chkStockParcial.Checked;
+    end;
+
+    chkMezclar.Enabled := not Value;
+    if giOpcion = 0 then begin
+      txtOrdenMezclar.Enabled := not Value;
+      txtCantidadMezclar.Enabled := not Value;
+      AddOrden.Enabled := not Value;
+      DeleteOrden.Enabled := not Value;
+      gvMezclado.Enabled := not Value;
+    end else begin
+      txtOrdenMezclar.Enabled := chkMezclar.Checked;
+      txtCantidadMezclar.Enabled := chkMezclar.Checked;
+      AddOrden.Enabled := chkMezclar.Checked;
+      DeleteOrden.Enabled := chkMezclar.Checked;
+      gvMezclado.Enabled := chkMezclar.Checked;
+    end;
+
     btnAceptar.Enabled := not Value;
     btnCancelar.Enabled := not Value;
 end;
@@ -427,6 +479,7 @@ begin
     txtOrden.Text := RightStr( VarToStr(Qry['ITE_Nombre']), Length(VarToStr(Qry['ITE_Nombre']))-3 );
     txtProceso.Text := VarToStr(Qry['TipoProceso']);
     txtRequerida.Text := VarToStr(Qry['Requerida']);
+    lblRequerida.Caption := txtRequerida.Text;
     txtOrdenada.Text := VarToStr(Qry['Ordenada']);
     txtNumero.Text := VarToStr(Qry['Numero']);
     txtTerminal.Text := VarToStr(Qry['Terminal']);
@@ -450,6 +503,16 @@ begin
     if planoId <> '' then begin
       chkplano.Checked := True;
       setValue(planoId, cmbPlanos);
+    end;
+
+    chkStockParcial.Checked := StrToBool(VarToStr(Qry['StockParcial']));
+    txtStockParcial.Text := VarToStr(Qry['StockParcialCantidad']);
+    lblStockParcial.Caption := txtStockParcial.Text;
+
+    chkMezclar.Checked := StrToBool(VarToStr(Qry['Mezclado']));
+
+    if chkMezclar.Checked then begin
+      BindOrdenesMezclar();
     end;
 
     application.ProcessMessages;
@@ -492,7 +555,7 @@ end;
 procedure TfrmVentas.btnAceptarClick(Sender: TObject);
 var SQLStr,sOrden : String;
 Qry2 : TADOQuery;
-sNew, planoId : String;
+sNew, planoId, stockParcial : String;
 stock,cambio : boolean;
 begin
 
@@ -511,6 +574,16 @@ begin
           planoId := getSelectedValue(cmbPlanos);
         end;
 
+        stockParcial := 'NULL';
+        if chkStockParcial.Checked then begin
+          stockParcial := txtStockParcial.Text;
+        end;
+
+        stock := false;
+        if (chkStock.Checked) or (chkMezclar.Checked) then begin
+          stock := True
+        end;
+
         SQLStr := 'Insert_Orden ' + QuotedStr(gsYear + txtOrden.Text) + ',' + QuotedStr(txtProceso.Text) +
                   ',' + txtRequerida.Text + ',' + txtOrdenada.Text + ',' + QuotedStr(cmbProductos.Text) +
                   ',' + QuotedStr(txtNumero.Text) + ',' + QuotedStr(txtTerminal.Text) +
@@ -521,7 +594,8 @@ begin
                   ',' + txtUnitario.Text + ',' + txtTotal.Text + ',' + QuotedStr(gsFirstTask) +
                   ',' + QuotedStr(frmMain.sUserLogin) + ',' + QuotedStr(GetLocalIP) +
                   ',' + QuotedStr(txtCompra.Text) + ',' + BoolToStrInt(chkDlls.Checked) +
-                  ',' + BoolToStrInt(chkStock.Checked) + ',' + planoId;
+                  ',' + BoolToStrInt(chkStock.Checked) + ',' + planoId + ',' + BoolToStrInt(chkStockParcial.Checked) +
+                  ',' + stockParcial + ',' + BoolToStrInt(chkMezclar.Checked) + ',' + BoolToStrInt(stock);
 
         Qry2.SQL.Clear;
         Qry2.SQL.Text := SQLStr;
@@ -534,13 +608,15 @@ begin
           end
         else
           begin
+            if chkMezclar.Checked then begin
+              InsertOrdenesMezclar();
+            end;
+
             Qry.SQL.Clear;
-            //Qry.SQL.Text := 'SELECT * FROM tblOrdenes ORDER BY ITE_ID';
             Qry.SQL.Text := 'Traer_Ordenes ' + QuotedStr(gsOYear);
             Qry.Open;
 
             Qry.Locate('ITE_Nombre', sNew, [loPartialKey] );
-            //Qry.Last;
 
             if MessageDlg('Quieres Imprimir la orden de trabajo?',mtConfirmation, [mbYes, mbNo], 0) = mrYes then
             begin
@@ -565,15 +641,20 @@ begin
         if not ValidateData() then
           Exit;
 
-        stock := StrToBool(VarToStr(Qry['Stock']));
-        if stock <> chkStock.Checked then
-                cambio := true;
+        //stock := StrToBool(VarToStr(Qry['Stock']));
+        //if stock <> chkStock.Checked then
+        //        cambio := true;
 
         sNew := gsYear + txtOrden.Text;
 
         planoId := 'NULL';
         if chkPlano.Checked then begin
           planoId := getSelectedValue(cmbPlanos);
+        end;
+
+        stockParcial := 'NULL';
+        if chkStockParcial.Checked then begin
+          stockParcial := txtStockParcial.Text;
         end;
 
         SQLStr := 'Update_Orden ' + lblId.Caption  + ',' + QuotedStr(gsYear + txtOrden.Text) + ',' + QuotedStr(txtProceso.Text) +
@@ -586,7 +667,9 @@ begin
                   ',' + txtUnitario.Text + ',' + txtTotal.Text + ',' + QuotedStr(gsFirstTask) +
                   ',' + QuotedStr(frmMain.sUserLogin) + ',' + QuotedStr(GetLocalIP) +
                   ',' + QuotedStr(txtCompra.Text) + ',' + BoolToStrInt(chkDlls.Checked) +
-                  ',' + BoolToStrInt(cambio) + ',' + BoolToStrInt(stock)+ ',' + planoId;
+                  ',' + BoolToStrInt(cambio) + ',' + BoolToStrInt(chkStock.Checked)+ ',' + planoId +
+                  ',' + BoolToStrInt(chkStockParcial.Checked) + ',' + stockParcial +
+                  ',' + BoolToStrInt(chkMezclar.Checked);
 
         Qry2.SQL.Clear;
         Qry2.SQL.Text := SQLStr;
@@ -599,12 +682,14 @@ begin
           end
         else
           begin
+            if chkMezclar.Checked then begin
+              InsertOrdenesMezclar();
+            end;
+
             Qry.SQL.Clear;
-            //Qry.SQL.Text := 'SELECT * FROM tblOrdenes ORDER BY ITE_ID';
             Qry.SQL.Text := 'Traer_Ordenes ' + QuotedStr(gsOYear);
             Qry.Open;
 
-            //Qry.Locate('ITE_ID',lblId.Caption,[loPartialKey] )
             Qry.Locate('ITE_Nombre', sNew, [loPartialKey] )
           end;
 
@@ -679,23 +764,12 @@ begin
 end;
 
 function TfrmVentas.ValidateData():Boolean;
-var i:Integer;
+var i, opciones, stock, diff,cantidad :Integer;
 bfound : boolean;
+stockVal : String;
 begin
         result := True;
 
-{        if not isnumeric(leftstr(txtOrden.Text,2)) then
-          begin
-            MessageDlg('Añio incorrecto: ' + leftstr(txtOrden.Text,2), mtInformation,[mbOk], 0);
-            result :=  False;
-          end;
-
-        if (leftstr(txtOrden.Text,2) <>  gsOYear) then
-          begin
-            MessageDlg('Añio incorrecto: ' + leftstr(txtOrden.Text,2) + ' el añio no es el mismo que el predeterminado.', mtInformation,[mbOk], 0);
-            result :=  False;
-          end;
-}
         if cmbEmpleados.Text = '' then
           begin
             MessageDlg('Por favor captura el empleado.' , mtInformation,[mbOk], 0);
@@ -790,12 +864,159 @@ begin
         begin
             MessageDlg('El Numero de Plano es requerido.', mtInformation,[mbOk], 0);
             result :=  False;
+            Exit;
         end;
 
         if (chkPlano.Checked) and (cmbPlanos.Items.IndexOf(cmbPlanos.Text) = -1) then
         begin
             MessageDlg('Numero de Plano incorrecto seleccionelo de la lista.', mtInformation,[mbOk], 0);
             result :=  False;
+            Exit;
+        end;
+
+        opciones := 0;
+        if chkStock.Checked then Inc(opciones);
+        if chkStockParcial.Checked then Inc(opciones);
+        if chkMezclar.Checked then Inc(opciones);
+
+        if opciones > 1 then
+        begin
+            MessageDlg('Solo puedes seleccionar una de las siguientes opciones Stock, StockParcial, Mezclar.', mtInformation,[mbOk], 0);
+            result :=  False;
+            Exit;
+        end;
+
+        txtStockParcial.Text := Trim(txtStockParcial.Text);
+        if chkStockParcial.Checked then
+        begin
+            if cmbPlanos.Text = '' then
+            begin
+              MessageDlg('Numero de Plano es requerido para ordenes con Stock Parcial.', mtInformation,[mbOk], 0);
+              result :=  False;
+              Exit;
+            end;
+
+            if txtStockParcial.Text = '' then
+            begin
+              MessageDlg('La Cantidad de Stock Parcial es requerida.', mtInformation,[mbOk], 0);
+              result :=  False;
+              Exit;
+            end;
+
+            if not IsNumeric(txtStockParcial.Text) then
+            begin
+                MessageDlg('La Cantidad de Stock Parcial debe de ser un valor numerico.', mtInformation,[mbOk], 0);
+                result :=  False;
+                Exit;
+            end;
+
+            if StrToInt(txtStockParcial.Text) <= 0 then
+            begin
+                MessageDlg('La Cantidad de Stock Parcial debe de ser mayor que 0.', mtInformation,[mbOk], 0);
+                result :=  False;
+                Exit;
+            end;
+
+            if StrToInt(txtStockParcial.Text) >= StrToInt(txtRequerida.Text) then
+            begin
+                MessageDlg('La Cantidad de Stock Parcial debe de ser menor que la cantidad Cliente.', mtInformation,[mbOk], 0);
+                result :=  False;
+                Exit;
+            end;
+
+            if lblStockParcial.Caption = '' then lblStockParcial.Caption := '0';
+
+            if giOpcion = 1 then begin // Only validate in new not in updates
+                stock := 0;
+                stockVal := gvNumPlano.Cell[2, 0].AsString;
+                if stockVal <> '' then
+                  stock := StrToInt(stockVal);
+
+                if StrToInt(txtStockParcial.Text) > stock then
+                begin
+                    MessageDlg('La Cantidad de Stock Parcial debe de ser menor o igual que la cantidad en Stock(' + IntToStr(stock) + ').', mtInformation,[mbOk], 0);
+                    result :=  False;
+                    Exit;
+                end;
+            end;
+
+            if (giOpcion = 2) and (StrToInt(lblStockParcial.Caption) <> StrToInt(txtStockParcial.Text)) then begin
+                stock := 0;
+                stockVal := gvNumPlano.Cell[2, 0].AsString;
+                if stockVal <> '' then
+                  stock := StrToInt(stockVal);
+
+                if  StrToInt(txtStockParcial.Text) > StrToInt(lblStockParcial.Caption) then begin
+                  diff := StrToInt(txtStockParcial.Text) - StrToInt(lblStockParcial.Caption);
+                  if diff > stock then
+                  begin
+                      MessageDlg('El aumento en la Cantidad de Stock Parcial (cambio de ' + lblStockParcial.Caption +
+                      ' a ' + txtStockParcial.Text + ') debe de ser menor o igual que la cantidad en Stock (' + IntToStr(stock) + ').', mtInformation,[mbOk], 0);
+                      result :=  False;
+                      Exit;
+                  end;
+                end;
+            end;
+
+        end;
+
+        if chkStock.Checked then
+        begin
+            if cmbPlanos.Text = '' then
+            begin
+              MessageDlg('Numero de Plano es requerido para ordenes con Stock.', mtInformation,[mbOk], 0);
+              result :=  False;
+              Exit;
+            end;
+
+            stock := 0;
+            stockVal := gvNumPlano.Cell[2, 0].AsString;
+            if stockVal <> '' then
+              stock := StrToInt(stockVal);
+
+            if lblRequerida.Caption = '' then lblRequerida.Caption := '0';
+            if giOpcion = 1 then begin // Only validate in new not in updates
+              if StrToInt(txtRequerida.Text) > stock then
+              begin
+                  MessageDlg('La Cantidad de Cliente debe de ser menor o igual que la cantidad en Stock(' + IntToStr(stock) + ').', mtInformation,[mbOk], 0);
+                  result :=  False;
+                  Exit;
+              end;
+            end;
+
+            if (giOpcion = 2) and (StrToInt(lblRequerida.Caption) <> StrToInt(txtRequerida.Text)) then begin
+                if  StrToInt(txtRequerida.Text) > StrToInt(lblRequerida.Caption) then begin
+                  diff := StrToInt(txtRequerida.Text) - StrToInt(lblRequerida.Caption);
+                  if diff > stock then
+                  begin
+                      MessageDlg('El aumento en la Cantidad de Cliente (cambio de ' + lblRequerida.Caption +
+                      ' a ' + txtRequerida.Text + ') debe de ser menor o igual que la cantidad en Stock (' + IntToStr(stock) + ').', mtInformation,[mbOk], 0);
+                      result :=  False;
+                      Exit;
+                  end;
+                end;
+            end;
+        end;
+
+        if (chkMezclar.Checked) and (gvMezclado.RowCount = 0) then begin
+          MessageDlg('Es necesario agregar al menos una Orden con la que se va a Mezclar.', mtInformation,[mbOk], 0);
+          result :=  False;
+          Exit;
+        end;
+
+
+        if (chkMezclar.Checked) then begin
+          cantidad := 0;
+          for i:= 0 to gvMezclado.RowCount - 1 do
+          begin
+             cantidad := cantidad + StrToInt(gvMezclado.Cells[1,i]);
+          end;
+
+          if (cantidad <> StrToInt(txtRequerida.Text)) then begin
+            MessageDlg('La Cantidad Cliente debe de ser igual que la sumatoria de las ordenes a mezclar.', mtInformation,[mbOk], 0);
+            result :=  False;
+            Exit;
+          end;
         end;
 end;
 
@@ -1465,6 +1686,203 @@ begin
    else if (Key = vk_Escape) and (btnCancelar.Enabled = True)  then begin
      btnCancelarClick(nil);
    end;
+end;
+
+procedure TfrmVentas.chkStockParcialClick(Sender: TObject);
+begin
+  if giOpcion <> 0 then begin
+    txtStockParcial.Enabled := chkStockParcial.Checked;
+    if not chkStockParcial.Checked then
+      txtStockParcial.Text := '';
+  end;
+end;
+
+procedure TfrmVentas.chkMezclarClick(Sender: TObject);
+begin
+  if giOpcion <> 0 then begin
+    txtOrdenMezclar.Enabled := chkMezclar.Checked;
+    txtCantidadMezclar.Enabled := chkMezclar.Checked;
+    AddOrden.Enabled := chkMezclar.Checked;
+    DeleteOrden.Enabled := chkMezclar.Checked;
+    gvMezclado.Enabled := chkMezclar.Checked;
+
+    if not chkMezclar.Checked then begin
+      gvMezclado.ClearRows;
+      txtOrdenMezclar.Text := '';
+      txtCantidadMezclar.Text := '';
+    end
+  end;
+end;
+
+procedure TfrmVentas.DeleteOrdenClick(Sender: TObject);
+begin
+  gvMezclado.DeleteRow(gvMezclado.SelectedRow);
+end;
+
+procedure TfrmVentas.txtCantidadMezclarKeyDown(Sender: TObject;
+  var Key: Word; Shift: TShiftState);
+begin
+  if Key = vk_return then
+  begin
+    AddOrdenClick(nil);
+  end;
+end;
+
+procedure TfrmVentas.AddOrdenClick(Sender: TObject);
+var sOrden, sOrdenTra : String;
+found : boolean;
+i,cantidad : integer;
+begin
+  sOrdenTra := Trim( StringReplace(txtOrden.Text,'-','',[rfReplaceAll, rfIgnoreCase]) );
+  sOrden := Trim( StringReplace(txtOrdenMezclar.Text,'-','',[rfReplaceAll, rfIgnoreCase]) );
+  if sOrden = '' then begin
+      ShowMessage('La Orden es requerida.');
+      Exit;
+  end;
+
+  if sOrden = sOrdenTra then begin
+      ShowMessage('No se puede mezclar con la misma orden.');
+      Exit;
+  end;
+
+  txtCantidadMezclar.Text := Trim(txtCantidadMezclar.Text);
+  if txtCantidadMezclar.Text = '' then begin
+      ShowMessage('La Cantidad es Requerida.');
+      Exit;
+  end;
+
+  if not IsNumeric(txtCantidadMezclar.Text) then begin
+    MessageDlg('La Cantidad debe de ser un valor numerico.', mtInformation,[mbOk], 0);
+    Exit;
+  end;
+
+  found := false;
+  cantidad := 0;
+  for i:= 0 to gvProdNumero.RowCount - 1 do
+  begin
+     if gvProdNumero.Cells[0,i] = txtOrdenMezclar.Text then begin
+        found := True;
+        cantidad := StrToInt(gvProdNumero.Cells[1,i]) - StrToInt(gvProdNumero.Cells[2,i]);
+        break;
+     end;
+  end;
+
+  for i:= 0 to gvProdPlano.RowCount - 1 do
+  begin
+     if gvProdPlano.Cells[0,i] = txtOrdenMezclar.Text then begin
+        found := True;
+        cantidad := StrToInt(gvProdPlano.Cells[1,i]) - StrToInt(gvProdPlano.Cells[2,i]);
+        break;
+     end;
+  end;
+
+  if found = false then begin
+    MessageDlg('La Orden no es valida, no es una orden en produccion.', mtInformation,[mbOk], 0);
+    Exit;
+  end;
+
+  for i:= 0 to gvMezclado.RowCount - 1 do
+  begin
+     if gvMezclado.Cells[0,i] = txtOrdenMezclar.Text then begin
+        MessageDlg('La Orden ya existe.', mtInformation,[mbOk], 0);
+        Exit;
+     end;
+  end;
+
+  if StrToInt(txtCantidadMezclar.Text) > cantidad then begin
+    MessageDlg('La cantidad es mayor que lo disponible en esta orden.', mtInformation,[mbOk], 0);
+    Exit;
+  end;
+
+  gvMezclado.AddRow(1);
+  gvMezclado.Cells[0,gvMezclado.RowCount -1] := txtOrdenMezclar.Text;
+  gvMezclado.Cells[1,gvMezclado.RowCount -1] := txtCantidadMezclar.Text;
+
+  txtOrdenMezclar.Text := '';
+  txtCantidadMezclar.Text := '';
+
+  txtOrdenMezclar.SetFocus;
+end;
+
+procedure TfrmVentas.CopiarOrden1Click(Sender: TObject);
+begin
+  Clipboard.AsText := gvProdNumero.Cells[0, gvProdNumero.SelectedRow];
+end;
+
+procedure TfrmVentas.Copiar1Click(Sender: TObject);
+begin
+  Clipboard.AsText := gvProdPlano.Cells[0, gvProdPlano.SelectedRow];
+end;
+
+procedure TfrmVentas.MenuItem2Click(Sender: TObject);
+var cantidad : integer;
+begin
+  if (giOpcion = 0) or (not chkMezclar.Checked) then Exit;
+
+  txtOrdenMezclar.Text := gvProdNumero.Cells[0, gvProdNumero.SelectedRow];
+  cantidad := StrToInt(gvProdNumero.Cells[1, gvProdNumero.SelectedRow]) - StrToInt(gvProdNumero.Cells[2, gvProdNumero.SelectedRow]);
+
+  txtCantidadMezclar.Text := IntToStr(cantidad);
+  txtCantidadMezclar.SetFocus;
+end;
+
+procedure TfrmVentas.Mezclar1Click(Sender: TObject);
+var cantidad : integer;
+begin
+  if (giOpcion = 0) or (not chkMezclar.Checked) then Exit;
+
+  txtOrdenMezclar.Text := gvProdPlano.Cells[0, gvProdPlano.SelectedRow];
+  cantidad := StrToInt(gvProdPlano.Cells[1, gvProdPlano.SelectedRow]) - StrToInt(gvProdPlano.Cells[2, gvProdPlano.SelectedRow]);
+
+  txtCantidadMezclar.Text := IntToStr(cantidad);
+  txtCantidadMezclar.SetFocus;
+end;
+
+procedure TfrmVentas.InsertOrdenesMezclar();
+var i : Integer;
+SQLStr : String;
+sDate: String;
+begin
+  if (giOpcion = 1) or (giOpcion = 2) then begin
+      sDate := DateTimeToStr(Now);
+      for i:= 0 to gvMezclado.RowCount - 1 do
+      begin
+            SQLStr := 'INSERT INTO tblMergeOrdenes(ITE_Nombre, MO_ITE_Nombre, MO_Cantidad, Update_Date, Update_User) ' +
+                      'VALUES(' + QuotedStr(gsYear + txtOrden.Text) + ',' + QuotedStr(gsYear + gvMezclado.Cells[0,i]) +
+                      ',' + gvMezclado.Cells[1,i] + ',' + QuotedStr(sDate) + ',' + frmMain.sUserLogin +')';
+
+            conn.Execute(SQLStr);
+
+
+      end;
+  end;
+end;
+
+procedure TfrmVentas.BindOrdenesMezclar();
+var Qry2 : TADOQuery;
+SQLStr : String;
+begin
+  Qry2 := TADOQuery.Create(nil);
+  Qry2.Connection :=Conn;
+
+  SQLStr := 'SELECT * FROM tblMergeOrdenes WHERE ITE_Nombre = ' + QuotedStr(gsYear + txtOrden.Text);
+
+  Qry2.SQL.Clear;
+  Qry2.SQL.Text := SQLStr;
+  Qry2.Open;
+
+  gvMezclado.ClearRows;
+  while not Qry2.Eof do
+  begin
+    gvMezclado.AddRow(1);
+    gvMezclado.Cells[0,gvMezclado.RowCount -1] := RightStr( VarToStr(Qry2['MO_ITE_Nombre']), Length(VarToStr(Qry2['MO_ITE_Nombre']))-3 );
+    gvMezclado.Cells[1,gvMezclado.RowCount -1] := VarToStr(Qry2['MO_Cantidad']);
+
+    Qry2.Next;
+  end;
+
+  Qry2.Close;
+  Qry2.Free;
 end;
 
 end.
