@@ -817,7 +817,7 @@ begin
       gvResults.AddRow(1);
       gvResults.Cells[0,gvResults.RowCount -1] := VarToStr(Qry2['ST_Id']);
       gvResults.Cells[1,gvResults.RowCount -1] := VarToStr(Qry2['PN_Numero']);
-      year := '20' +  LeftStr(VarToStr(Qry['ITE_Nombre']), 2);
+      year := '20' +  LeftStr(VarToStr(Qry2['ITE_Nombre']), 2);
       gvResults.Cells[2,gvResults.RowCount -1] := year;
       gvResults.Cells[3,gvResults.RowCount -1] := VarToStr(Qry2['ST_Fecha']);
       gvResults.Cells[4,gvResults.RowCount -1] := RightStr( VarToStr(Qry2['ITE_Nombre']), Length(VarToStr(Qry2['ITE_Nombre']))-3 );
@@ -837,6 +837,8 @@ begin
       Qry2.Next;
   End;
 
+  Qry2.Close;
+  Qry2.Free;
 end;
 
 procedure TfrmESStock.txtBuscarPlanoExit(Sender: TObject);

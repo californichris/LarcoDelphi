@@ -126,10 +126,11 @@ object frmRelacionOC: TfrmRelacionOC
     Visible = False
   end
   object GridView1: TGridView
-    Left = 10
-    Top = 120
-    Width = 1159
-    Height = 497
+    Left = 3
+    Top = 108
+    Width = 1169
+    Height = 505
+    Cursor = 3000
     Hint = 'Presiona F5 para Refrescar'
     BorderStyle = bsSingle
     GridStyle = gsReport
@@ -184,7 +185,7 @@ object frmRelacionOC: TfrmRelacionOC
       Color = clWindow
       Cursor = crDefault
       DrawingOptions = doNormal
-      DefaultWidth = 91
+      DefaultWidth = 44
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
@@ -205,7 +206,7 @@ object frmRelacionOC: TfrmRelacionOC
       SortType = stDate
       VerticalAlignment = vaMiddle
       Visible = True
-      Width = 91
+      Width = 44
       WrapKind = wkEllipsis
       AutoExecute = False
     end
@@ -214,7 +215,7 @@ object frmRelacionOC: TfrmRelacionOC
       Color = clWindow
       Cursor = crDefault
       DrawingOptions = doNormal
-      DefaultWidth = 103
+      DefaultWidth = 49
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
@@ -235,7 +236,7 @@ object frmRelacionOC: TfrmRelacionOC
       SortType = stAlphabetic
       VerticalAlignment = vaMiddle
       Visible = True
-      Width = 103
+      Width = 49
       WrapKind = wkEllipsis
       AutoExecute = False
     end
@@ -244,7 +245,7 @@ object frmRelacionOC: TfrmRelacionOC
       Color = clWindow
       Cursor = crDefault
       DrawingOptions = doNormal
-      DefaultWidth = 57
+      DefaultWidth = 27
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
@@ -265,7 +266,7 @@ object frmRelacionOC: TfrmRelacionOC
       SortType = stNumeric
       VerticalAlignment = vaMiddle
       Visible = True
-      Width = 57
+      Width = 27
       WrapKind = wkEllipsis
       AutoExecute = False
     end
@@ -304,7 +305,7 @@ object frmRelacionOC: TfrmRelacionOC
       Color = clWindow
       Cursor = crDefault
       DrawingOptions = doNormal
-      DefaultWidth = 114
+      DefaultWidth = 55
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
@@ -325,7 +326,7 @@ object frmRelacionOC: TfrmRelacionOC
       SortType = stAlphabetic
       VerticalAlignment = vaMiddle
       Visible = True
-      Width = 114
+      Width = 55
       WrapKind = wkEllipsis
       AutoExecute = False
     end
@@ -364,7 +365,7 @@ object frmRelacionOC: TfrmRelacionOC
       Color = clWindow
       Cursor = crDefault
       DrawingOptions = doNormal
-      DefaultWidth = 101
+      DefaultWidth = 48
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
@@ -385,7 +386,7 @@ object frmRelacionOC: TfrmRelacionOC
       SortType = stAlphabetic
       VerticalAlignment = vaMiddle
       Visible = True
-      Width = 101
+      Width = 48
       WrapKind = wkEllipsis
       AutoExecute = False
     end
@@ -394,7 +395,7 @@ object frmRelacionOC: TfrmRelacionOC
       Color = clWindow
       Cursor = crDefault
       DrawingOptions = doNormal
-      DefaultWidth = 103
+      DefaultWidth = 49
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
@@ -415,7 +416,7 @@ object frmRelacionOC: TfrmRelacionOC
       SortType = stDate
       VerticalAlignment = vaMiddle
       Visible = True
-      Width = 103
+      Width = 49
       WrapKind = wkEllipsis
       AutoExecute = False
     end
@@ -424,7 +425,7 @@ object frmRelacionOC: TfrmRelacionOC
       Color = clWindow
       Cursor = crDefault
       DrawingOptions = doNormal
-      DefaultWidth = 101
+      DefaultWidth = 49
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
@@ -445,7 +446,7 @@ object frmRelacionOC: TfrmRelacionOC
       SortType = stDate
       VerticalAlignment = vaMiddle
       Visible = True
-      Width = 101
+      Width = 49
       WrapKind = wkEllipsis
       AutoExecute = False
     end
@@ -454,7 +455,7 @@ object frmRelacionOC: TfrmRelacionOC
       Color = clWindow
       Cursor = crDefault
       DrawingOptions = doNormal
-      DefaultWidth = 114
+      DefaultWidth = 64
       Font.Charset = ANSI_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
@@ -475,7 +476,7 @@ object frmRelacionOC: TfrmRelacionOC
       SortType = stAlphabetic
       VerticalAlignment = vaMiddle
       Visible = True
-      Width = 114
+      Width = 64
       WrapKind = wkEllipsis
       AutoExecute = False
     end
@@ -484,7 +485,7 @@ object frmRelacionOC: TfrmRelacionOC
       Color = clWindow
       Cursor = crDefault
       DrawingOptions = doNormal
-      DefaultWidth = 80
+      DefaultWidth = 38
       Font.Charset = ANSI_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
@@ -505,7 +506,7 @@ object frmRelacionOC: TfrmRelacionOC
       SortType = stAlphabetic
       VerticalAlignment = vaMiddle
       Visible = True
-      Width = 80
+      Width = 38
       WrapKind = wkEllipsis
       AutoExecute = False
     end
@@ -694,7 +695,7 @@ object frmRelacionOC: TfrmRelacionOC
       Color = clWindow
       Cursor = crDefault
       DrawingOptions = doNormal
-      DefaultWidth = 80
+      DefaultWidth = 70
       Font.Charset = ANSI_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
@@ -715,15 +716,75 @@ object frmRelacionOC: TfrmRelacionOC
       SortType = stAlphabetic
       VerticalAlignment = vaMiddle
       Visible = True
-      Width = 80
+      Width = 70
+      WrapKind = wkEllipsis
+      AutoExecute = False
+    end
+    object TTextualColumn
+      Alignment = taLeftJustify
+      Color = clWindow
+      Cursor = crDefault
+      DrawingOptions = doNormal
+      DefaultWidth = 50
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      Footer.Color = clWindow
+      Footer.FormulaKind = fkNone
+      Header.Color = clBtnFace
+      Header.Caption = 'Revision'
+      Header.DisplayMode = dmTextOnly
+      Options = [coCanClick, coCanSort, coEditorAutoSelect, coPublicUsing]
+      Position = 19
+      SlideBounds.Height = 0
+      SlideBounds.Left = 0
+      SlideBounds.Top = 0
+      SlideBounds.Width = 0
+      Sorted = False
+      SortType = stAlphabetic
+      VerticalAlignment = vaMiddle
+      Visible = True
+      Width = 50
+      WrapKind = wkEllipsis
+      AutoExecute = False
+    end
+    object TTextualColumn
+      Alignment = taLeftJustify
+      Color = clWindow
+      Cursor = crDefault
+      DrawingOptions = doNormal
+      DefaultWidth = 75
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      Footer.Color = clWindow
+      Footer.FormulaKind = fkNone
+      Header.Color = clBtnFace
+      Header.Caption = 'Requisicion'
+      Header.DisplayMode = dmTextOnly
+      Options = [coCanClick, coCanSort, coEditorAutoSelect, coPublicUsing]
+      Position = 20
+      SlideBounds.Height = 0
+      SlideBounds.Left = 0
+      SlideBounds.Top = 0
+      SlideBounds.Width = 0
+      Sorted = False
+      SortType = stAlphabetic
+      VerticalAlignment = vaMiddle
+      Visible = True
+      Width = 75
       WrapKind = wkEllipsis
       AutoExecute = False
     end
   end
   object GroupBox1: TGroupBox
-    Left = 10
-    Top = 8
-    Width = 1159
+    Left = 3
+    Top = 0
+    Width = 1169
     Height = 105
     Hint = 'Presiona F5 para Refrescar'
     ParentShowHint = False
@@ -737,7 +798,7 @@ object frmRelacionOC: TfrmRelacionOC
       Caption = 'Cliente :'
     end
     object Label4: TLabel
-      Left = 266
+      Left = 260
       Top = 16
       Width = 37
       Height = 13
@@ -759,7 +820,7 @@ object frmRelacionOC: TfrmRelacionOC
       Caption = 'No. Parte :'
     end
     object Label5: TLabel
-      Left = 234
+      Left = 231
       Top = 39
       Width = 66
       Height = 13
@@ -773,18 +834,26 @@ object frmRelacionOC: TfrmRelacionOC
       Caption = 'A'#241'o : '
     end
     object Label7: TLabel
-      Left = 456
+      Left = 453
       Top = 39
       Width = 61
       Height = 13
       Caption = 'Descripcion :'
     end
     object Label8: TLabel
-      Left = 674
+      Left = 676
       Top = 40
       Width = 53
       Height = 13
       Caption = 'No. Plano :'
+    end
+    object lblWeek: TLabel
+      Left = 336
+      Top = 80
+      Width = 37
+      Height = 13
+      Caption = 'lblWeek'
+      Visible = False
     end
     object GroupBox2: TGroupBox
       Left = 820
@@ -926,15 +995,17 @@ object frmRelacionOC: TfrmRelacionOC
       ItemHeight = 13
       TabOrder = 9
       OnKeyDown = cmbPartesKeyDown
+      OnKeyPress = cmbPartesKeyPress
     end
     object cmbCompra: TComboBox
-      Left = 306
+      Left = 303
       Top = 38
       Width = 145
       Height = 21
       ItemHeight = 13
       TabOrder = 10
       OnKeyDown = cmbCompraKeyDown
+      OnKeyPress = cmbCompraKeyPress
     end
     object Button5: TButton
       Left = 523
@@ -965,7 +1036,7 @@ object frmRelacionOC: TfrmRelacionOC
       Text = 'Todos'
     end
     object txtOrden: TEdit
-      Left = 305
+      Left = 303
       Top = 13
       Width = 144
       Height = 21
@@ -974,7 +1045,7 @@ object frmRelacionOC: TfrmRelacionOC
       Text = 'Todos'
     end
     object Button7: TButton
-      Left = 448
+      Left = 446
       Top = 13
       Width = 16
       Height = 21
@@ -1039,7 +1110,7 @@ object frmRelacionOC: TfrmRelacionOC
       OnClick = chkRecibidoClick
     end
     object cmbProductos: TComboBox
-      Left = 522
+      Left = 520
       Top = 38
       Width = 145
       Height = 21
@@ -1048,7 +1119,7 @@ object frmRelacionOC: TfrmRelacionOC
       OnKeyDown = cmbPartesKeyDown
     end
     object cmbPlanos: TComboBox
-      Left = 730
+      Left = 731
       Top = 38
       Width = 145
       Height = 21
@@ -1064,6 +1135,87 @@ object frmRelacionOC: TfrmRelacionOC
       Caption = 'Export ROC'
       TabOrder = 22
       OnClick = ExportROCClick
+    end
+    object gvColorCode: TGridView
+      Left = 1079
+      Top = 8
+      Width = 86
+      Height = 91
+      BorderStyle = bsSingle
+      Ctl3D = False
+      Enabled = False
+      GridStyle = gsReport
+      GridLinesStyle = lsNormal
+      HeaderSize = 18
+      HeaderStyle = hsAuto
+      HideScrollBar = True
+      InputSize = 16
+      Options = [goDissableColumnMoving, goGrid, goHighlightTextSelection, goSelectFullRow]
+      RowSize = 16
+      ParentColor = False
+      SelectionMoveDirection = mdDown
+      SlideSize = 80
+      TabOrder = 23
+      TabStop = True
+      WantReturns = False
+      object TTextualColumn
+        Alignment = taLeftJustify
+        Color = clWindow
+        Cursor = crDefault
+        DrawingOptions = doNormal
+        DefaultWidth = 10
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'Tahoma'
+        Font.Style = []
+        Footer.Color = clWindow
+        Footer.FormulaKind = fkNone
+        Header.Color = clBtnFace
+        Header.DisplayMode = dmTextOnly
+        Options = [coCanClick, coCanSort, coEditorAutoSelect, coPublicUsing]
+        Position = 0
+        SlideBounds.Height = 0
+        SlideBounds.Left = 0
+        SlideBounds.Top = 0
+        SlideBounds.Width = 0
+        Sorted = False
+        SortType = stAlphabetic
+        VerticalAlignment = vaMiddle
+        Visible = True
+        Width = 10
+        WrapKind = wkEllipsis
+        AutoExecute = False
+      end
+      object TTextualColumn
+        Alignment = taLeftJustify
+        Color = clBtnFace
+        Cursor = crDefault
+        DrawingOptions = doNormal
+        DefaultWidth = 70
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'Tahoma'
+        Font.Style = []
+        Footer.Color = clWindow
+        Footer.FormulaKind = fkNone
+        Header.Color = clBtnFace
+        Header.DisplayMode = dmTextOnly
+        Options = [coCanClick, coEditorAutoSelect, coPublicUsing]
+        Position = 1
+        SlideBounds.Height = 0
+        SlideBounds.Left = 0
+        SlideBounds.Top = 0
+        SlideBounds.Width = 0
+        Sorted = False
+        SortType = stAlphabetic
+        VerticalAlignment = vaMiddle
+        Visible = True
+        Width = 70
+        WrapKind = wkEllipsis
+        AutoExecute = False
+      end
     end
   end
   object ProgressBar1: TProgressBar

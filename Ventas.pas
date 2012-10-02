@@ -97,6 +97,8 @@ type
     PopupMenu2: TPopupMenu;
     Mezclar1: TMenuItem;
     Copiar1: TMenuItem;
+    Label17: TLabel;
+    txtRequisicion: TEdit;
     function FormIsRunning(FormName: String):Boolean;
     procedure ExportGrid(Grid:TGridView;sFileName: String);
     procedure BindGrid();
@@ -317,7 +319,9 @@ begin
     txtRequerida.Text := '';
     lblRequerida.Caption := '';
     txtNumero.Text := '';
-    txtTerminal.Text := '';
+    txtTerminal.Text := ''; // El label fue cambiado por Revision el 1 oct 2012 a peticion
+                            // de daria para que apareciera en el export del ROC
+    txtRequisicion.Text := '';                             
     deEntrega.Text := DateToStr(Now);
     deInterna.Text := DateToStr(Now);
     txtRecibido.Text := DateToStr(Now);
@@ -398,6 +402,7 @@ begin
     txtRequerida.ReadOnly := Value;
     txtNumero.ReadOnly := Value;
     txtTerminal.ReadOnly := Value;
+    txtRequisicion.ReadOnly := Value;
     txtUnitario.ReadOnly := Value;
     txtObservaciones.ReadOnly := Value;
     txtOtras.ReadOnly := Value;
@@ -483,6 +488,7 @@ begin
     txtOrdenada.Text := VarToStr(Qry['Ordenada']);
     txtNumero.Text := VarToStr(Qry['Numero']);
     txtTerminal.Text := VarToStr(Qry['Terminal']);
+    txtRequisicion.Text := VarTOStr(Qry['Requisicion']);
     deEntrega.Text := VarToStr(Qry['Entrega']);
     deInterna.Text := VarToStr(Qry['Interna']);
     txtRecibido.Text := VarToStr(Qry['Recibido']);
@@ -595,7 +601,8 @@ begin
                   ',' + QuotedStr(frmMain.sUserLogin) + ',' + QuotedStr(GetLocalIP) +
                   ',' + QuotedStr(txtCompra.Text) + ',' + BoolToStrInt(chkDlls.Checked) +
                   ',' + BoolToStrInt(chkStock.Checked) + ',' + planoId + ',' + BoolToStrInt(chkStockParcial.Checked) +
-                  ',' + stockParcial + ',' + BoolToStrInt(chkMezclar.Checked) + ',' + BoolToStrInt(stock);
+                  ',' + stockParcial + ',' + BoolToStrInt(chkMezclar.Checked) + ',' + BoolToStrInt(stock) +
+                  ',' + QuotedStr(txtRequisicion.Text);
 
         Qry2.SQL.Clear;
         Qry2.SQL.Text := SQLStr;
@@ -669,7 +676,7 @@ begin
                   ',' + QuotedStr(txtCompra.Text) + ',' + BoolToStrInt(chkDlls.Checked) +
                   ',' + BoolToStrInt(cambio) + ',' + BoolToStrInt(chkStock.Checked)+ ',' + planoId +
                   ',' + BoolToStrInt(chkStockParcial.Checked) + ',' + stockParcial +
-                  ',' + BoolToStrInt(chkMezclar.Checked);
+                  ',' + BoolToStrInt(chkMezclar.Checked) + ',' + QuotedStr(txtRequisicion.Text);
 
         Qry2.SQL.Clear;
         Qry2.SQL.Text := SQLStr;
@@ -1342,6 +1349,8 @@ begin
                 txtCompra.Text := sCompra;
                 deInterna.Date := StrToDate(sInterna);
                 deEntrega.Date := StrToDate(sEntrega);
+                txtRequisicion.Text := VarToStr(Qry2['Requisicion']);
+                txtTerminal.Text := VarToStr(Qry2['Terminal']);
                 txtOrden.SelStart := 8;
         end;
 
@@ -1512,13 +1521,18 @@ begin
             'T.Nombre AS Tarea, ' +
             'CASE WHEN I.ITS_Status = 0 THEN ''Listo'' ' +
             'WHEN I.ITS_Status = 1 THEN ''Activo'' ' +
-            'WHEN I.ITS_Status = 2 THEN ''Terminado'' END AS Status ' +
+            'WHEN I.ITS_Status = 2 THEN ''Terminado'' END AS Status, ' +
+            'SUM(CASE WHEN MO_Cantidad IS NULL THEN 0 ELSE MO_Cantidad END) As Usado, ' +
+            '(O.Ordenada + CASE WHEN StockParcialCantidad IS NULL THEN 0 ELSE StockParcialCantidad END) - ' +
+            '(SUM(CASE WHEN MO_Cantidad IS NULL THEN 0 ELSE MO_Cantidad END) + Requerida) As Disponible ' +
             'FROM tblOrdenes O  ' +
             'INNER JOIN tblItemTasks I ON O.ITE_ID = I.ITE_ID ' +
             'AND ITS_DTStart IS NOT NULL AND ITS_DTStop IS NULL AND I.ITS_Status <> 9 ' +
-            'AND LEFT(O.ITE_Nombre,2) = ' + QuotedStr(gsOYear) + ' ' +
+            'AND LEFT(O.ITE_Nombre,2) = ' + QuotedStr(gsOYear) + ' AND O.ITE_Nombre <> ' + QuotedStr(gsYear + txtOrden.Text) + ' ' +
             'INNER JOIN tblTareas T ON T.[ID] = I.TAS_ID ' +
-            'INNER JOIN tblPlano P ON O.PN_Id = P.PN_Id AND P.PN_Numero = ' + QuotedStr(cmbPlanos.Text);
+            'INNER JOIN tblPlano P ON O.PN_Id = P.PN_Id AND P.PN_Numero = ' + QuotedStr(cmbPlanos.Text) + ' ' +
+            'LEFT OUTER JOIN tblMergeOrdenes M ON O.ITE_Nombre = M.MO_ITE_Nombre ' +
+            'GROUP BY O.ITE_Nombre, O.Ordenada, O.Requerida, T.Nombre,I.ITS_Status,StockParcialCantidad';
 
   Qry2.SQL.Clear;
   Qry2.SQL.Text := SQLStr;
@@ -1530,8 +1544,9 @@ begin
     gvProdPlano.Cells[0, gvProdPlano.RowCount -1] := VarToStr(Qry2['Orden']);
     gvProdPlano.Cells[1, gvProdPlano.RowCount -1] := VarToStr(Qry2['Cantidad']);
     gvProdPlano.Cells[2, gvProdPlano.RowCount -1] := VarToStr(Qry2['Cliente']);
-    gvProdPlano.Cells[3, gvProdPlano.RowCount -1] := VarToStr(Qry2['Tarea']);
-    gvProdPlano.Cells[4, gvProdPlano.RowCount -1] := VarToStr(Qry2['Status']);
+    gvProdPlano.Cells[3, gvProdPlano.RowCount -1] := VarToStr(Qry2['Disponible']);
+    gvProdPlano.Cells[4, gvProdPlano.RowCount -1] := VarToStr(Qry2['Tarea']);
+    gvProdPlano.Cells[5, gvProdPlano.RowCount -1] := VarToStr(Qry2['Status']);
     Qry2.Next;
   end;
 
@@ -1647,12 +1662,18 @@ begin
             'T.Nombre AS Tarea, ' +
             'CASE WHEN I.ITS_Status = 0 THEN ''Listo'' ' +
             'WHEN I.ITS_Status = 1 THEN ''Activo'' ' +
-            'WHEN I.ITS_Status = 2 THEN ''Terminado'' END AS Status ' +
+            'WHEN I.ITS_Status = 2 THEN ''Terminado'' END AS Status, ' +
+            'SUM(CASE WHEN MO_Cantidad IS NULL THEN 0 ELSE MO_Cantidad END) As Usado, ' +
+            '(O.Ordenada + CASE WHEN StockParcialCantidad IS NULL THEN 0 ELSE StockParcialCantidad END) - ' +
+            '(SUM(CASE WHEN MO_Cantidad IS NULL THEN 0 ELSE MO_Cantidad END) + Requerida) As Disponible ' +
             'FROM tblOrdenes O  ' +
             'INNER JOIN tblItemTasks I ON O.ITE_ID = I.ITE_ID ' +
             'AND ITS_DTStart IS NOT NULL AND ITS_DTStop IS NULL AND I.ITS_Status <> 9 ' +
-            'AND LEFT(O.ITE_Nombre,2) = ' + QuotedStr(gsOYear) + ' AND O.Numero = ' + QuotedStr(txtNumero.Text) + ' ' +
-            'INNER JOIN tblTareas T ON T.[ID] = I.TAS_ID';
+            'AND LEFT(O.ITE_Nombre,2) = ' + QuotedStr(gsOYear) + ' AND O.Numero = ' + QuotedStr(txtNumero.Text) +
+            ' AND O.ITE_Nombre <> ' + QuotedStr(gsYear + txtOrden.Text) + ' ' +
+            'INNER JOIN tblTareas T ON T.[ID] = I.TAS_ID ' +
+            'LEFT OUTER JOIN tblMergeOrdenes M ON O.ITE_Nombre = M.MO_ITE_Nombre ' +
+            'GROUP BY O.ITE_Nombre, O.Ordenada, O.Requerida, T.Nombre,I.ITS_Status,StockParcialCantidad';
 
   Qry2.SQL.Clear;
   Qry2.SQL.Text := SQLStr;
@@ -1664,8 +1685,9 @@ begin
     gvProdNumero.Cells[0, gvProdNumero.RowCount -1] := VarToStr(Qry2['Orden']);
     gvProdNumero.Cells[1, gvProdNumero.RowCount -1] := VarToStr(Qry2['Cantidad']);
     gvProdNumero.Cells[2, gvProdNumero.RowCount -1] := VarToStr(Qry2['Cliente']);
-    gvProdNumero.Cells[3, gvProdNumero.RowCount -1] := VarToStr(Qry2['Tarea']);
-    gvProdNumero.Cells[4, gvProdNumero.RowCount -1] := VarToStr(Qry2['Status']);
+    gvProdNumero.Cells[3, gvProdNumero.RowCount -1] := VarToStr(Qry2['Disponible']);
+    gvProdNumero.Cells[4, gvProdNumero.RowCount -1] := VarToStr(Qry2['Tarea']);
+    gvProdNumero.Cells[5, gvProdNumero.RowCount -1] := VarToStr(Qry2['Status']);
     Qry2.Next;
   end;
 
@@ -1715,7 +1737,27 @@ begin
 end;
 
 procedure TfrmVentas.DeleteOrdenClick(Sender: TObject);
+var i, cantidad : Integer;
 begin
+
+  for i:= 0 to gvProdNumero.RowCount - 1 do
+  begin
+     if gvProdNumero.Cells[0,i] = gvMezclado.Cells[0, gvMezclado.SelectedRow] then begin
+        cantidad := StrToInt(gvProdNumero.Cells[3, i]) + StrToInt(gvMezclado.Cells[1, gvMezclado.SelectedRow]);
+        gvProdNumero.Cells[3, i] := IntToStr(cantidad);
+        break;
+     end;
+  end;
+
+  for i:= 0 to gvProdPlano.RowCount - 1 do
+  begin
+     if gvProdPlano.Cells[0,i] = gvMezclado.Cells[0, gvMezclado.SelectedRow] then begin
+        cantidad := StrToInt(gvProdPlano.Cells[3, i]) + StrToInt(gvMezclado.Cells[1, gvMezclado.SelectedRow]);
+        gvProdPlano.Cells[3, i] := IntToStr(cantidad);
+        break;
+     end;
+  end;
+
   gvMezclado.DeleteRow(gvMezclado.SelectedRow);
 end;
 
@@ -1756,13 +1798,21 @@ begin
     Exit;
   end;
 
+  for i:= 0 to gvMezclado.RowCount - 1 do
+  begin
+     if gvMezclado.Cells[0,i] = txtOrdenMezclar.Text then begin
+        MessageDlg('La Orden ya existe.', mtInformation,[mbOk], 0);
+        Exit;
+     end;
+  end;
+
   found := false;
   cantidad := 0;
   for i:= 0 to gvProdNumero.RowCount - 1 do
   begin
      if gvProdNumero.Cells[0,i] = txtOrdenMezclar.Text then begin
         found := True;
-        cantidad := StrToInt(gvProdNumero.Cells[1,i]) - StrToInt(gvProdNumero.Cells[2,i]);
+        cantidad := StrToInt(gvProdNumero.Cells[3, i]);
         break;
      end;
   end;
@@ -1771,7 +1821,7 @@ begin
   begin
      if gvProdPlano.Cells[0,i] = txtOrdenMezclar.Text then begin
         found := True;
-        cantidad := StrToInt(gvProdPlano.Cells[1,i]) - StrToInt(gvProdPlano.Cells[2,i]);
+        cantidad := StrToInt(gvProdPlano.Cells[3, i]);
         break;
      end;
   end;
@@ -1779,14 +1829,6 @@ begin
   if found = false then begin
     MessageDlg('La Orden no es valida, no es una orden en produccion.', mtInformation,[mbOk], 0);
     Exit;
-  end;
-
-  for i:= 0 to gvMezclado.RowCount - 1 do
-  begin
-     if gvMezclado.Cells[0,i] = txtOrdenMezclar.Text then begin
-        MessageDlg('La Orden ya existe.', mtInformation,[mbOk], 0);
-        Exit;
-     end;
   end;
 
   if StrToInt(txtCantidadMezclar.Text) > cantidad then begin
@@ -1815,26 +1857,20 @@ begin
 end;
 
 procedure TfrmVentas.MenuItem2Click(Sender: TObject);
-var cantidad : integer;
 begin
   if (giOpcion = 0) or (not chkMezclar.Checked) then Exit;
 
   txtOrdenMezclar.Text := gvProdNumero.Cells[0, gvProdNumero.SelectedRow];
-  cantidad := StrToInt(gvProdNumero.Cells[1, gvProdNumero.SelectedRow]) - StrToInt(gvProdNumero.Cells[2, gvProdNumero.SelectedRow]);
-
-  txtCantidadMezclar.Text := IntToStr(cantidad);
+  txtCantidadMezclar.Text := gvProdNumero.Cells[3, gvProdNumero.SelectedRow];
   txtCantidadMezclar.SetFocus;
 end;
 
 procedure TfrmVentas.Mezclar1Click(Sender: TObject);
-var cantidad : integer;
 begin
   if (giOpcion = 0) or (not chkMezclar.Checked) then Exit;
 
   txtOrdenMezclar.Text := gvProdPlano.Cells[0, gvProdPlano.SelectedRow];
-  cantidad := StrToInt(gvProdPlano.Cells[1, gvProdPlano.SelectedRow]) - StrToInt(gvProdPlano.Cells[2, gvProdPlano.SelectedRow]);
-
-  txtCantidadMezclar.Text := IntToStr(cantidad);
+  txtCantidadMezclar.Text := gvProdPlano.Cells[3, gvProdPlano.SelectedRow];
   txtCantidadMezclar.SetFocus;
 end;
 

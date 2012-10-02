@@ -67,6 +67,8 @@ type
     cmbPlanos: TComboBox;
     Label8: TLabel;
     ExportROC: TButton;
+    gvColorCode: TGridView;
+    lblWeek: TLabel;
     procedure IdleLoop; virtual;
     function FormIsRunning(FormName: String):Boolean;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
@@ -108,6 +110,9 @@ type
     procedure cmbCompraKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
     procedure ExportROCClick(Sender: TObject);
+    procedure cmbCompraKeyPress(Sender: TObject; var Key: Char);
+    procedure cmbPartesKeyPress(Sender: TObject; var Key: Char);
+    function getClient(clientId : String; date: String) :String;
   private
     { Private declarations }
   public
@@ -174,6 +179,28 @@ begin
     CheckBox1.Checked := False;
     btnOKClick(nil);
     BindGrid();
+
+
+    gvColorCode.ClearRows;
+    gvColorCode.AddRow();
+    gvColorCode.Cells[1,gvColorCode.RowCount -1] := 'Stock';
+    gvColorCode.Cell[0, gvColorCode.RowCount -1].Color := clBlue;
+
+    gvColorCode.AddRow();
+    gvColorCode.Cells[1,gvColorCode.RowCount -1] := 'Terminado';
+    gvColorCode.Cell[0, gvColorCode.RowCount -1].Color := clYellow;
+
+    gvColorCode.AddRow();
+    gvColorCode.Cells[1,gvColorCode.RowCount -1] := 'Sin Plano';
+    gvColorCode.Cell[0, gvColorCode.RowCount -1].Color := clSkyBlue;
+
+    gvColorCode.AddRow();
+    gvColorCode.Cells[1,gvColorCode.RowCount -1] := 'Stock Parcial';
+    gvColorCode.Cell[0, gvColorCode.RowCount -1].Color := clLime;
+
+    gvColorCode.AddRow();
+    gvColorCode.Cells[1,gvColorCode.RowCount -1] := 'Mezclado';
+    gvColorCode.Cell[0, gvColorCode.RowCount -1].Color := clSilver;
 
 end;
 
@@ -278,6 +305,8 @@ begin
         GridView1.Cells[16,GridView1.RowCount -1] := VarToStr(Qry['StockParcialCantidad']);
         GridView1.Cells[17,GridView1.RowCount -1] := getBitVal(VarToStr(Qry['Mezclado']));
         GridView1.Cells[18,GridView1.RowCount -1] := VarToStr(Qry['MO_ITE_NOmbre']);
+        GridView1.Cells[19,GridView1.RowCount -1] := VarToStr(Qry['Revision']);
+        GridView1.Cells[20,GridView1.RowCount -1] := VarToStr(Qry['Requisicion']);
 
         if (GridView1.Cells[10,GridView1.RowCount -1] = 'VentasFinal') and (GridView1.Cells[11,GridView1.RowCount -1] = 'Terminado') then
            begin
@@ -1416,15 +1445,20 @@ begin
       Sheet := XApp.ActiveWorkbook.WorkSheets['PAGE 1'];
 
       //Sheet.Name := 'Ordenes de Compra';
-      Sheet.Cells[5, 3] := cmbCompra.Text;
+      Sheet.Cells[5, 3] := UpperCase(cmbCompra.Text);
+      Sheet.Cells[4, 6] := getClient(LeftStr(Grid.Cells[0, 1], 3), Grid.Cells[1, 1]);
+      Sheet.Cells[5, 6] := LeftStr(Grid.Cells[0, 1], 3);
+      Sheet.Cells[5, 8] := 'SEM ' + lblWeek.Caption;
+
+
       for Row := 1 to Grid.RowCount do begin
         Sheet.Cells[Row + 7, 1] := Grid.Cells[0, Row - 1];
         Sheet.Cells[Row + 7, 2] := Grid.Cells[1, Row - 1];
-        //Sheet.Cells[Row + 7, 3] := Grid.Cells[1, Row - 1];
+        Sheet.Cells[Row + 7, 3] := Grid.Cells[20, Row - 1];
         Sheet.Cells[Row + 7, 4] := Grid.Cells[4, Row - 1];
         Sheet.Cells[Row + 7, 5] := Grid.Cells[5, Row - 1];
         Sheet.Cells[Row + 7, 6] := Grid.Cells[7, Row - 1];
-        //Sheet.Cells[Row + 7, 7] := Grid.Cells[4, Row - 1];
+        Sheet.Cells[Row + 7, 7] := Grid.Cells[19, Row - 1];
         Sheet.Cells[Row + 7, 8] := Grid.Cells[8, Row - 1];
       end;
 
@@ -1441,6 +1475,40 @@ function TfrmRelacionOC.getBitVal(value : String):String;
 begin
   result := 'No';
   if(value = '1') then result := 'Si';
+end;
+
+procedure TfrmRelacionOC.cmbCompraKeyPress(Sender: TObject; var Key: Char);
+begin
+  Key := upcase(Key);
+end;
+
+procedure TfrmRelacionOC.cmbPartesKeyPress(Sender: TObject; var Key: Char);
+begin
+  Key := upcase(Key);
+end;
+
+function TfrmRelacionOC.getClient(clientId : String; date: String) : String;
+var SQLStr: String;
+Qry2 : TADOQuery;
+begin
+  result := '';
+  lblWeek.Caption := '';
+  Qry2 := TADOQuery.Create(nil);
+  Qry2.Connection :=Conn;
+
+  SQLStr := 'SELECT *, dbo.ISOWeek(' + QuotedStr(date) + ') As Week FROM tblClientes WHERE Clave = ' + QuotedStr(clientId);
+
+  Qry2.SQL.Clear;
+  Qry2.SQL.Text := SQLStr;
+  Qry2.Open;
+
+  if Qry2.RecordCount > 0 then begin
+    result := VarToStr(Qry2['Nombre']);
+    lblWeek.Caption := VarToStr(Qry2['Week']);
+  end;
+
+  Qry2.Close;
+  Qry2.Free;
 end;
 
 end.
