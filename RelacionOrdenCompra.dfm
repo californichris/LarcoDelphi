@@ -1,6 +1,6 @@
 object frmRelacionOC: TfrmRelacionOC
-  Left = 106
-  Top = 25
+  Left = 49
+  Top = 35
   Width = 1219
   Height = 675
   Caption = 'Relacion  de Ordene de Compra por Cliente'
@@ -130,7 +130,6 @@ object frmRelacionOC: TfrmRelacionOC
     Top = 108
     Width = 1169
     Height = 505
-    Cursor = 3000
     Hint = 'Presiona F5 para Refrescar'
     BorderStyle = bsSingle
     GridStyle = gsReport

@@ -21,31 +21,42 @@ var Conn : TADOConnection;
 Qry : TADOQuery;
 SQLStr : String;
 begin
-    //Create Connection
-    Conn := TADOConnection.Create(nil);
-    Conn.ConnectionString := sConnString;
-    Conn.LoginPrompt := False;
-    Qry := TADOQuery.Create(nil);
-    Qry.Connection :=Conn;
+    Qry := nil;
+    Conn := nil;
+    try
+    begin
+      Conn := TADOConnection.Create(nil);
+      Conn.ConnectionString := sConnString;
+      Conn.LoginPrompt := False;
+      Qry := TADOQuery.Create(nil);
+      Qry.Connection :=Conn;
 
-    SQLStr := 'SELECT ID,Nombre FROM tblEmpleados Order By Nombre';
+      SQLStr := 'SELECT ID,Nombre FROM tblEmpleados Order By Nombre';
 
-    Qry.SQL.Clear;
-    Qry.SQL.Text := SQLStr;
-    Qry.Open;
+      Qry.SQL.Clear;
+      Qry.SQL.Text := SQLStr;
+      Qry.Open;
 
-    cmbEmpleados.Items.Clear;
-    cmbEmpleados.Items.Add('Todos');
-    cmbEmpleados.Items.Add('000 - Desconocido');
-    While not Qry.Eof do
-    Begin
-        cmbEmpleados.Items.Add(FormatFloat('000',Qry['ID']) + ' - ' + Qry['Nombre']);
-        Qry.Next;
-    End;
+      cmbEmpleados.Items.Clear;
+      cmbEmpleados.Items.Add('Todos');
+      cmbEmpleados.Items.Add('000 - Desconocido');
+      while not Qry.Eof do begin
+          cmbEmpleados.Items.Add(FormatFloat('000',Qry['ID']) + ' - ' + Qry['Nombre']);
+          Qry.Next;
+      end;
+    end
+    finally
+      if Qry <> nil then begin
+        Qry.Close;
+        Qry.Free;
+      end;
+      if Conn <> nil then begin
+        Conn.Close;
+        Conn.Free
+      end;
+    end;
 
     cmbEmpleados.Text := '';
-    Qry.Close;
-    Conn.Close;
 end;
 
 procedure BindComboTareasDetectado(sConnString: String;
@@ -54,35 +65,45 @@ var Conn : TADOConnection;
 Qry : TADOQuery;
 SQLStr : String;
 begin
-    //Create Connection
-    Conn := TADOConnection.Create(nil);
-    Conn.ConnectionString := sConnString;
-    Conn.LoginPrompt := False;
-    Qry := TADOQuery.Create(nil);
-    Qry.Connection :=Conn;
+    Qry := nil;
+    Conn := nil;
+    try
+    begin
+      Conn := TADOConnection.Create(nil);
+      Conn.ConnectionString := sConnString;
+      Conn.LoginPrompt := False;
+      Qry := TADOQuery.Create(nil);
+      Qry.Connection :=Conn;
 
-    SQLStr := 'SELECT Nombre FROM tblTareas Order By Nombre';
+      SQLStr := 'SELECT Nombre FROM tblTareas Order By Nombre';
 
-    Qry.SQL.Clear;
-    Qry.SQL.Text := SQLStr;
-    Qry.Open;
+      Qry.SQL.Clear;
+      Qry.SQL.Text := SQLStr;
+      Qry.Open;
 
-    cmbTareas.Items.Clear;
-    cmbDetectado.Items.Clear;
-    cmbTareas.Items.Add('Todos');
-    cmbDetectado.Items.Add('Todos');
-    While not Qry.Eof do
-    Begin
-        cmbTareas.Items.Add(Qry['Nombre']);
-        cmbDetectado.Items.Add(Qry['Nombre']);
-        Qry.Next;
-    End;
+      cmbTareas.Items.Clear;
+      cmbDetectado.Items.Clear;
+      cmbTareas.Items.Add('Todos');
+      cmbDetectado.Items.Add('Todos');
+      while not Qry.Eof do begin
+          cmbTareas.Items.Add(Qry['Nombre']);
+          cmbDetectado.Items.Add(Qry['Nombre']);
+          Qry.Next;
+      end;
+    end
+    finally
+      if Qry <> nil then begin
+        Qry.Close;
+        Qry.Free;
+      end;
+      if Conn <> nil then begin
+        Conn.Close;
+        Conn.Free
+      end;
+    end;
 
     cmbTareas.Text := '';
     cmbDetectado.Text := '';
-
-    Qry.Close;
-    Conn.Close;
 end;
 
 procedure BindGridClientes(sConnString: String; gvClientes: TGridView);
@@ -94,33 +115,43 @@ begin
     slClientes := TStringList.Create;
     slClientes.CommaText := '060,062,699,799,899,999,960';
 
-    //Create Connection
-    Conn := TADOConnection.Create(nil);
-    Conn.ConnectionString := sConnString;
-    Conn.LoginPrompt := False;
-    Qry := TADOQuery.Create(nil);
-    Qry.Connection :=Conn;
+    Qry := nil;
+    Conn := nil;
+    try
+    begin
+      Conn := TADOConnection.Create(nil);
+      Conn.ConnectionString := sConnString;
+      Conn.LoginPrompt := False;
+      Qry := TADOQuery.Create(nil);
+      Qry.Connection :=Conn;
 
-    SQLStr := 'SELECT Distinct Clave FROM tblClientes Order By Clave';
+      SQLStr := 'SELECT Distinct Clave FROM tblClientes Order By Clave';
 
-    Qry.SQL.Clear;
-    Qry.SQL.Text := SQLStr;
-    Qry.Open;
+      Qry.SQL.Clear;
+      Qry.SQL.Text := SQLStr;
+      Qry.Open;
 
-    gvClientes.ClearRows;
-    While not Qry.Eof do
-    Begin
-        gvClientes.AddRow(1);
-        gvClientes.Cells[0,gvClientes.RowCount -1] := VarToStr(Qry['Clave']);
-        if (slClientes.IndexOf(VarToStr(Qry['Clave'])) = -1) then begin
-                gvClientes.Cell[1,gvClientes.RowCount -1].AsBoolean := True;
-        end;
+      gvClientes.ClearRows;
+      while not Qry.Eof do begin
+          gvClientes.AddRow(1);
+          gvClientes.Cells[0,gvClientes.RowCount -1] := VarToStr(Qry['Clave']);
+          if (slClientes.IndexOf(VarToStr(Qry['Clave'])) = -1) then begin
+                  gvClientes.Cell[1,gvClientes.RowCount -1].AsBoolean := True;
+          end;
 
-        Qry.Next;
-    End;
-
-    Qry.Close;
-    Conn.Close;
+          Qry.Next;
+      end;
+    end
+    finally
+      if Qry <> nil then begin
+        Qry.Close;
+        Qry.Free;
+      end;
+      if Conn <> nil then begin
+        Conn.Close;
+        Conn.Free
+      end;
+    end;
 end;
 
 function getFormYear(sConnString: String; sFormName: String): String;
@@ -132,6 +163,7 @@ begin
     Qry := nil;
     Result := '';
     try
+    begin
         Conn := TADOConnection.Create(nil);
         Conn.ConnectionString := sConnString;
         Conn.LoginPrompt := False;
@@ -150,16 +182,17 @@ begin
         else begin
                 Result := WordToStr( YearOf(Date) );
         end;
-
-    except
-          on e : EOleException do
-                ShowMessage('La base de datos no esta disponible. Por favor verifique que exista conectividad al servidor.');
-          on e : Exception do
-                ShowMessage(e.ClassName + ' error raised, with message : ' + e.Message + ' Method : getFormYear');
+    end
+    finally
+      if Qry <> nil then begin
+        Qry.Close;
+        Qry.Free;
+      end;
+      if Conn <> nil then begin
+        Conn.Close;
+        Conn.Free
+      end;
     end;
-
-    Qry.Close;
-    Conn.Close;
 end;
 
 function getUserPermits(sConnString: String; sFormName: String; sUserLogin: String): String;
@@ -171,6 +204,7 @@ begin
     Qry := nil;
     Result := '';
     try
+    begin
         Conn := TADOConnection.Create(nil);
         Conn.ConnectionString := sConnString;
         Conn.LoginPrompt := False;
@@ -196,16 +230,17 @@ begin
         else begin
                 Result := '0,0,0,0';
         end;
-
-    except
-          on e : EOleException do
-                ShowMessage('La base de datos no esta disponible. Por favor verifique que exista conectividad al servidor.');
-          on e : Exception do
-                ShowMessage(e.ClassName + ' error raised, with message : ' + e.Message + ' Method : getFormYear');
+    end
+    finally
+      if Qry <> nil then begin
+        Qry.Close;
+        Qry.Free;
+      end;
+      if Conn <> nil then begin
+        Conn.Close;
+        Conn.Free
+      end;
     end;
-
-    Qry.Close;
-    Conn.Close;
 end;
 
 procedure EnableFormButtons(gbButtons: TGroupBox; sPermits: String);

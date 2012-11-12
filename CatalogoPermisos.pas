@@ -57,6 +57,7 @@ begin
     Conn := nil;
     Qry := nil;
     try
+    begin
         Conn := TADOConnection.Create(nil);
         Conn.ConnectionString := frmMain.sConnString;
         Conn.LoginPrompt := False;
@@ -77,15 +78,17 @@ begin
             GridView1.Cells[1,GridView1.RowCount -1] := VarToStr(Qry['Group_Name']);
             Qry.Next;
         end;
-    except
-          on e : EOleException do
-                ShowMessage('La base de datos no esta disponible. Por favor verifique que exista conectividad al servidor.');
-          on e : Exception do
-                ShowMessage(e.ClassName + ' error raised, with message : ' + e.Message + ' Method : BindGrid');
+    end
+    finally
+      if Qry <> nil then begin
+        Qry.Close;
+        Qry.Free;
+      end;
+      if Conn <> nil then begin
+        Conn.Close;
+        Conn.Free
+      end;
     end;
-
-    Qry.Close;
-    Conn.Close;
 end;
 
 procedure TfrmCatalogoPermisos.BindPantallas();
@@ -96,7 +99,7 @@ begin
     Conn := nil;
     Qry := nil;
     try
-
+    begin
         Conn := TADOConnection.Create(nil);
         Conn.ConnectionString := frmMain.sConnString;
         Conn.LoginPrompt := False;
@@ -118,16 +121,17 @@ begin
             GridView2.Cells[1,GridView2.RowCount -1] := VarToStr(Qry['SCR_Name']);
             Qry.Next;
         End;
-
-    except
-          on e : EOleException do
-                ShowMessage('La base de datos no esta disponible. Por favor verifique que exista conectividad al servidor.');
-          on e : Exception do
-                ShowMessage(e.ClassName + ' error raised, with message : ' + e.Message + ' Method : BindGrid');
+    end
+    finally
+      if Qry <> nil then begin
+        Qry.Close;
+        Qry.Free;
+      end;
+      if Conn <> nil then begin
+        Conn.Close;
+        Conn.Free
+      end;
     end;
-
-    Qry.Close;
-    Conn.Close;
 end;
 
 
@@ -153,6 +157,7 @@ begin
 
     Conn := nil;
     try
+    begin
         Conn := TADOConnection.Create(nil);
         Conn.ConnectionString := frmMain.sConnString;
         Conn.LoginPrompt := False;
@@ -177,14 +182,13 @@ begin
         end;
 
         GridView1SelectCell(nil,0,GridView1.SelectedRow);
-    except
-          on e : EOleException do
-                ShowMessage('La base de datos no esta disponible. Por favor verifique que exista conectividad al servidor.');
-          on e : Exception do
-                ShowMessage(e.ClassName + ' error raised, with message : ' + e.Message + ' Method : btnAddClick');
+    end
+    finally
+      if Conn <> nil then begin
+        Conn.Close;
+        Conn.Free
+      end;
     end;
-
-    Conn.Close;
 end;
 
 procedure TfrmCatalogoPermisos.GridView1SelectCell(Sender: TObject; ACol, ARow: Integer);
@@ -196,6 +200,7 @@ begin
     Conn := nil;
     Qry := nil;
     try
+    begin
         Conn := TADOConnection.Create(nil);
         Conn.ConnectionString := frmMain.sConnString;
         Conn.LoginPrompt := False;
@@ -231,16 +236,17 @@ begin
             Qry.Next;
         End;
         Application.ProcessMessages;
-    except
-          on e : EOleException do
-                ShowMessage('La base de datos no esta disponible. Por favor verifique que exista conectividad al servidor.');
-          on e : Exception do
-                ShowMessage(e.ClassName + ' error raised, with message : ' + e.Message + ' Method : BindGrid');
+    end
+    finally
+      if Qry <> nil then begin
+        Qry.Close;
+        Qry.Free;
+      end;
+      if Conn <> nil then begin
+        Conn.Close;
+        Conn.Free
+      end;
     end;
-
-    Qry.Close;
-    Conn.Close;
-
 end;
 
 procedure TfrmCatalogoPermisos.btnCerrarClick(Sender: TObject);

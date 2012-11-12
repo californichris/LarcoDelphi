@@ -1446,7 +1446,7 @@ begin
 
       //Sheet.Name := 'Ordenes de Compra';
       Sheet.Cells[5, 3] := UpperCase(cmbCompra.Text);
-      Sheet.Cells[4, 6] := getClient(LeftStr(Grid.Cells[0, 1], 3), Grid.Cells[1, 1]);
+      Sheet.Cells[4, 6] := UpperCase(getClient(LeftStr(Grid.Cells[0, 1], 3), Grid.Cells[1, 1]));
       Sheet.Cells[5, 6] := LeftStr(Grid.Cells[0, 1], 3);
       Sheet.Cells[5, 8] := 'SEM ' + lblWeek.Caption;
 
@@ -1454,10 +1454,10 @@ begin
       for Row := 1 to Grid.RowCount do begin
         Sheet.Cells[Row + 7, 1] := Grid.Cells[0, Row - 1];
         Sheet.Cells[Row + 7, 2] := Grid.Cells[1, Row - 1];
-        Sheet.Cells[Row + 7, 3] := Grid.Cells[20, Row - 1];
+        Sheet.Cells[Row + 7, 3] := UpperCase(Grid.Cells[20, Row - 1]);
         Sheet.Cells[Row + 7, 4] := Grid.Cells[4, Row - 1];
-        Sheet.Cells[Row + 7, 5] := Grid.Cells[5, Row - 1];
-        Sheet.Cells[Row + 7, 6] := Grid.Cells[7, Row - 1];
+        Sheet.Cells[Row + 7, 5] := UpperCase(Grid.Cells[5, Row - 1]);
+        Sheet.Cells[Row + 7, 6] := UpperCase(Grid.Cells[7, Row - 1]);
         Sheet.Cells[Row + 7, 7] := Grid.Cells[19, Row - 1];
         Sheet.Cells[Row + 7, 8] := Grid.Cells[8, Row - 1];
       end;

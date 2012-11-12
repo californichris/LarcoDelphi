@@ -352,6 +352,18 @@ object frmMain: TfrmMain
         Caption = 'Entradas Stock'
         OnClick = EntradasStock1Click
       end
+      object EntradasvsSalidas1: TMenuItem
+        Caption = 'Entradas vs Salidas'
+        OnClick = EntradasvsSalidas1Click
+      end
+      object EntradasvsSalidasPorPlano1: TMenuItem
+        Caption = 'Entradas vs Salidas Por Plano'
+        OnClick = EntradasvsSalidasPorPlano1Click
+      end
+      object TotalPiezasStock1: TMenuItem
+        Caption = 'Total de Piezas en Stock'
+        OnClick = TotalPiezasStock1Click
+      end
     end
   end
   object Timer1: TTimer

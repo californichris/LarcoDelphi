@@ -1,7 +1,7 @@
 object frmEntrega: TfrmEntrega
   Left = 102
   Top = 63
-  Width = 1005
+  Width = 1231
   Height = 589
   Caption = 'Relacion de Fecha de Entrega'
   Color = clBtnFace
@@ -272,9 +272,8 @@ object frmEntrega: TfrmEntrega
   object GridView1: TGridView
     Left = 16
     Top = 120
-    Width = 993
+    Width = 1169
     Height = 505
-    Cursor = 3000
     Hint = 'Presiona F5 para Refrescar'
     BorderStyle = bsSingle
     GridStyle = gsReport
@@ -448,6 +447,36 @@ object frmEntrega: TfrmEntrega
       Color = clWindow
       Cursor = crDefault
       DrawingOptions = doNormal
+      DefaultWidth = 80
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      Footer.Color = clWindow
+      Footer.FormulaKind = fkNone
+      Header.Color = clBtnFace
+      Header.Caption = 'OrdenCompra'
+      Header.DisplayMode = dmTextOnly
+      Options = [coCanClick, coCanSort, coEditorAutoSelect, coPublicUsing]
+      Position = 5
+      SlideBounds.Height = 0
+      SlideBounds.Left = 0
+      SlideBounds.Top = 0
+      SlideBounds.Width = 0
+      Sorted = False
+      SortType = stAlphabetic
+      VerticalAlignment = vaMiddle
+      Visible = True
+      Width = 80
+      WrapKind = wkEllipsis
+      AutoExecute = False
+    end
+    object TTextualColumn
+      Alignment = taLeftJustify
+      Color = clWindow
+      Cursor = crDefault
+      DrawingOptions = doNormal
       DefaultWidth = 50
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
@@ -460,7 +489,7 @@ object frmEntrega: TfrmEntrega
       Header.Caption = 'Term.'
       Header.DisplayMode = dmTextOnly
       Options = [coCanClick, coCanSort, coEditorAutoSelect, coPublicUsing]
-      Position = 5
+      Position = 6
       SlideBounds.Height = 0
       SlideBounds.Left = 0
       SlideBounds.Top = 0
@@ -490,7 +519,7 @@ object frmEntrega: TfrmEntrega
       Header.Caption = 'Fecha Interna'
       Header.DisplayMode = dmTextOnly
       Options = [coCanClick, coCanSort, coEditorAutoSelect, coPublicUsing]
-      Position = 6
+      Position = 7
       SlideBounds.Height = 0
       SlideBounds.Left = 0
       SlideBounds.Top = 0
@@ -520,7 +549,7 @@ object frmEntrega: TfrmEntrega
       Header.Caption = 'Fecha Compromiso'
       Header.DisplayMode = dmTextOnly
       Options = [coCanClick, coCanSort, coEditorAutoSelect, coPublicUsing]
-      Position = 7
+      Position = 8
       SlideBounds.Height = 0
       SlideBounds.Left = 0
       SlideBounds.Top = 0
@@ -530,6 +559,36 @@ object frmEntrega: TfrmEntrega
       VerticalAlignment = vaMiddle
       Visible = True
       Width = 90
+      WrapKind = wkEllipsis
+      AutoExecute = False
+    end
+    object TTextualColumn
+      Alignment = taLeftJustify
+      Color = clWindow
+      Cursor = crDefault
+      DrawingOptions = doNormal
+      DefaultWidth = 80
+      Font.Charset = ANSI_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -11
+      Font.Name = 'Tahoma'
+      Font.Style = []
+      Footer.Color = clWindow
+      Footer.FormulaKind = fkNone
+      Header.Color = clBtnFace
+      Header.Caption = 'Fecha Recibido'
+      Header.DisplayMode = dmTextOnly
+      Options = [coCanClick, coCanSort, coEditorAutoSelect, coPublicUsing]
+      Position = 9
+      SlideBounds.Height = 0
+      SlideBounds.Left = 0
+      SlideBounds.Top = 0
+      SlideBounds.Width = 0
+      Sorted = False
+      SortType = stAlphabetic
+      VerticalAlignment = vaMiddle
+      Visible = True
+      Width = 80
       WrapKind = wkEllipsis
       AutoExecute = False
     end
@@ -550,7 +609,7 @@ object frmEntrega: TfrmEntrega
       Header.Caption = 'Tarea'
       Header.DisplayMode = dmTextOnly
       Options = [coCanClick, coCanSort, coEditorAutoSelect, coPublicUsing]
-      Position = 8
+      Position = 10
       SlideBounds.Height = 0
       SlideBounds.Left = 0
       SlideBounds.Top = 0
@@ -580,7 +639,7 @@ object frmEntrega: TfrmEntrega
       Header.Caption = 'Status'
       Header.DisplayMode = dmTextOnly
       Options = [coCanClick, coCanSort, coEditorAutoSelect, coPublicUsing]
-      Position = 9
+      Position = 11
       SlideBounds.Height = 0
       SlideBounds.Left = 0
       SlideBounds.Top = 0
@@ -610,7 +669,7 @@ object frmEntrega: TfrmEntrega
       Header.Caption = 'Fecha y hora'
       Header.DisplayMode = dmTextOnly
       Options = [coCanClick, coCanSort, coEditorAutoSelect, coPublicUsing]
-      Position = 10
+      Position = 12
       SlideBounds.Height = 0
       SlideBounds.Left = 0
       SlideBounds.Top = 0
@@ -640,7 +699,7 @@ object frmEntrega: TfrmEntrega
       Header.Caption = 'Empelado'
       Header.DisplayMode = dmTextOnly
       Options = [coCanClick, coCanSort, coEditorAutoSelect, coPublicUsing]
-      Position = 11
+      Position = 13
       SlideBounds.Height = 0
       SlideBounds.Left = 0
       SlideBounds.Top = 0
@@ -670,7 +729,7 @@ object frmEntrega: TfrmEntrega
       Header.Caption = 'Observaciones'
       Header.DisplayMode = dmTextOnly
       Options = [coCanClick, coCanSort, coEditorAutoSelect, coPublicUsing]
-      Position = 12
+      Position = 14
       SlideBounds.Height = 0
       SlideBounds.Left = 0
       SlideBounds.Top = 0
@@ -687,7 +746,7 @@ object frmEntrega: TfrmEntrega
   object gbSearch: TGroupBox
     Left = 16
     Top = 8
-    Width = 993
+    Width = 1169
     Height = 105
     Hint = 'Presiona F5 para Refrescar'
     ParentShowHint = False
@@ -769,7 +828,7 @@ object frmEntrega: TfrmEntrega
       Date = 38829
     end
     object Button1: TButton
-      Left = 880
+      Left = 784
       Top = 64
       Width = 75
       Height = 25
@@ -915,7 +974,7 @@ object frmEntrega: TfrmEntrega
       TabOrder = 12
     end
     object Button2: TButton
-      Left = 800
+      Left = 704
       Top = 64
       Width = 75
       Height = 25
@@ -924,7 +983,7 @@ object frmEntrega: TfrmEntrega
       OnClick = Button2Click
     end
     object btnBuscar: TButton
-      Left = 720
+      Left = 624
       Top = 64
       Width = 75
       Height = 25
@@ -993,6 +1052,24 @@ object frmEntrega: TfrmEntrega
       Height = 21
       ItemHeight = 13
       TabOrder = 21
+    end
+    object txtTarea: TEdit
+      Left = 915
+      Top = 38
+      Width = 144
+      Height = 21
+      ReadOnly = True
+      TabOrder = 22
+      Text = 'Todos'
+    end
+    object Button8: TButton
+      Left = 1060
+      Top = 38
+      Width = 17
+      Height = 21
+      Caption = '...'
+      TabOrder = 23
+      OnClick = Button8Click
     end
   end
   object GroupBox3: TGroupBox
@@ -1111,7 +1188,7 @@ object frmEntrega: TfrmEntrega
   end
   object GroupBox5: TGroupBox
     Left = 20
-    Top = 93
+    Top = 165
     Width = 141
     Height = 348
     TabOrder = 4
@@ -1338,8 +1415,8 @@ object frmEntrega: TfrmEntrega
     end
   end
   object Button5: TButton
-    Left = 16
-    Top = 120
+    Left = 24
+    Top = 144
     Width = 75
     Height = 25
     Caption = 'Button5'
@@ -1348,8 +1425,8 @@ object frmEntrega: TfrmEntrega
     OnClick = Button5Click
   end
   object Button6: TButton
-    Left = 96
-    Top = 120
+    Left = 104
+    Top = 152
     Width = 75
     Height = 25
     Caption = 'Button6'
@@ -1357,13 +1434,127 @@ object frmEntrega: TfrmEntrega
     Visible = False
     OnClick = Button6Click
   end
+  object GroupBox4: TGroupBox
+    Left = 588
+    Top = 157
+    Width = 141
+    Height = 348
+    TabOrder = 8
+    Visible = False
+    object gvTareas: TGridView
+      Left = 9
+      Top = 32
+      Width = 121
+      Height = 290
+      BorderStyle = bsSingle
+      GridStyle = gsReport
+      GridLinesStyle = lsNormal
+      HeaderSize = 18
+      HeaderStyle = hsAuto
+      HideScrollBar = True
+      InputSize = 16
+      Options = [goAlwaysIndicateSelected, goHeader, goHighlightTextSelection, goSelectFullRow]
+      RowSize = 16
+      ParentColor = False
+      SelectionMoveDirection = mdDown
+      SlideSize = 80
+      TabOrder = 0
+      TabStop = True
+      WantReturns = False
+      object TTextualColumn
+        Alignment = taLeftJustify
+        Color = clWindow
+        Cursor = crDefault
+        DrawingOptions = doNormal
+        DefaultWidth = 80
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'Tahoma'
+        Font.Style = []
+        Footer.Color = clWindow
+        Footer.FormulaKind = fkNone
+        Header.Color = clBtnFace
+        Header.Caption = 'Tareas'
+        Header.DisplayMode = dmTextOnly
+        Options = [coCanClick, coCanSort, coEditorAutoSelect, coPublicUsing]
+        Position = 0
+        SlideBounds.Height = 0
+        SlideBounds.Left = 0
+        SlideBounds.Top = 0
+        SlideBounds.Width = 0
+        Sorted = True
+        SortType = stAlphabetic
+        VerticalAlignment = vaMiddle
+        Visible = True
+        Width = 80
+        WrapKind = wkEllipsis
+        AutoExecute = False
+      end
+      object TCheckBoxColumn
+        Alignment = taLeftJustify
+        Color = clWindow
+        Cursor = crDefault
+        DrawingOptions = doNormal
+        DefaultWidth = 20
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -11
+        Font.Name = 'Tahoma'
+        Font.Style = []
+        Footer.Color = clWindow
+        Footer.FormulaKind = fkNone
+        Header.Color = clBtnFace
+        Header.DisplayMode = dmTextOnly
+        Options = [coCanClick, coCanSort, coEditing, coEditorAutoSelect, coPublicUsing]
+        Position = 1
+        SlideBounds.Height = 0
+        SlideBounds.Left = 0
+        SlideBounds.Top = 0
+        SlideBounds.Width = 0
+        Sorted = False
+        SortType = stNumeric
+        VerticalAlignment = vaMiddle
+        Visible = True
+        Width = 20
+        WrapKind = wkEllipsis
+      end
+    end
+    object CheckBox4: TCheckBox
+      Left = 10
+      Top = 11
+      Width = 97
+      Height = 17
+      Caption = 'Todos'
+      TabOrder = 1
+      OnClick = CheckBox4Click
+    end
+    object btnOK4: TButton
+      Left = 72
+      Top = 11
+      Width = 57
+      Height = 17
+      Caption = 'Aceptar'
+      TabOrder = 2
+      OnClick = btnOK4Click
+    end
+    object btnTodos4: TButton
+      Left = 8
+      Top = 325
+      Width = 122
+      Height = 18
+      Caption = 'Seleccionar Todos'
+      TabOrder = 3
+      OnClick = btnTodos4Click
+    end
+  end
   object Timer1: TTimer
     OnTimer = Timer1Timer
-    Left = 700
-    Top = 72
+    Left = 916
+    Top = 24
   end
   object SaveDialog1: TSaveDialog
-    Left = 664
-    Top = 72
+    Left = 872
+    Top = 24
   end
 end

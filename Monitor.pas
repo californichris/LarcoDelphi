@@ -184,16 +184,25 @@ procedure TForm1.SaveTaskLocation(TaskName:String; X,Y: Integer);
 var Conn : TADOConnection;
 SQLStr : String;
 begin
-    //Create Connection
-    Conn := TADOConnection.Create(nil);
-    Conn.ConnectionString := frmMain.sConnString;;
-    Conn.LoginPrompt := False;
+    Conn := nil;
+    try
+    begin
+      Conn := TADOConnection.Create(nil);
+      Conn.ConnectionString := frmMain.sConnString;;
+      Conn.LoginPrompt := False;
 
-    SQLStr := 'UPDATE tblMonitor SET MValue = ' + QuotedStr(IntToStr(X) + ',' + IntToStr(Y)) +
-              ' WHERE MTYPE = ''Task'' AND MName = ' + QuotedStr(TaskName);
+      SQLStr := 'UPDATE tblMonitor SET MValue = ' + QuotedStr(IntToStr(X) + ',' + IntToStr(Y)) +
+                ' WHERE MTYPE = ''Task'' AND MName = ' + QuotedStr(TaskName);
 
-    Conn.Execute(SQLStr);
-    Conn.Close;
+      Conn.Execute(SQLStr);
+    end
+    finally
+      if Conn <> nil then begin
+        Conn.Close;
+        Conn.Free
+      end;
+    end;
+
 end;
 
 procedure TForm1.FormClose(Sender: TObject; var Action: TCloseAction);
@@ -209,43 +218,53 @@ APoint1,Apoint2: TPoint;
 Location : TStringList;
 begin
     Location := TStringList.Create;
-    //Create Connection
-    Conn := TADOConnection.Create(nil);
-    Conn.ConnectionString := frmMain.sConnString;;
-    Conn.LoginPrompt := False;
-    Qry := TADOQuery.Create(nil);
-    Qry.Connection := Conn;
+    Qry := nil;
+    Conn := nil;
+    try
+    begin
+      Conn := TADOConnection.Create(nil);
+      Conn.ConnectionString := frmMain.sConnString;;
+      Conn.LoginPrompt := False;
+      Qry := TADOQuery.Create(nil);
+      Qry.Connection := Conn;
 
-    SQLStr := 'SELECT Rou_From,Rou_Code,Rou_To,M.MValue,M2.MValue AS MValue2 ' +
-              'FROM tblrouting R ' +
-              'INNER JOIN tblTareas T ON Rou_From = T.id ' +
-              'INNER JOIN tblTareas T2 ON Rou_To = T2.id ' +
-              'INNER JOIN tblMonitor M ON T.Nombre = M.MName ' +
-              'INNER JOIN tblMonitor M2 ON T2.Nombre = M2.MName ' +
-              'GROUP BY Rou_from,Rou_code,Rou_to,M.MValue,M2.MValue ' +
-              'ORDER BY Rou_from';
+      SQLStr := 'SELECT Rou_From,Rou_Code,Rou_To,M.MValue,M2.MValue AS MValue2 ' +
+                'FROM tblrouting R ' +
+                'INNER JOIN tblTareas T ON Rou_From = T.id ' +
+                'INNER JOIN tblTareas T2 ON Rou_To = T2.id ' +
+                'INNER JOIN tblMonitor M ON T.Nombre = M.MName ' +
+                'INNER JOIN tblMonitor M2 ON T2.Nombre = M2.MName ' +
+                'GROUP BY Rou_from,Rou_code,Rou_to,M.MValue,M2.MValue ' +
+                'ORDER BY Rou_from';
 
-    Qry.SQL.Clear;
-    Qry.SQL.Text := SQLStr;
-    Qry.Open;
+      Qry.SQL.Clear;
+      Qry.SQL.Text := SQLStr;
+      Qry.Open;
 
-    While not Qry.Eof do
-    Begin
-        Location.Clear;
-        Location.CommaText := Qry['MValue'];
-        Apoint1.X := StrToInt(Location[0]);
-        Apoint1.Y := StrToInt(Location[1]);
-        Location.Clear;
-        Location.CommaText := Qry['MValue2'];
-        Apoint2.X := StrToInt(Location[0]);
-        Apoint2.Y := StrToInt(Location[1]);
-        DrawLine(Apoint1,Apoint2);
-        Qry.Next;
+      While not Qry.Eof do
+      Begin
+          Location.Clear;
+          Location.CommaText := Qry['MValue'];
+          Apoint1.X := StrToInt(Location[0]);
+          Apoint1.Y := StrToInt(Location[1]);
+          Location.Clear;
+          Location.CommaText := Qry['MValue2'];
+          Apoint2.X := StrToInt(Location[0]);
+          Apoint2.Y := StrToInt(Location[1]);
+          DrawLine(Apoint1,Apoint2);
+          Qry.Next;
+      end;
+    end
+    finally
+      if Qry <> nil then begin
+        Qry.Close;
+        Qry.Free;
+      end;
+      if Conn <> nil then begin
+        Conn.Close;
+        Conn.Free
+      end;
     end;
-
-
-    Qry.Close;
-    Conn.Close;
 end;
 
 procedure TForm1.FormPaint(Sender: TObject);
@@ -269,43 +288,54 @@ var Conn : TADOConnection;
 Qry : TADOQuery;
 SQLStr : String;
 begin
-    Conn := TADOConnection.Create(nil);
-    Conn.ConnectionString := frmMain.sConnString;;
-    Conn.LoginPrompt := False;
-    Qry := TADOQuery.Create(nil);
-    Qry.Connection := Conn;
-
-    if Status <> 'Ordenes' then
+    Qry := nil;
+    Conn := nil;
+    try
     begin
-          SQLStr := 'SELECT I.ITE_Nombre,I.ITE_ID ' +
-                    'FROM tblItemTasks I ' +
-                    'INNER JOIN tblTareas T ON I.TAS_ID = T.[ID] ' +
-                    'INNER JOIN tblDescriptions D ON I.ITS_Status = D.DES_CODE ' +
-                    'WHERE T.[Nombre] = ' + QuotedStr(Task) + ' AND D.DEC_NOTE = ' + QuotedStr(Status) +
-                    ' ORDER BY I.ITE_Nombre';
+      Conn := TADOConnection.Create(nil);
+      Conn.ConnectionString := frmMain.sConnString;;
+      Conn.LoginPrompt := False;
+      Qry := TADOQuery.Create(nil);
+      Qry.Connection := Conn;
+
+      if Status <> 'Ordenes' then
+      begin
+            SQLStr := 'SELECT I.ITE_Nombre,I.ITE_ID ' +
+                      'FROM tblItemTasks I ' +
+                      'INNER JOIN tblTareas T ON I.TAS_ID = T.[ID] ' +
+                      'INNER JOIN tblDescriptions D ON I.ITS_Status = D.DES_CODE ' +
+                      'WHERE T.[Nombre] = ' + QuotedStr(Task) + ' AND D.DEC_NOTE = ' + QuotedStr(Status) +
+                      ' ORDER BY I.ITE_Nombre';
+      end
+      else begin
+            SQLStr := 'SELECT S.ITE_Nombre,I.ITE_ID ' +
+                      'FROM tblScrap S ' +
+                      'INNER JOIN tblItems I ON S.ITE_Nombre = I.ITE_Nombre ' +
+                      'ORDER BY S.ITE_Nombre';
+      end;
+
+      Qry.SQL.Clear;
+      Qry.SQL.Text := SQLStr;
+      Qry.Open;
+
+      While not Qry.Eof do
+      Begin
+          gvItems.AddRow(1);
+          gvItems.Cells[0,gvItems.RowCount -1] := VarToStr(Qry['ITE_Nombre']);
+          gvItems.Cells[1,gvItems.RowCount -1] := VarToStr(Qry['ITE_ID']);
+          Qry.Next;
+      end;
     end
-    else begin
-          SQLStr := 'SELECT S.ITE_Nombre,I.ITE_ID ' +
-                    'FROM tblScrap S ' +
-                    'INNER JOIN tblItems I ON S.ITE_Nombre = I.ITE_Nombre ' +
-                    'ORDER BY S.ITE_Nombre';
+    finally
+      if Qry <> nil then begin
+        Qry.Close;
+        Qry.Free;
+      end;
+      if Conn <> nil then begin
+        Conn.Close;
+        Conn.Free
+      end;
     end;
-
-    Qry.SQL.Clear;
-    Qry.SQL.Text := SQLStr;
-    Qry.Open;
-
-    While not Qry.Eof do
-    Begin
-        gvItems.AddRow(1);
-        gvItems.Cells[0,gvItems.RowCount -1] := VarToStr(Qry['ITE_Nombre']);
-        gvItems.Cells[1,gvItems.RowCount -1] := VarToStr(Qry['ITE_ID']);
-        Qry.Next;
-    end;
-
-
-    Qry.Close;
-    Conn.Close;
 end;
 
 procedure TForm1.BindItemDetail(Item: String);
@@ -313,67 +343,78 @@ var Conn : TADOConnection;
 Qry : TADOQuery;
 SQLStr : String;
 begin
-    Conn := TADOConnection.Create(nil);
-    Conn.ConnectionString := frmMain.sConnString;;
-    Conn.LoginPrompt := False;
-    Qry := TADOQuery.Create(nil);
-    Qry.Connection := Conn;
-
-    SQLStr := 'SELECT * FROM tblOrdenes O ' +
-              'INNER JOIN tblItems I ON O.ITE_ID = I.ITE_ID ' +
-              'WHERE O.ITE_ID = ' + Item;
-
-    Qry.SQL.Clear;
-    Qry.SQL.Text := SQLStr;
-    Qry.Open;
-
-    gvPropiedades.ClearRows;
-    if Qry.RecordCount > 0 then
+    Qry := nil;
+    Conn := nil;
+    try
     begin
-        gvPropiedades.AddRow(1);
-        gvPropiedades.Cells[0,gvPropiedades.RowCount -1] := 'Tipo Proceso';
-        gvPropiedades.Cells[1,gvPropiedades.RowCount -1] := VarToStr(Qry['TipoProceso']);
+      Conn := TADOConnection.Create(nil);
+      Conn.ConnectionString := frmMain.sConnString;;
+      Conn.LoginPrompt := False;
+      Qry := TADOQuery.Create(nil);
+      Qry.Connection := Conn;
 
-        gvPropiedades.AddRow(1);
-        gvPropiedades.Cells[0,gvPropiedades.RowCount -1] := 'Cantidad Requerida';
-        gvPropiedades.Cells[1,gvPropiedades.RowCount -1] := VarToStr(Qry['Requerida']);
+      SQLStr := 'SELECT * FROM tblOrdenes O ' +
+                'INNER JOIN tblItems I ON O.ITE_ID = I.ITE_ID ' +
+                'WHERE O.ITE_ID = ' + Item;
 
-        gvPropiedades.AddRow(1);
-        gvPropiedades.Cells[0,gvPropiedades.RowCount -1] := 'Cantidad Ordenada';
-        gvPropiedades.Cells[1,gvPropiedades.RowCount -1] := VarToStr(Qry['Ordenada']);
+      Qry.SQL.Clear;
+      Qry.SQL.Text := SQLStr;
+      Qry.Open;
 
-        gvPropiedades.AddRow(1);
-        gvPropiedades.Cells[0,gvPropiedades.RowCount -1] := 'Descripcion';
-        gvPropiedades.Cells[1,gvPropiedades.RowCount -1] := VarToStr(Qry['Producto']);
+      gvPropiedades.ClearRows;
+      if Qry.RecordCount > 0 then
+      begin
+          gvPropiedades.AddRow(1);
+          gvPropiedades.Cells[0,gvPropiedades.RowCount -1] := 'Tipo Proceso';
+          gvPropiedades.Cells[1,gvPropiedades.RowCount -1] := VarToStr(Qry['TipoProceso']);
 
-        gvPropiedades.AddRow(1);
-        gvPropiedades.Cells[0,gvPropiedades.RowCount -1] := 'Numero';
-        gvPropiedades.Cells[1,gvPropiedades.RowCount -1] := VarToStr(Qry['Numero']);
+          gvPropiedades.AddRow(1);
+          gvPropiedades.Cells[0,gvPropiedades.RowCount -1] := 'Cantidad Requerida';
+          gvPropiedades.Cells[1,gvPropiedades.RowCount -1] := VarToStr(Qry['Requerida']);
 
-        gvPropiedades.AddRow(1);
-        gvPropiedades.Cells[0,gvPropiedades.RowCount -1] := 'Terminal';
-        gvPropiedades.Cells[1,gvPropiedades.RowCount -1] := VarToStr(Qry['Terminal']);
+          gvPropiedades.AddRow(1);
+          gvPropiedades.Cells[0,gvPropiedades.RowCount -1] := 'Cantidad Ordenada';
+          gvPropiedades.Cells[1,gvPropiedades.RowCount -1] := VarToStr(Qry['Ordenada']);
 
-        gvPropiedades.AddRow(1);
-        gvPropiedades.Cells[0,gvPropiedades.RowCount -1] := 'Fecha Recibido';
-        gvPropiedades.Cells[1,gvPropiedades.RowCount -1] := VarToStr(Qry['Recibido']);
+          gvPropiedades.AddRow(1);
+          gvPropiedades.Cells[0,gvPropiedades.RowCount -1] := 'Descripcion';
+          gvPropiedades.Cells[1,gvPropiedades.RowCount -1] := VarToStr(Qry['Producto']);
 
-        gvPropiedades.AddRow(1);
-        gvPropiedades.Cells[0,gvPropiedades.RowCount -1] := 'Fecha Entrega';
-        gvPropiedades.Cells[1,gvPropiedades.RowCount -1] := VarToStr(Qry['Entrega']);
+          gvPropiedades.AddRow(1);
+          gvPropiedades.Cells[0,gvPropiedades.RowCount -1] := 'Numero';
+          gvPropiedades.Cells[1,gvPropiedades.RowCount -1] := VarToStr(Qry['Numero']);
 
-        gvPropiedades.AddRow(1);
-        gvPropiedades.Cells[0,gvPropiedades.RowCount -1] := 'Nombre';
-        gvPropiedades.Cells[1,gvPropiedades.RowCount -1] := VarToStr(Qry['Nombre']);
+          gvPropiedades.AddRow(1);
+          gvPropiedades.Cells[0,gvPropiedades.RowCount -1] := 'Terminal';
+          gvPropiedades.Cells[1,gvPropiedades.RowCount -1] := VarToStr(Qry['Terminal']);
 
-        gvPropiedades.AddRow(1);
-        gvPropiedades.Cells[0,gvPropiedades.RowCount -1] := 'Prioridad';
-        gvPropiedades.Cells[1,gvPropiedades.RowCount -1] := VarToStr(Qry['ITE_Priority']);
+          gvPropiedades.AddRow(1);
+          gvPropiedades.Cells[0,gvPropiedades.RowCount -1] := 'Fecha Recibido';
+          gvPropiedades.Cells[1,gvPropiedades.RowCount -1] := VarToStr(Qry['Recibido']);
+
+          gvPropiedades.AddRow(1);
+          gvPropiedades.Cells[0,gvPropiedades.RowCount -1] := 'Fecha Entrega';
+          gvPropiedades.Cells[1,gvPropiedades.RowCount -1] := VarToStr(Qry['Entrega']);
+
+          gvPropiedades.AddRow(1);
+          gvPropiedades.Cells[0,gvPropiedades.RowCount -1] := 'Nombre';
+          gvPropiedades.Cells[1,gvPropiedades.RowCount -1] := VarToStr(Qry['Nombre']);
+
+          gvPropiedades.AddRow(1);
+          gvPropiedades.Cells[0,gvPropiedades.RowCount -1] := 'Prioridad';
+          gvPropiedades.Cells[1,gvPropiedades.RowCount -1] := VarToStr(Qry['ITE_Priority']);
+      end;
+    end
+    finally
+      if Qry <> nil then begin
+        Qry.Close;
+        Qry.Free;
+      end;
+      if Conn <> nil then begin
+        Conn.Close;
+        Conn.Free
+      end;
     end;
-
-
-    Qry.Close;
-    Conn.Close;
 end;
 
 procedure TForm1.gvItemsSelectCell(Sender: TObject; ACol, ARow: Integer);
@@ -388,123 +429,134 @@ SQLStr,sStatus : String;
 Qry,Qry2 : TADOQuery;
 Location : TStringList;
 begin
+    Qry := nil;
+    Qry2 := nil;
+    Conn := nil;
     try
-
-    While Panel1.ControlCount > 0 do
-    Begin
+    begin
+      While Panel1.ControlCount > 0 do
+      Begin
         if (Panel1.Controls[0] is TGridView) then
                 (Panel1.Controls[0] as TGridView).Free;
-     end;
+      end;
 
-    application.ProcessMessages;
+      application.ProcessMessages;
 
-    Location := TStringList.Create;
-    //Create Connection
-    Conn := TADOConnection.Create(nil);
-    Conn.ConnectionString := frmMain.sConnString;;
-    Conn.LoginPrompt := False;
+      Location := TStringList.Create;
+      //Create Connection
+      Conn := TADOConnection.Create(nil);
+      Conn.ConnectionString := frmMain.sConnString;;
+      Conn.LoginPrompt := False;
 
-    //Create Query commands
-    Qry := TADOQuery.Create(nil);
-    Qry.Connection := Conn;
+      //Create Query commands
+      Qry := TADOQuery.Create(nil);
+      Qry.Connection := Conn;
 
-    Qry2 := TADOQuery.Create(nil);
-    Qry2.Connection := Conn;
+      Qry2 := TADOQuery.Create(nil);
+      Qry2.Connection := Conn;
 
-    SQLStr := 'SELECT Id,Nombre FROM tblTareas ORDER BY Id';
-    Qry.SQL.Clear;
-    Qry.SQL.Text := SQLStr;
-    Qry.Open;
+      SQLStr := 'SELECT Id,Nombre FROM tblTareas ORDER BY Id';
+      Qry.SQL.Clear;
+      Qry.SQL.Text := SQLStr;
+      Qry.Open;
 
-    if Qry.RecordCount <= 0 then
-        Exit;
+      if Qry.RecordCount <= 0 then
+          Exit;
 
-    While not Qry.Eof do
-    Begin
-        SQLStr := 'SELECT MValue FROM tblMonitor WHERE MName = ' + QuotedStr(VarToStr(Qry['Nombre']));
+      While not Qry.Eof do
+      Begin
+          SQLStr := 'SELECT MValue FROM tblMonitor WHERE MName = ' + QuotedStr(VarToStr(Qry['Nombre']));
 
-        Qry2.SQL.Clear;
-        Qry2.SQL.Text := SQLStr;
-        Qry2.Open;
+          Qry2.SQL.Clear;
+          Qry2.SQL.Text := SQLStr;
+          Qry2.Open;
 
-        Location.CommaText := Qry2['MValue'];
-        gvTask := TGridView.Create(nil);
-        gvTask.Parent := Panel1;
-        gvTask.Name := VarToStr(Qry['Nombre']);
-        gvTask.Left := StrToInt(Location[0]);
-        gvTask.Top := StrToInt(Location[1]);
-        gvTask.Width := 130;
-        gvTask.Height := 80;
-        if gvTask.Name = 'Calidad' then
-                gvTask.Height := 90;
-        gvTask.Font.Name := 'Tahoma';
-        //gvTask.OnMouseDown := TaskMouseDown;
+          Location.CommaText := Qry2['MValue'];
+          gvTask := TGridView.Create(nil);
+          gvTask.Parent := Panel1;
+          gvTask.Name := VarToStr(Qry['Nombre']);
+          gvTask.Left := StrToInt(Location[0]);
+          gvTask.Top := StrToInt(Location[1]);
+          gvTask.Width := 130;
+          gvTask.Height := 80;
+          if gvTask.Name = 'Calidad' then
+                  gvTask.Height := 90;
+          gvTask.Font.Name := 'Tahoma';
+          //gvTask.OnMouseDown := TaskMouseDown;
 
-        gvTask.OnMouseDown := ControlMouseDown;
-        gvTask.OnMouseMove := ControlMouseMove;
-        gvTask.OnMouseUp := ControlMouseUp;
+          gvTask.OnMouseDown := ControlMouseDown;
+          gvTask.OnMouseMove := ControlMouseMove;
+          gvTask.OnMouseUp := ControlMouseUp;
 
-        gvTask.OnSelectCell := TaskSelectCell;
-        gvTask.OnKeyDown := gvPropiedadesKeyDown;
-        gvTask.Options := gvTask.Options + [goDissableColumnMoving];
-        gvTask.Options := gvTask.Options + [goSelectFullRow];
-
-
-        gvTask.Columns.Clear;
-        gvTask.Columns.Add(TTextualColumn);
-        gvTask.Columns.Add(TTextualColumn);
-        gvTask.Columns[0].Header.Caption := VarToStr(Qry['Nombre']);
-        gvTask.Columns[0].Width := 80;
-        gvTask.Columns[0].Options := gvTask.Columns[0].Options - [coCanSort];
-        gvTask.Columns[1].Width := 45;
-        gvTask.Columns[1].Options := gvTask.Columns[0].Options - [coCanSort];
-
-        sStatus := '3';
-        if Qry['Nombre'] = 'Calidad' Then
-                sStatus := '4';
+          gvTask.OnSelectCell := TaskSelectCell;
+          gvTask.OnKeyDown := gvPropiedadesKeyDown;
+          gvTask.Options := gvTask.Options + [goDissableColumnMoving];
+          gvTask.Options := gvTask.Options + [goSelectFullRow];
 
 
-        if Qry['Nombre'] <> 'Scrap' Then
-        begin
-            SQLStr := 'SELECT DES_CODE,DEC_NOTE,SUM(CASE WHEN ITE_ID IS NULL THEN 0 ELSE 1 END) AS Total ' +
-                      'FROM tblDescriptions D ' +
-                      'LEFT OUTER JOIN tblItemTasks I ON I.ITS_STATUS = D.DES_CODE AND I.Tas_ID = ' + VarToStr(Qry['Id']) + ' ' +
-                      'WHERE DES_CODE < ' + sStatus + ' AND RTRIM(DES_GROUP) = ' + QuotedStr('TASK STATUSES') + ' ' +
-                      'GROUP BY D.DEC_NOTE,D.DES_CODE ' +
-                      'ORDER BY D.DES_CODE';
-        end
-        else begin
-            SQLStr := 'SELECT ''Ordenes'' AS DEC_NOTE,COUNT(*) AS Total ' +
-                      'FROM tblScrap ';
-        end;
-        Qry2.SQL.Clear;
-        Qry2.SQL.Text := SQLStr;
-        Qry2.Open;
+          gvTask.Columns.Clear;
+          gvTask.Columns.Add(TTextualColumn);
+          gvTask.Columns.Add(TTextualColumn);
+          gvTask.Columns[0].Header.Caption := VarToStr(Qry['Nombre']);
+          gvTask.Columns[0].Width := 80;
+          gvTask.Columns[0].Options := gvTask.Columns[0].Options - [coCanSort];
+          gvTask.Columns[1].Width := 45;
+          gvTask.Columns[1].Options := gvTask.Columns[0].Options - [coCanSort];
 
-        gvTask.ClearRows;
-        While not Qry2.Eof do
-        Begin
-            gvTask.AddRow(1);
-            gvTask.Cells[0,gvTask.RowCount -1] := VarToStr(Qry2['DEC_NOTE']);
-            gvTask.Cells[1,gvTask.RowCount -1] := VarToStr(Qry2['Total']);
-            //gvTask.Cells[2,gvTask.RowCount -1] := VarToStr(Qry2['DES_CODE']);
-            Qry2.Next;
+          sStatus := '3';
+          if Qry['Nombre'] = 'Calidad' Then
+                  sStatus := '4';
+
+
+          if Qry['Nombre'] <> 'Scrap' Then
+          begin
+              SQLStr := 'SELECT DES_CODE,DEC_NOTE,SUM(CASE WHEN ITE_ID IS NULL THEN 0 ELSE 1 END) AS Total ' +
+                        'FROM tblDescriptions D ' +
+                        'LEFT OUTER JOIN tblItemTasks I ON I.ITS_STATUS = D.DES_CODE AND I.Tas_ID = ' + VarToStr(Qry['Id']) + ' ' +
+                        'WHERE DES_CODE < ' + sStatus + ' AND RTRIM(DES_GROUP) = ' + QuotedStr('TASK STATUSES') + ' ' +
+                        'GROUP BY D.DEC_NOTE,D.DES_CODE ' +
+                        'ORDER BY D.DES_CODE';
+          end
+          else begin
+              SQLStr := 'SELECT ''Ordenes'' AS DEC_NOTE,COUNT(*) AS Total ' +
+                        'FROM tblScrap ';
+          end;
+          Qry2.SQL.Clear;
+          Qry2.SQL.Text := SQLStr;
+          Qry2.Open;
+
+          gvTask.ClearRows;
+          While not Qry2.Eof do
+          Begin
+              gvTask.AddRow(1);
+              gvTask.Cells[0,gvTask.RowCount -1] := VarToStr(Qry2['DEC_NOTE']);
+              gvTask.Cells[1,gvTask.RowCount -1] := VarToStr(Qry2['Total']);
+              //gvTask.Cells[2,gvTask.RowCount -1] := VarToStr(Qry2['DES_CODE']);
+              Qry2.Next;
         End;
 
         Qry.Next;
-    end;
+      end;
 
-    Qry2.Close;
-    Qry.Close;
-    Conn.Close;
-    application.ProcessMessages;
+      application.ProcessMessages;
 
-    DrawRouts;
+      DrawRouts;
 
-    application.ProcessMessages;
-
-    except
-
+      application.ProcessMessages;
+    end
+    finally
+      if Qry <> nil then begin
+        Qry.Close;
+        Qry.Free;
+      end;
+      if Qry2 <> nil then begin
+        Qry2.Close;
+        Qry2.Free;
+      end;
+      if Conn <> nil then begin
+        Conn.Close;
+        Conn.Free
+      end;
     end;
 end;
 
@@ -514,67 +566,80 @@ SQLStr,sStatus : String;
 Qry : TADOQuery;
 i : integer;
 begin
-   // try
+    Qry := nil;
+    Conn := nil;
+    try
+    begin
+      frmMain.ProgressBar1.Visible := True;
+      application.ProcessMessages;
+      frmMain.ProgressBar1.Max := Panel1.ControlCount - 1;
+      frmMain.ProgressBar1.Position := 0;
+      frmMain.ProgressBar1.Step := 1;
 
-    frmMain.ProgressBar1.Visible := True;
-    application.ProcessMessages;
-    frmMain.ProgressBar1.Max := Panel1.ControlCount - 1;
-    frmMain.ProgressBar1.Position := 0;
-    frmMain.ProgressBar1.Step := 1;
+      for i:=0 to Panel1.ControlCount - 1 do
+      Begin
+          if (Panel1.Controls[i] is TGridView) then
+          begin
+                //Create Connection
+                Conn := TADOConnection.Create(nil);
+                Conn.ConnectionString := frmMain.sConnString;;
+                Conn.LoginPrompt := False;
 
-    for i:=0 to Panel1.ControlCount - 1 do
-    Begin
-        if (Panel1.Controls[i] is TGridView) then
-        begin
-              //Create Connection
-              Conn := TADOConnection.Create(nil);
-              Conn.ConnectionString := frmMain.sConnString;;
-              Conn.LoginPrompt := False;
+                //Create Query commands
+                Qry := TADOQuery.Create(nil);
+                Qry.Connection := Conn;
 
-              //Create Query commands
-              Qry := TADOQuery.Create(nil);
-              Qry.Connection := Conn;
+                sStatus := '3';
+                if (Panel1.Controls[i] as TGridView).Name = 'Calidad' Then
+                        sStatus := '4';
 
-              sStatus := '3';
-              if (Panel1.Controls[i] as TGridView).Name = 'Calidad' Then
-                      sStatus := '4';
-
-              if (Panel1.Controls[i] as TGridView).Name <> 'Scrap' Then
-              begin
-                    SQLStr := 'SELECT DES_CODE,DEC_NOTE,SUM(CASE WHEN ITE_ID IS NULL THEN 0 ELSE 1 END) AS Total ' +
-                              'FROM tblDescriptions D ' +
-                              'LEFT OUTER JOIN tblItemTasks I ON I.ITS_STATUS = D.DES_CODE ' +
-                              'AND I.TAS_ID = (SELECT ID FROM tblTareas WHERE Nombre = ' + QuotedStr((Panel1.Controls[i] as TGridView).Name) + ') ' +
-                              'WHERE DES_CODE < ' + sStatus + ' AND RTRIM(DES_GROUP) = ' + QuotedStr('TASK STATUSES') + ' ' +
-                              'GROUP BY D.DEC_NOTE,D.DES_CODE ' +
-                              'ORDER BY D.DES_CODE ';
-              end
-              else begin
-                  SQLStr := 'SELECT ''Ordenes'' AS DEC_NOTE,COUNT(*) AS Total ' +
-                            'FROM tblScrap ';
-              end;
+                if (Panel1.Controls[i] as TGridView).Name <> 'Scrap' Then
+                begin
+                      SQLStr := 'SELECT DES_CODE,DEC_NOTE,SUM(CASE WHEN ITE_ID IS NULL THEN 0 ELSE 1 END) AS Total ' +
+                                'FROM tblDescriptions D ' +
+                                'LEFT OUTER JOIN tblItemTasks I ON I.ITS_STATUS = D.DES_CODE ' +
+                                'AND I.TAS_ID = (SELECT ID FROM tblTareas WHERE Nombre = ' + QuotedStr((Panel1.Controls[i] as TGridView).Name) + ') ' +
+                                'WHERE DES_CODE < ' + sStatus + ' AND RTRIM(DES_GROUP) = ' + QuotedStr('TASK STATUSES') + ' ' +
+                                'GROUP BY D.DEC_NOTE,D.DES_CODE ' +
+                                'ORDER BY D.DES_CODE ';
+                end
+                else begin
+                    SQLStr := 'SELECT ''Ordenes'' AS DEC_NOTE,COUNT(*) AS Total ' +
+                              'FROM tblScrap ';
+                end;
 
 
 
-              Qry.SQL.Clear;
-              Qry.SQL.Text := SQLStr;
-              Qry.Open;
+                Qry.SQL.Clear;
+                Qry.SQL.Text := SQLStr;
+                Qry.Open;
 
-              (Panel1.Controls[i] as TGridView).ClearRows;
-              While not Qry.Eof do
-              Begin
-                  (Panel1.Controls[i] as TGridView).AddRow(1);
-                  (Panel1.Controls[i] as TGridView).Cells[0,(Panel1.Controls[i] as TGridView).RowCount -1] := VarToStr(Qry['DEC_NOTE']);
-                  (Panel1.Controls[i] as TGridView).Cells[1,(Panel1.Controls[i] as TGridView).RowCount -1] := VarToStr(Qry['Total']);
-                  Qry.Next;
-              End;
+                (Panel1.Controls[i] as TGridView).ClearRows;
+                While not Qry.Eof do
+                Begin
+                    (Panel1.Controls[i] as TGridView).AddRow(1);
+                    (Panel1.Controls[i] as TGridView).Cells[0,(Panel1.Controls[i] as TGridView).RowCount -1] := VarToStr(Qry['DEC_NOTE']);
+                    (Panel1.Controls[i] as TGridView).Cells[1,(Panel1.Controls[i] as TGridView).RowCount -1] := VarToStr(Qry['Total']);
+                    Qry.Next;
+                End;
 
-              frmMain.ProgressBar1.StepIt;
-              //ShowMessage((Panel1.Controls[i] as TGridView).Name);
-        end;
-     end;
-     frmMain.ProgressBar1.Visible := False;
-     application.ProcessMessages;
+                frmMain.ProgressBar1.StepIt;
+                //ShowMessage((Panel1.Controls[i] as TGridView).Name);
+          end;
+       end;
+       frmMain.ProgressBar1.Visible := False;
+       application.ProcessMessages;
+    end
+    finally
+      if Qry <> nil then begin
+        Qry.Close;
+        Qry.Free;
+      end;
+      if Conn <> nil then begin
+        Conn.Close;
+        Conn.Free
+      end;
+    end;
 end;
 
 

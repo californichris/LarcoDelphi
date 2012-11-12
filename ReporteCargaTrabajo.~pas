@@ -97,8 +97,6 @@ type
 
 var
   frmCargaTrabajo: TfrmCargaTrabajo;
-  Qry : TADOQuery;
-  Conn : TADOConnection;
 
 implementation
 
@@ -113,31 +111,43 @@ Action := caFree;
 end;
 
 procedure TfrmCargaTrabajo.FormCreate(Sender: TObject);
-var SQLStr : String;
-Qry2 : TADOQuery;
+var Conn : TADOConnection;
+Qry : TADOQuery;
+SQLStr : String;
 begin
-    //Create Connection
-    Conn := TADOConnection.Create(nil);
-    Conn.ConnectionString := frmMain.sConnString;
-    Conn.LoginPrompt := False;
-    Qry := TADOQuery.Create(nil);
-    Qry.Connection :=Conn;
-    Qry2 := TADOQuery.Create(nil);
-    Qry2.Connection :=Conn;
+    Qry := nil;
+    Conn := nil;
+    try
+    begin
+      Conn := TADOConnection.Create(nil);
+      Conn.ConnectionString := frmMain.sConnString;
+      Conn.LoginPrompt := False;
+      Qry := TADOQuery.Create(nil);
+      Qry.Connection :=Conn;
 
-    SQLStr := 'SELECT CASE WHEN Min(Interna) IS NULL THEN GETDATE() ELSE Min(Interna) END As Interna ' +
-              'FROM tblOrdenes O ' +
-              'INNER JOIN tblItemTasks I ON O.ITE_ID = I.ITE_ID AND ITS_DTStart IS NOT NULL AND ITS_DTStop IS NULL ';
+      SQLStr := 'SELECT CASE WHEN Min(Interna) IS NULL THEN GETDATE() ELSE Min(Interna) END As Interna ' +
+                'FROM tblOrdenes O ' +
+                'INNER JOIN tblItemTasks I ON O.ITE_ID = I.ITE_ID AND ITS_DTStart IS NOT NULL AND ITS_DTStop IS NULL ';
 
-    Qry2.SQL.Clear;
-    Qry2.SQL.Text := SQLStr;
-    Qry2.Open;
+      Qry.SQL.Clear;
+      Qry.SQL.Text := SQLStr;
+      Qry.Open;
 
-    deInterna1.Date := Now;
-    if Qry2.RecordCount > 0 then
-            deInterna1.Date := StrToDateTime( VarToStr(Qry2['Interna']) ) ;
+      deInterna1.Date := Now;
+      if Qry.RecordCount > 0 then
+              deInterna1.Date := StrToDateTime( VarToStr(Qry['Interna']) ) ;
 
-    Qry2.Close;
+    end
+    finally
+      if Qry <> nil then begin
+        Qry.Close;
+        Qry.Free;
+      end;
+      if Conn <> nil then begin
+        Conn.Close;
+        Conn.Free
+      end;
+    end;
 
     deInterna2.Date := DateAdd(Now,5,daDays);
 
@@ -160,83 +170,134 @@ begin
 end;
 
 procedure TfrmCargaTrabajo.BindProductos();
-var Qry2 : TADOQuery;
+var Conn : TADOConnection;
+Qry : TADOQuery;
 SQLStr : String;
 begin
-    Qry2 := TADOQuery.Create(nil);
-    Qry2.Connection :=Conn;
+    Qry := nil;
+    Conn := nil;
+    try
+    begin
+      Conn := TADOConnection.Create(nil);
+      Conn.ConnectionString := gsConnString;
+      Conn.LoginPrompt := False;
+      Qry := TADOQuery.Create(nil);
+      Qry.Connection :=Conn;
 
-    SQLStr := 'SELECT Nombre FROM tblProductos Order By Nombre';
+      SQLStr := 'SELECT Nombre FROM tblProductos Order By Nombre';
 
-    Qry2.SQL.Clear;
-    Qry2.SQL.Text := SQLStr;
-    Qry2.Open;
+      Qry.SQL.Clear;
+      Qry.SQL.Text := SQLStr;
+      Qry.Open;
 
-    gvProds.ClearRows;
-    While not Qry2.Eof do
-    Begin
-        gvProds.AddRow(1);
-        gvProds.Cells[0,gvProds.RowCount -1] := VarToStr(Qry2['Nombre']);
-        Qry2.Next;
-    End;
-
-    Qry2.Close;
+      gvProds.ClearRows;
+      While not Qry.Eof do
+      Begin
+          gvProds.AddRow(1);
+          gvProds.Cells[0,gvProds.RowCount -1] := VarToStr(Qry['Nombre']);
+          Qry.Next;
+      End;
+    end
+    finally
+      if Qry <> nil then begin
+        Qry.Close;
+        Qry.Free;
+      end;
+      if Conn <> nil then begin
+        Conn.Close;
+        Conn.Free
+      end;
+    end;
 end;
 
 procedure TfrmCargaTrabajo.BindClientes();
-var Qry2 : TADOQuery;
+var Conn : TADOConnection;
+Qry : TADOQuery;
 SQLStr : String;
 slClientes : TStringList;
 begin
     slClientes := TStringList.Create;
     slClientes.CommaText := '060,062,699,799,899,999,960';
 
-    Qry2 := TADOQuery.Create(nil);
-    Qry2.Connection :=Conn;
+    Qry := nil;
+    Conn := nil;
+    try
+    begin
+      Conn := TADOConnection.Create(nil);
+      Conn.ConnectionString := gsConnString;
+      Conn.LoginPrompt := False;
+      Qry := TADOQuery.Create(nil);
+      Qry.Connection :=Conn;
 
-    SQLStr := 'SELECT Distinct Clave FROM tblClientes Order By Clave';
+      SQLStr := 'SELECT Distinct Clave FROM tblClientes Order By Clave';
 
-    Qry2.SQL.Clear;
-    Qry2.SQL.Text := SQLStr;
-    Qry2.Open;
+      Qry.SQL.Clear;
+      Qry.SQL.Text := SQLStr;
+      Qry.Open;
 
-    gvClientes.ClearRows;
-    While not Qry2.Eof do
-    Begin
-        gvClientes.AddRow(1);
-        gvClientes.Cells[0,gvClientes.RowCount -1] := VarToStr(Qry2['Clave']);
-        if (slClientes.IndexOf(VarToStr(Qry2['Clave'])) = -1) then begin
-                gvClientes.Cell[1,gvClientes.RowCount -1].AsBoolean := True;
-        end;
-        
-        Qry2.Next;
-    End;
-    
-    Qry2.Close;
+      gvClientes.ClearRows;
+      While not Qry.Eof do
+      Begin
+          gvClientes.AddRow(1);
+          gvClientes.Cells[0,gvClientes.RowCount -1] := VarToStr(Qry['Clave']);
+          if (slClientes.IndexOf(VarToStr(Qry['Clave'])) = -1) then begin
+                  gvClientes.Cell[1,gvClientes.RowCount -1].AsBoolean := True;
+          end;
+
+          Qry.Next;
+      End;
+    end
+    finally
+      if Qry <> nil then begin
+        Qry.Close;
+        Qry.Free;
+      end;
+      if Conn <> nil then begin
+        Conn.Close;
+        Conn.Free
+      end;
+    end;
 end;
 
 procedure TfrmCargaTrabajo.BindTareas();
-var Qry2 : TADOQuery;
+var Conn : TADOConnection;
+Qry : TADOQuery;
 SQLStr : String;
 begin
-    Qry2 := TADOQuery.Create(nil);
-    Qry2.Connection :=Conn;
+    Qry := nil;
+    Conn := nil;
+    try
+    begin
+      Conn := TADOConnection.Create(nil);
+      Conn.ConnectionString := gsConnString;
+      Conn.LoginPrompt := False;
+      Qry := TADOQuery.Create(nil);
+      Qry.Connection :=Conn;
 
-    SQLStr := 'SELECT Nombre FROM tblTareas Order By Nombre';
+      SQLStr := 'SELECT Nombre FROM tblTareas Order By Nombre';
 
-    Qry2.SQL.Clear;
-    Qry2.SQL.Text := SQLStr;
-    Qry2.Open;
+      Qry.SQL.Clear;
+      Qry.SQL.Text := SQLStr;
+      Qry.Open;
 
-    gvTareas.ClearRows;
-    While not Qry2.Eof do
-    Begin
-        gvTareas.AddRow(1);
-        gvTareas.Cells[0,gvTareas.RowCount -1] := VarToStr(Qry2['Nombre']);
-        Qry2.Next;
-    End;
-
-    Qry2.Close;
+      gvTareas.ClearRows;
+      While not Qry.Eof do
+      Begin
+          gvTareas.AddRow(1);
+          gvTareas.Cells[0,gvTareas.RowCount -1] := VarToStr(Qry['Nombre']);
+          Qry.Next;
+      End;
+    end
+    finally
+      if Qry <> nil then begin
+        Qry.Close;
+        Qry.Free;
+      end;
+      if Conn <> nil then begin
+        Conn.Close;
+        Conn.Free
+      end;
+    end;
 end;
 
 procedure TfrmCargaTrabajo.Button4Click(Sender: TObject);
@@ -501,6 +562,8 @@ const Fields : array[0..2] of PChar =
 var SQLStr : String;
 i,iTotalColumn:integer;
 slColumns: TStringList;
+Conn : TADOConnection;
+Qry : TADOQuery;
 begin
     if cmbRenglon.Text = cmbColumna.Text then begin
         ShowMessage('El renglon y la columna no puede ser el mismo campo.');
@@ -511,45 +574,66 @@ begin
 
     slColumns := TStringList.Create;
 
-    SQLStr := 'Carga_Trabajo ' + QuotedStr(Fields[cmbRenglon.ItemIndex]) + ',' + QuotedStr(Fields[cmbColumna.ItemIndex]);
+    Qry := nil;
+    Conn := nil;
+    try
+    begin
+      Conn := TADOConnection.Create(nil);
+      Conn.ConnectionString := gsConnString;
+      Conn.LoginPrompt := False;
+      Qry := TADOQuery.Create(nil);
+      Qry.Connection :=Conn;
 
-    SQLStr := SQLStr + ',' + QuotedStr(getWhere()) + ',' + IntToStr(getIntValue(chkPiezas.Checked));
+      SQLStr := 'Carga_Trabajo ' + QuotedStr(Fields[cmbRenglon.ItemIndex]) + ',' + QuotedStr(Fields[cmbColumna.ItemIndex]);
 
-    Qry.SQL.Clear;
-    Qry.SQL.Text := SQLStr;
-    Qry.Open;
+      SQLStr := SQLStr + ',' + QuotedStr(getWhere()) + ',' + IntToStr(getIntValue(chkPiezas.Checked));
 
-    GridView1.ClearRows;
-    GridView1.Columns.Clear;
-    iTotalColumn := 0;
-    for i := 0 to Qry.Fields.Count - 1 do begin
-       slColumns.Add(Qry.Fields[i].FieldName);
-       GridView1.Columns.Add(TTextualColumn);
-       GridView1.Columns[i].Header.Caption := Qry.Fields[i].FieldName;
+      Qry.SQL.Clear;
+      Qry.SQL.Text := SQLStr;
+      Qry.Open;
 
-       if GridView1.Columns[i].Header.Caption = 'Total' then begin
-                iTotalColumn := i;
-       end;
+      GridView1.ClearRows;
+      GridView1.Columns.Clear;
+      iTotalColumn := 0;
+      for i := 0 to Qry.Fields.Count - 1 do begin
+         slColumns.Add(Qry.Fields[i].FieldName);
+         GridView1.Columns.Add(TTextualColumn);
+         GridView1.Columns[i].Header.Caption := Qry.Fields[i].FieldName;
 
-       if i > 0 then begin
-               GridView1.Columns[i].SortType := stNumeric;
-       end
-       else begin
-               GridView1.Columns[i].SortType := stAlphabetic;
-       end;
-       GridView1.Columns[i].Width := 70;
+         if GridView1.Columns[i].Header.Caption = 'Total' then begin
+                  iTotalColumn := i;
+         end;
+
+         if i > 0 then begin
+                 GridView1.Columns[i].SortType := stNumeric;
+         end
+         else begin
+                 GridView1.Columns[i].SortType := stAlphabetic;
+         end;
+         GridView1.Columns[i].Width := 70;
+      end;
+
+
+      While not Qry.Eof do
+      Begin
+          GridView1.AddRow(1);
+          for i := 0 to (slColumns.Count - 1) do
+          begin
+                  GridView1.Cells[i,GridView1.RowCount -1] := VarToStr(Qry[slColumns[i]]);
+          end;
+         Qry.Next;
+      End;
+    end
+    finally
+      if Qry <> nil then begin
+        Qry.Close;
+        Qry.Free;
+      end;
+      if Conn <> nil then begin
+        Conn.Close;
+        Conn.Free
+      end;
     end;
-
-
-    While not Qry.Eof do
-    Begin
-        GridView1.AddRow(1);
-        for i := 0 to (slColumns.Count - 1) do
-        begin
-                GridView1.Cells[i,GridView1.RowCount -1] := VarToStr(Qry[slColumns[i]]);
-        end;
-       Qry.Next;
-    End;
 
     GridView1.Columns[0].Header.Caption := cmbRenglon.Text;
     GridView1.Columns[0].Width := 100;
@@ -682,6 +766,8 @@ const Fields : array[0..2] of PChar =
 ('T.Nombre','O.Producto','SUBSTRING(I.ITE_Nombre,4,3)');
 var cellValue,SQLStr,ren, col, field : String;
 i:Integer;
+Conn : TADOConnection;
+Qry : TADOQuery;
 begin
      if(GridView1.SelectedColumn = 0) then
         Exit;
@@ -690,52 +776,74 @@ begin
      if(cellValue = '0') then
         Exit;
 
-     SQLStr := 'SELECT ';
+    Qry := nil;
+    Conn := nil;
+    try
+    begin
+      Conn := TADOConnection.Create(nil);
+      Conn.ConnectionString := gsConnString;
+      Conn.LoginPrompt := False;
+      Qry := TADOQuery.Create(nil);
+      Qry.Connection :=Conn;
 
-     ren := cmbRenglon.Text;
-     col := cmbColumna.Text;
-     for i:=0 to cmbRenglon.Items.Count -1 do
-     begin
-        if ( (cmbRenglon.Items[i] <> ren) and (cmbRenglon.Items[i] <> col) ) then begin
-                field := Fields[i];
-                SQLStr := SQLStr + field + ' AS Nombre, ';
-                Break;
-        end;
-     end;
+       SQLStr := 'SELECT ';
 
-     if chkPiezas.Checked then begin
-        SQLStr := SQLStr + 'SUM(O.Requerida) AS Cantidad';
-     end
-     else begin
-        SQLStr := SQLStr + 'COUNT(*) AS Cantidad';
-     end;
+       ren := cmbRenglon.Text;
+       col := cmbColumna.Text;
+       for i:=0 to cmbRenglon.Items.Count -1 do
+       begin
+          if ( (cmbRenglon.Items[i] <> ren) and (cmbRenglon.Items[i] <> col) ) then begin
+                  field := Fields[i];
+                  SQLStr := SQLStr + field + ' AS Nombre, ';
+                  Break;
+          end;
+       end;
 
-     SQLStr := SQLStr + ' FROM tblItemTasks I ' +
-               'INNER JOIN tblTareas T ON I.TAS_ID = T.[ID] ' +
-               'INNER JOIN tblOrdenes O ON I.ITE_Nombre = O.ITE_Nombre ';
+       if chkPiezas.Checked then begin
+          SQLStr := SQLStr + 'SUM(O.Requerida) AS Cantidad';
+       end
+       else begin
+          SQLStr := SQLStr + 'COUNT(*) AS Cantidad';
+       end;
 
-     SQLStr := SQLStr + ' WHERE ' + getWhere();
+       SQLStr := SQLStr + ' FROM tblItemTasks I ' +
+                 'INNER JOIN tblTareas T ON I.TAS_ID = T.[ID] ' +
+                 'INNER JOIN tblOrdenes O ON I.ITE_Nombre = O.ITE_Nombre ';
 
-     SQLStr := SQLStr + ' AND ' + Fields[cmbRenglon.ItemIndex] + ' = ' +
-               QuotedStr(GridView1.Cells[0, GridView1.SelectedRow]) +
-               ' AND ' + Fields[cmbColumna.ItemIndex] + ' = ' +
-               QuotedStr(GridView1.Columns[GridView1.SelectedColumn].Header.Caption);
+       SQLStr := SQLStr + ' WHERE ' + getWhere();
 
-     SQLStr := SQLStr + ' GROUP BY ' + field;
+       SQLStr := SQLStr + ' AND ' + Fields[cmbRenglon.ItemIndex] + ' = ' +
+                 QuotedStr(GridView1.Cells[0, GridView1.SelectedRow]) +
+                 ' AND ' + Fields[cmbColumna.ItemIndex] + ' = ' +
+                 QuotedStr(GridView1.Columns[GridView1.SelectedColumn].Header.Caption);
 
-     Qry.SQL.Clear;
-     Qry.SQL.Text := SQLStr;
-     Qry.Open;
+       SQLStr := SQLStr + ' GROUP BY ' + field;
 
-     Application.CreateForm(TfrmCTDetail,frmCTDetail);
+       Qry.SQL.Clear;
+       Qry.SQL.Text := SQLStr;
+       Qry.Open;
 
-     While not Qry.Eof do
-     Begin
-        frmCTDetail.GridView1.AddRow(1);
-        frmCTDetail.GridView1.Cells[0,frmCTDetail.GridView1.RowCount -1] := VarToStr(Qry['Nombre']);
-        frmCTDetail.GridView1.Cells[1,frmCTDetail.GridView1.RowCount -1] := VarToStr(Qry['Cantidad']);
-        Qry.Next;
-     end;
+       Application.CreateForm(TfrmCTDetail,frmCTDetail);
+
+       While not Qry.Eof do
+       Begin
+          frmCTDetail.GridView1.AddRow(1);
+          frmCTDetail.GridView1.Cells[0,frmCTDetail.GridView1.RowCount -1] := VarToStr(Qry['Nombre']);
+          frmCTDetail.GridView1.Cells[1,frmCTDetail.GridView1.RowCount -1] := VarToStr(Qry['Cantidad']);
+          Qry.Next;
+       end;
+    end
+    finally
+      if Qry <> nil then begin
+        Qry.Close;
+        Qry.Free;
+      end;
+      if Conn <> nil then begin
+        Conn.Close;
+        Conn.Free
+      end;
+    end;
+
      frmCTDetail.GridView1.Columns[0].Header.Caption := cmbRenglon.Items[i];
      frmCTDetail.GridView1.Columns[1].Header.Caption := 'Ordenes';
      if chkPiezas.Checked then

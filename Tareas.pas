@@ -64,6 +64,7 @@ type
     procedure Editar1Click(Sender: TObject);
     procedure BorrarTarea();
     function BoolToStrInt(Value:Boolean):String;
+    procedure txtNombreKeyPress(Sender: TObject; var Key: Char);
   private
     { Private declarations }
   public
@@ -161,9 +162,18 @@ procedure TfrmTareas.btnAceptarClick(Sender: TObject);
 var Conn : TADOConnection;
 SQLStr,sTarea : String;
 begin
+    txtNombre.Text := Trim(txtNombre.Text);
+    txtTiempo.Text := Trim(txtTiempo.Text);
+    txtInterno.Text := Trim(txtInterno.Text);
+
+    if pos(' ', txtNombre.Text) <> 0 then begin
+        MessageDlg('Espacios no son validos en el Nombre de Tarea.', mtInformation,[mbOk], 0);
+        Exit;
+    end;
+
     If txtNombre.Text = '' then
       begin
-        MessageDlg('Por favor escriba un nombre de Producto.', mtInformation,[mbOk], 0);
+        MessageDlg('Por favor escriba un nombre de Tarea.', mtInformation,[mbOk], 0);
         Exit;
       end;
 
@@ -492,6 +502,15 @@ begin
         Result := '0';
         if Value Then
                 Result := '1';
+end;
+
+procedure TfrmTareas.txtNombreKeyPress(Sender: TObject; var Key: Char);
+begin
+        if Key = Chr(vk_Space) then
+            begin
+              Key := #0;
+            end
+
 end;
 
 end.

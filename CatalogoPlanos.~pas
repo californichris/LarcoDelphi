@@ -839,7 +839,7 @@ begin
 
   SQLStr := 'SELECT P.PN_Id, P.PN_Numero,P.PN_Descripcion, SUM(CASE WHEN ST_TIPO = ''Entrada'' Then ST_Cantidad ELSE 0 END) - ' +
             'SUM(CASE WHEN ST_TIPO = ''Salida'' Then ST_Cantidad ELSE 0 END) AS Cantidad ' +
-            'FROM tblStock S INNER JOIN tblPlano P ON S.PN_Id = P.PN_Id WHERE P.PN_Numero ';
+            'FROM tblPlano P LEFT OUTER JOIN tblStock S ON S.PN_Id = P.PN_Id WHERE P.PN_Numero ';
   if Pos('*', txtBuscarPlano.Text) <> 0 then begin
     SQLWhere := ' LIKE ' + QuotedStr(StringReplace(SQLWhere, '*', '%', [rfReplaceAll, rfIgnoreCase]));
   end

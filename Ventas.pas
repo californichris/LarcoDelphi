@@ -1002,6 +1002,16 @@ begin
                       Exit;
                   end;
                 end;
+            end
+            else begin
+              if (giOpcion = 2) and (StrToInt(lblRequerida.Caption) = StrToInt(txtRequerida.Text)) then begin
+                if StrToInt(txtRequerida.Text) > stock then
+                begin
+                    MessageDlg('La Cantidad de Cliente debe de ser menor o igual que la cantidad en Stock(' + IntToStr(stock) + ').', mtInformation,[mbOk], 0);
+                    result :=  False;
+                    Exit;
+                end;
+              end;
             end;
         end;
 

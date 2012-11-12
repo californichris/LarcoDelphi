@@ -51,6 +51,9 @@ type
     MenuItem1: TMenuItem;
     CopiarOrden1: TMenuItem;
     SaveDialog1: TSaveDialog;
+    PopupMenu1: TPopupMenu;
+    Copiar1: TMenuItem;
+    Pegar1: TMenuItem;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure NuevoClick(Sender: TObject);
     procedure EditarClick(Sender: TObject);
@@ -72,6 +75,8 @@ type
     procedure AddPlanoClick(Sender: TObject);
     function ValidatePlano():Boolean;
     function ValidateOrden():Boolean;
+    function ValidateOrdenInStock():Boolean;
+    function ValidateExistencia():Boolean;
     procedure txtCantidadKeyPress(Sender: TObject; var Key: Char);
     procedure FormKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
@@ -88,10 +93,24 @@ type
     procedure ExportGrid(Grid: TGridView;sFileName: String);
     procedure CopiarOrden1Click(Sender: TObject);
     procedure txtPlanoKeyPress(Sender: TObject; var Key: Char);
+    procedure Copiar1Click(Sender: TObject);
+    procedure Pegar1Click(Sender: TObject);
   private
     { Private declarations }
   public
     { Public declarations }
+  end;
+
+  type
+    TStock = class(TObject)
+    id: String;
+    plano: String;
+    anio: String;
+    orden: String;
+    fecha: String;
+    cantidad: String;
+    noParte: String;
+    tipo: String;
   end;
 
 var
@@ -99,7 +118,8 @@ var
   Conn : TADOConnection;
   Qry : TADOQuery;
   sPermits : String;
-  giOpcion : Integer;  //0= nada, 1 Nuevo, 2, editar, 3 borrar, 4 buscar
+  giOpcion : Integer;  //0= nada, 1 Nuevo, 2 editar, 3 borrar, 4 buscar
+  giStock : TStock;
 
 implementation
 
@@ -109,7 +129,8 @@ uses Main, CatalogoPlanos, CatalogoPlanosModal;
 
 procedure TfrmESStock.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
-Action := caFree;
+  CloseConns(Qry, Conn);
+  Action := caFree;
 end;
 
 // Start of Action Buttons
@@ -298,7 +319,7 @@ begin
   Conn.ConnectionString := frmMain.sConnString;
   Conn.LoginPrompt := False;
   Qry := TADOQuery.Create(nil);
-  Qry.Connection :=Conn;
+  Qry.Connection := Conn;
 
   Qry.SQL.Clear;
   Qry.SQL.Text := 'SELECT * FROM tblStock ORDER BY ST_Fecha Desc, ST_ID Desc';
@@ -314,6 +335,8 @@ begin
   EnableControls(True);
   EnableButtons();
   lblTotal.Caption := '';
+
+  giStock := TStock.Create;
 end;
 
 procedure TfrmESStock.txtPlanoExit(Sender: TObject);
@@ -351,87 +374,92 @@ begin
   if (giOpcion = 0) or (Trim(sOrden) = '') then
     Exit;
 
-  Qry2 := TADOQuery.Create(nil);
-  Qry2.Connection :=Conn;
+  Qry2 := nil;
+  try
+  begin
+    Qry2 := TADOQuery.Create(nil);
+    Qry2.Connection :=Conn;
 
-  SQLStr := 'SELECT ITE_ID,ITE_Nombre,O.Numero,PA.*,P.* FROM tblOrdenes O ' +
-            'LEFT OUTER JOIN tblPlanoAlias PA ON O.Numero = PA.PA_Alias ' +
-            'LEFT OUTER JOIN tblPlano P ON PA.PN_Id = P.PN_Id ' +
-            'WHERE ITE_Nombre = ' + QuotedStr(RightStr(ddlAnio.Text, 2) + '-' + txtOrden.Text);
+    SQLStr := 'SELECT ITE_ID,ITE_Nombre,O.Numero,PA.*,P.* FROM tblOrdenes O ' +
+              'LEFT OUTER JOIN tblPlanoAlias PA ON O.Numero = PA.PA_Alias ' +
+              'LEFT OUTER JOIN tblPlano P ON PA.PN_Id = P.PN_Id ' +
+              'WHERE ITE_Nombre = ' + QuotedStr(RightStr(ddlAnio.Text, 2) + '-' + txtOrden.Text);
 
 
-  Qry2.SQL.Clear;
-  Qry2.SQL.Text := SQLStr;
-  Qry2.Open;
+    Qry2.SQL.Clear;
+    Qry2.SQL.Text := SQLStr;
+    Qry2.Open;
 
-  lblValidOrden.Caption := '';
+    lblValidOrden.Caption := '';
 
-  if Qry2.RecordCount > 0 then begin
-    lblValidOrden.Caption := VarToStr(Qry2['ITE_Id']);
-    sNoParte := VarToStr(Qry2['Numero']);
-    sAlias := VarToStr(Qry2['PA_Alias']);
-    sPlano := VarToStr(Qry2['PN_Numero']);
-    txtNumero.Text := sNoParte;
+    if Qry2.RecordCount > 0 then begin
+      lblValidOrden.Caption := VarToStr(Qry2['ITE_Id']);
+      sNoParte := VarToStr(Qry2['Numero']);
+      sAlias := VarToStr(Qry2['PA_Alias']);
+      sPlano := VarToStr(Qry2['PN_Numero']);
+      txtNumero.Text := sNoParte;
 
-    //Removed validation ask by Edgar. The Part Number does not need to be an alias of a blueprint we already
-    //have the link using the ITE_Nombre.
+      //Removed validation ask by Edgar. The Part Number does not need to be an alias of a blueprint we already
+      //have the link using the ITE_Nombre.
 
-    {if (Trim(sNoParte) <> Trim(txtPlano.Text)) and (sAlias = '') then begin
-      if MessageDlg('El Numero de Parte [' + sNoParte + '] de esta orden no es un Nombre Interno o Alias de este numero de Plano, deseas agregarlo?',
-                mtConfirmation, [mbYes, mbNo], 0) = mrYes then
-      begin
-        if FormIsRunning('frmCatalogoPlanos') Then
+      {if (Trim(sNoParte) <> Trim(txtPlano.Text)) and (sAlias = '') then begin
+        if MessageDlg('El Numero de Parte [' + sNoParte + '] de esta orden no es un Nombre Interno o Alias de este numero de Plano, deseas agregarlo?',
+                  mtConfirmation, [mbYes, mbNo], 0) = mrYes then
         begin
-          setActiveWindow(frmCatalogoPlanos.Handle);
+          if FormIsRunning('frmCatalogoPlanos') Then
+          begin
+            setActiveWindow(frmCatalogoPlanos.Handle);
+          end
+          else begin
+            Application.CreateForm(TfrmCatalogoPlanos, frmCatalogoPlanos);
+          end;
+          if lblPNId.Caption <> '' then begin
+            frmCatalogoPlanos.EditarPlano(lblPNId.Caption);
+            frmCatalogoPlanos.txtInterno.Text := sNoParte;
+            frmCatalogoPlanos.txtAlias.Text := sNoParte;
+          end;
+
+          frmCatalogoPlanos.Show();
+
+        end;
+      end;}
+
+    end
+    else begin
+      if  cmbTipo.Text = 'Salida' then begin // checar en stock
+        SQLStr := 'SELECT ITE_ID,ITE_Nombre,O.Numero,PA.*,P.* FROM tblStockOrdenes O ' +
+                  'LEFT OUTER JOIN tblPlanoAlias PA ON O.Numero = PA.PA_Alias ' +
+                  'LEFT OUTER JOIN tblPlano P ON PA.PN_Id = P.PN_Id ' +
+                  'WHERE ITE_Nombre = ' + QuotedStr(RightStr(ddlAnio.Text, 2) + '-' + txtOrden.Text);
+
+
+        Qry2.SQL.Clear;
+        Qry2.SQL.Text := SQLStr;
+        Qry2.Open;
+
+        lblValidOrden.Caption := '';
+
+        if Qry2.RecordCount > 0 then begin
+          lblValidOrden.Caption := VarToStr(Qry2['ITE_Id']);
+          sNoParte := VarToStr(Qry2['Numero']);
+          sAlias := VarToStr(Qry2['PA_Alias']);
+          sPlano := VarToStr(Qry2['PN_Numero']);
+          txtNumero.Text := sNoParte;
         end
         else begin
-          Application.CreateForm(TfrmCatalogoPlanos, frmCatalogoPlanos);
-        end;
-        if lblPNId.Caption <> '' then begin
-          frmCatalogoPlanos.EditarPlano(lblPNId.Caption);
-          frmCatalogoPlanos.txtInterno.Text := sNoParte;
-          frmCatalogoPlanos.txtAlias.Text := sNoParte;
+          ShowMessage('La Orden de Trabajo no es valida.');
         end;
 
-        frmCatalogoPlanos.Show();
-
-      end;
-    end;}
-
-  end
-  else begin
-    if  cmbTipo.Text = 'Salida' then begin // checar en stock
-      SQLStr := 'SELECT ITE_ID,ITE_Nombre,O.Numero,PA.*,P.* FROM tblStockOrdenes O ' +
-                'LEFT OUTER JOIN tblPlanoAlias PA ON O.Numero = PA.PA_Alias ' +
-                'LEFT OUTER JOIN tblPlano P ON PA.PN_Id = P.PN_Id ' +
-                'WHERE ITE_Nombre = ' + QuotedStr(RightStr(ddlAnio.Text, 2) + '-' + txtOrden.Text);
-
-
-      Qry2.SQL.Clear;
-      Qry2.SQL.Text := SQLStr;
-      Qry2.Open;
-
-      lblValidOrden.Caption := '';
-
-      if Qry2.RecordCount > 0 then begin
-        lblValidOrden.Caption := VarToStr(Qry2['ITE_Id']);
-        sNoParte := VarToStr(Qry2['Numero']);
-        sAlias := VarToStr(Qry2['PA_Alias']);
-        sPlano := VarToStr(Qry2['PN_Numero']);
-        txtNumero.Text := sNoParte;
       end
       else begin
         ShowMessage('La Orden de Trabajo no es valida.');
       end;
-
-    end
-    else begin
-      ShowMessage('La Orden de Trabajo no es valida.');
     end;
+  end
+  finally
+    CloseConns(Qry2, nil);
   end;
 
-  Qry2.Close;
-  Qry2.Free;
 end;
 
 procedure TfrmESStock.btnAceptarClick(Sender: TObject);
@@ -537,6 +565,14 @@ begin
     end;
   end;
 
+  if not ValidateOrdenInStock() then
+  begin
+    MessageDlg('Ya existe una ' +  cmbTipo.Text + ' para esta Orden de Trabajo.', mtInformation,[mbOk], 0);
+    result :=  False;
+    Exit;
+  end;
+
+
   if Trim(txtCantidad.Text) = '' Then
   begin
     MessageDlg('Por favor capture la Cantidad.', mtInformation,[mbOk], 0);
@@ -551,12 +587,28 @@ begin
     Exit;
   end;
 
+  if (cmbTipo.Text = 'Salida') then begin
+    if not ValidateExistencia() then begin
+      MessageDlg('No hay piezas suficientes en existencia para registrar esta Salida.', mtInformation,[mbOk], 0);
+      result :=  False;
+      Exit;
+    end;
+  end;
+
   if Trim(deFecha.Text) = '' then
   begin
     MessageDlg('La Fecha es requerida.', mtInformation,[mbOk], 0);
     result :=  False;
     Exit;
   end;
+
+  if deFecha.Date > Now then
+  begin
+    MessageDlg('La Fecha no puede ser mayor que el dia de hoy.', mtInformation,[mbOk], 0);
+    result :=  False;
+    Exit;
+  end;
+
 
   if Trim(cmbTipo.Text) = '' Then
   begin
@@ -572,78 +624,165 @@ begin
 
 end;
 
+function TfrmESStock.ValidateExistencia():Boolean;
+var SQLStr: String;
+Qry2 : TADOQuery;
+exist : Integer;
+sExist : String;
+begin
+  result := False;
+  Qry2 := nil;
+
+  try
+  begin
+    Qry2 := TADOQuery.Create(nil);
+    Qry2.Connection := Conn;
+
+    SQLStr := 'SELECT SUM(CASE WHEN S.ST_Tipo = ''Entrada'' THEN S.ST_Cantidad ELSE 0 END) - ' +
+              'SUM(CASE WHEN S.ST_Tipo = ''Salida'' THEN S.ST_Cantidad ELSE 0 END) AS Existencia  ' +
+              'FROM tblStock S WHERE S.PN_Id = ' + lblPNId.Caption;
+
+    if giOpcion = 2 then begin
+      SQLStr := SQLStr + ' AND S.ST_ID <> ' + lblId.Caption;
+    end;
+
+    Qry2.SQL.Clear;
+    Qry2.SQL.Text := SQLStr;
+    Qry2.Open;
+
+    exist := 0;
+    if Qry2.RecordCount > 0 then begin
+      sExist := VarToStr(Qry2['Existencia']);
+      if '' <> sExist then begin
+        exist := StrToInt(sExist);
+      end;
+    end;
+
+    if StrToInt(txtCantidad.Text) <= exist then begin
+      result := True;
+    end;
+
+  end
+  finally
+    CloseConns(Qry2, nil);
+  end;
+
+end;
+
+
 function TfrmESStock.ValidatePlano():Boolean;
 var SQLStr: String;
 Qry2 : TADOQuery;
 begin
   result := False;
-  Qry2 := TADOQuery.Create(nil);
-  Qry2.Connection :=Conn;
+  Qry2 := nil;
 
-  SQLStr := 'SELECT PN_Id FROM tblPlano WHERE PN_Numero = ' + QuotedStr(txtPlano.Text);
+  try
+  begin
+    Qry2 := TADOQuery.Create(nil);
+    Qry2.Connection := Conn;
 
-  Qry2.SQL.Clear;
-  Qry2.SQL.Text := SQLStr;
-  Qry2.Open;
+    SQLStr := 'SELECT PN_Id FROM tblPlano WHERE PN_Numero = ' + QuotedStr(txtPlano.Text);
 
-  lblPNId.Caption := '';
-  if Qry2.RecordCount > 0 then begin
-    lblPNId.Caption := VarToStr(Qry2['PN_Id']);
-    result := True;
+    Qry2.SQL.Clear;
+    Qry2.SQL.Text := SQLStr;
+    Qry2.Open;
+
+    lblPNId.Caption := '';
+    if Qry2.RecordCount > 0 then begin
+      lblPNId.Caption := VarToStr(Qry2['PN_Id']);
+      result := True;
+    end;
+  end
+  finally
+    CloseConns(Qry2, nil);
   end;
-
-  Qry2.Close;
-  Qry2.Free;
+  
 end;
+
+function TfrmESStock.ValidateOrdenInStock():Boolean;
+var SQLStr: String;
+Qry2 : TADOQuery;
+begin
+  result := True;
+  Qry2 := nil;
+  try
+  begin
+    Qry2 := TADOQuery.Create(nil);
+    Qry2.Connection := Conn;
+
+    SQLStr := 'SELECT ST_ID FROM tblStock WHERE ITE_Nombre = ' + QuotedStr(RightStr(ddlAnio.Text, 2) + '-' + txtOrden.Text) +
+              ' AND ST_Tipo = ' + QuotedStr(cmbTipo.Text);
+
+    if giOpcion = 2 then begin
+     SQLStr := SQLStr + ' AND ST_ID <> ' + lblId.Caption;
+    end;
+
+    Qry2.SQL.Clear;
+    Qry2.SQL.Text := SQLStr;
+    Qry2.Open;
+
+    if Qry2.RecordCount > 0 then begin
+      result := False;
+    end;
+  end
+  finally
+    CloseConns(Qry2, nil);
+  end;
+end;
+
 
 function TfrmESStock.ValidateOrden():Boolean;
 var SQLStr: String;
 Qry2 : TADOQuery;
 begin
   result := False;
-  Qry2 := TADOQuery.Create(nil);
-  Qry2.Connection :=Conn;
 
-  SQLStr := 'SELECT ITE_ID,ITE_Nombre,O.Numero,PA.*,P.* FROM tblOrdenes O ' +
-            'LEFT OUTER JOIN tblPlanoAlias PA ON O.Numero = PA.PA_Alias ' +
-            'LEFT OUTER JOIN tblPlano P ON PA.PN_Id = P.PN_Id ' +
-            'WHERE ITE_Nombre = ' + QuotedStr(RightStr(ddlAnio.Text, 2) + '-' + txtOrden.Text);
+  Qry2 := nil;
+  try
+  begin
+    Qry2 := TADOQuery.Create(nil);
+    Qry2.Connection := Conn;
 
-  Qry2.SQL.Clear;
-  Qry2.SQL.Text := SQLStr;
-  Qry2.Open;
+    SQLStr := 'SELECT ITE_ID,ITE_Nombre,O.Numero,PA.*,P.* FROM tblOrdenes O ' +
+              'LEFT OUTER JOIN tblPlanoAlias PA ON O.Numero = PA.PA_Alias ' +
+              'LEFT OUTER JOIN tblPlano P ON PA.PN_Id = P.PN_Id ' +
+              'WHERE ITE_Nombre = ' + QuotedStr(RightStr(ddlAnio.Text, 2) + '-' + txtOrden.Text);
 
-  if Qry2.RecordCount > 0 then begin
-    txtNumero.Text := VarToStr(Qry2['Numero']);
-    lblValidOrden.Caption := VarToStr(Qry2['ITE_Id']);
-    result := True;
-  end
-  else begin
-    if  cmbTipo.Text = 'Salida' then begin // checar en stock
-      SQLStr := 'SELECT ITE_ID,ITE_Nombre,O.Numero,PA.*,P.* FROM tblStockOrdenes O ' +
-                'LEFT OUTER JOIN tblPlanoAlias PA ON O.Numero = PA.PA_Alias ' +
-                'LEFT OUTER JOIN tblPlano P ON PA.PN_Id = P.PN_Id ' +
-                'WHERE ITE_Nombre = ' + QuotedStr(RightStr(ddlAnio.Text, 2) + '-' + txtOrden.Text);
+    Qry2.SQL.Clear;
+    Qry2.SQL.Text := SQLStr;
+    Qry2.Open;
+
+    if Qry2.RecordCount > 0 then begin
+      txtNumero.Text := VarToStr(Qry2['Numero']);
+      lblValidOrden.Caption := VarToStr(Qry2['ITE_Id']);
+      result := True;
+    end
+    else begin
+      if  cmbTipo.Text = 'Salida' then begin // checar en stock
+        SQLStr := 'SELECT ITE_ID,ITE_Nombre,O.Numero,PA.*,P.* FROM tblStockOrdenes O ' +
+                  'LEFT OUTER JOIN tblPlanoAlias PA ON O.Numero = PA.PA_Alias ' +
+                  'LEFT OUTER JOIN tblPlano P ON PA.PN_Id = P.PN_Id ' +
+                  'WHERE ITE_Nombre = ' + QuotedStr(RightStr(ddlAnio.Text, 2) + '-' + txtOrden.Text);
 
 
-      Qry2.SQL.Clear;
-      Qry2.SQL.Text := SQLStr;
-      Qry2.Open;
+        Qry2.SQL.Clear;
+        Qry2.SQL.Text := SQLStr;
+        Qry2.Open;
 
-      lblValidOrden.Caption := '';
+        lblValidOrden.Caption := '';
 
-      if Qry2.RecordCount > 0 then begin
-        txtNumero.Text := VarToStr(Qry2['Numero']);
-        lblValidOrden.Caption := VarToStr(Qry2['ITE_Id']);
-        result := True;
+        if Qry2.RecordCount > 0 then begin
+          txtNumero.Text := VarToStr(Qry2['Numero']);
+          lblValidOrden.Caption := VarToStr(Qry2['ITE_Id']);
+          result := True;
+        end;
       end;
     end;
+  end
+  finally
+    CloseConns(Qry2, nil);
   end;
-
-
-  Qry2.Close;
-  Qry2.Free;
-
 end;
 
 
@@ -652,21 +791,25 @@ var SQLStr: String;
 Qry2 : TADOQuery;
 begin
   result := '';
-  Qry2 := TADOQuery.Create(nil);
-  Qry2.Connection :=Conn;
+  Qry2 := nil;
+  try
+  begin
+    Qry2 := TADOQuery.Create(nil);
+    Qry2.Connection := Conn;
 
-  SQLStr := 'SELECT PN_Numero FROM tblPlano WHERE PN_Id = ' + PlanoId;
+    SQLStr := 'SELECT PN_Numero FROM tblPlano WHERE PN_Id = ' + PlanoId;
 
-  Qry2.SQL.Clear;
-  Qry2.SQL.Text := SQLStr;
-  Qry2.Open;
+    Qry2.SQL.Clear;
+    Qry2.SQL.Text := SQLStr;
+    Qry2.Open;
 
-  if Qry2.RecordCount > 0 then begin
-    result := VarToStr(Qry2['PN_Numero']);
+    if Qry2.RecordCount > 0 then begin
+      result := VarToStr(Qry2['PN_Numero']);
+    end;
+  end
+  finally
+    CloseConns(Qry2, nil);
   end;
-
-  Qry2.Close;
-  Qry2.Free;
 end;
 
 procedure TfrmESStock.SendTab(Sender: TObject; var Key: Word;  Shift: TShiftState);
@@ -793,52 +936,57 @@ begin
   txtBuscarPlano.Text := UpperCase(Trim(txtBuscarPlano.Text));
   SQLWhere := txtBuscarPlano.Text;
 
-  Qry2 := TADOQuery.Create(nil);
-  Qry2.Connection :=Conn;
+  Qry2 := nil;
+  try
+  begin
+    Qry2 := TADOQuery.Create(nil);
+    Qry2.Connection := Conn;
 
-  SQLStr := 'SELECT * FROM tblStock S INNER JOIN tblPlano P ON S.PN_Id = P.PN_Id WHERE P.PN_Numero ';
-  if Pos('*', txtBuscarPlano.Text) <> 0 then begin
-    SQLWhere := ' LIKE ' + QuotedStr(StringReplace(SQLWhere, '*', '%', [rfReplaceAll, rfIgnoreCase]));
-    doCount := false;
+    SQLStr := 'SELECT * FROM tblStock S INNER JOIN tblPlano P ON S.PN_Id = P.PN_Id WHERE P.PN_Numero ';
+    if Pos('*', txtBuscarPlano.Text) <> 0 then begin
+      SQLWhere := ' LIKE ' + QuotedStr(StringReplace(SQLWhere, '*', '%', [rfReplaceAll, rfIgnoreCase]));
+      doCount := false;
+    end
+    else begin
+      SQLWhere := ' = ' + QuotedStr(SQLWhere);
+      doCount := true;
+    end;
+
+    Qry2.SQL.Clear;
+    Qry2.SQL.Text := SQLStr + SQLWhere;
+    Qry2.Open;
+
+    entradas := 0;
+    salidas := 0;
+    While not Qry2.Eof do
+    Begin
+        gvResults.AddRow(1);
+        gvResults.Cells[0,gvResults.RowCount -1] := VarToStr(Qry2['ST_Id']);
+        gvResults.Cells[1,gvResults.RowCount -1] := VarToStr(Qry2['PN_Numero']);
+        year := '20' +  LeftStr(VarToStr(Qry2['ITE_Nombre']), 2);
+        gvResults.Cells[2,gvResults.RowCount -1] := year;
+        gvResults.Cells[3,gvResults.RowCount -1] := VarToStr(Qry2['ST_Fecha']);
+        gvResults.Cells[4,gvResults.RowCount -1] := RightStr( VarToStr(Qry2['ITE_Nombre']), Length(VarToStr(Qry2['ITE_Nombre']))-3 );
+        gvResults.Cells[5,gvResults.RowCount -1] := VarToStr(Qry2['ST_Tipo']);
+        gvResults.Cells[6,gvResults.RowCount -1] := VarToStr(Qry2['ST_Cantidad']);
+
+        if doCount then begin
+          if 'Entrada' = VarToStr(Qry2['ST_Tipo']) then begin
+            entradas := entradas + StrToInt(VarToStr(Qry2['ST_Cantidad']));
+          end
+          else begin
+            salidas := salidas + StrToInt(VarToStr(Qry2['ST_Cantidad']));
+          end;
+          lblTotal.Caption := 'En Stock : '+ IntToStr(entradas - salidas);
+        end;
+
+        Qry2.Next;
+    end;
   end
-  else begin
-    SQLWhere := ' = ' + QuotedStr(SQLWhere);
-    doCount := true;
+  finally
+    CloseConns(Qry2, nil);
   end;
 
-  Qry2.SQL.Clear;
-  Qry2.SQL.Text := SQLStr + SQLWhere;
-  Qry2.Open;
-
-  entradas := 0;
-  salidas := 0;
-  While not Qry2.Eof do
-  Begin
-      gvResults.AddRow(1);
-      gvResults.Cells[0,gvResults.RowCount -1] := VarToStr(Qry2['ST_Id']);
-      gvResults.Cells[1,gvResults.RowCount -1] := VarToStr(Qry2['PN_Numero']);
-      year := '20' +  LeftStr(VarToStr(Qry2['ITE_Nombre']), 2);
-      gvResults.Cells[2,gvResults.RowCount -1] := year;
-      gvResults.Cells[3,gvResults.RowCount -1] := VarToStr(Qry2['ST_Fecha']);
-      gvResults.Cells[4,gvResults.RowCount -1] := RightStr( VarToStr(Qry2['ITE_Nombre']), Length(VarToStr(Qry2['ITE_Nombre']))-3 );
-      gvResults.Cells[5,gvResults.RowCount -1] := VarToStr(Qry2['ST_Tipo']);
-      gvResults.Cells[6,gvResults.RowCount -1] := VarToStr(Qry2['ST_Cantidad']);
-
-      if doCount then begin
-        if 'Entrada' = VarToStr(Qry2['ST_Tipo']) then begin
-          entradas := entradas + StrToInt(VarToStr(Qry2['ST_Cantidad']));
-        end
-        else begin
-          salidas := salidas + StrToInt(VarToStr(Qry2['ST_Cantidad']));
-        end;
-        lblTotal.Caption := 'En Stock : '+ IntToStr(entradas - salidas);
-      end;
-      
-      Qry2.Next;
-  End;
-
-  Qry2.Close;
-  Qry2.Free;
 end;
 
 procedure TfrmESStock.txtBuscarPlanoExit(Sender: TObject);
@@ -964,6 +1112,37 @@ end;
 procedure TfrmESStock.txtPlanoKeyPress(Sender: TObject; var Key: Char);
 begin
   Key := upcase(Key);
+end;
+
+procedure TfrmESStock.Copiar1Click(Sender: TObject);
+begin
+  giStock.id := '';
+  giStock.plano := lblPNId.Caption;
+  giStock.anio := ddlAnio.Text;
+  giStock.orden := txtOrden.Text;
+  giStock.fecha := deFecha.Text;
+  giStock.cantidad := txtCantidad.Text;
+  giStock.noParte := txtNumero.Text;
+  giStock.tipo := cmbTipo.Text;
+end;
+
+procedure TfrmESStock.Pegar1Click(Sender: TObject);
+begin
+  if giOpcion <> 1 then begin
+    ShowMessage('Solo se puede pegar cuando se esta creando una nueva entrada/Salida');
+    Exit;
+  end;
+
+  lblPNId.Caption := giStock.plano;
+  txtPlano.Text := GetNumeroDePlano(lblPNId.Caption);
+  txtOrden.Text := giStock.orden;
+  deFecha.Text := giStock.fecha;
+  txtCantidad.Text := giStock.cantidad;
+  cmbTipo.Text := giStock.tipo;
+
+  ddlAnio.ItemIndex := ddlAnio.Items.IndexOf(giStock.anio);
+  ddlAnio.Text := giStock.anio;
+  ValidateOrden();
 end;
 
 end.

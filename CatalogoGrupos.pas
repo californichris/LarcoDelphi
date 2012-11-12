@@ -63,9 +63,10 @@ var SQLStr : String;
 Conn : TADOConnection;
 Qry : TADOQuery;
 begin
-    Conn := nil;
     Qry := nil;
+    Conn := nil;
     try
+    begin
         Conn := TADOConnection.Create(nil);
         Conn.ConnectionString := frmMain.sConnString;
         Conn.LoginPrompt := False;
@@ -86,15 +87,17 @@ begin
             GridView1.Cells[1,GridView1.RowCount -1] := VarToStr(Qry['Group_Name']);
             Qry.Next;
         end;
-    except
-          on e : EOleException do
-                ShowMessage('La base de datos no esta disponible. Por favor verifique que exista conectividad al servidor.');
-          on e : Exception do
-                ShowMessage(e.ClassName + ' error raised, with message : ' + e.Message + ' Method : BindGrid');
+    end
+    finally
+      if Qry <> nil then begin
+        Qry.Close;
+        Qry.Free;
+      end;
+      if Conn <> nil then begin
+        Conn.Close;
+        Conn.Free
+      end;
     end;
-
-    Qry.Close;
-    Conn.Close;
 end;
 
 
@@ -111,6 +114,7 @@ Conn : TADOConnection;
 begin
     Conn := nil;
     try
+    begin
         Conn := TADOConnection.Create(nil);
         Conn.ConnectionString := frmMain.sConnString;
         Conn.LoginPrompt := False;
@@ -124,19 +128,17 @@ begin
         SQLStr := 'Grupos 0,' + QuotedStr(txtNombre.Text);
 
         Conn.Execute(SQLStr);
-
-        BindGrid();
-        txtNombre.Text := '';
-        txtNombre.SetFocus;
-
-    except
-          on e : EOleException do
-                ShowMessage('La base de datos no esta disponible. Por favor verifique que exista conectividad al servidor.');
-          on e : Exception do
-                ShowMessage(e.ClassName + ' error raised, with message : ' + e.Message + ' Method : BindGrid');
+    end
+    finally
+      if Conn <> nil then begin
+        Conn.Close;
+        Conn.Free
+      end;
     end;
 
-    Conn.Close;
+    BindGrid();
+    txtNombre.Text := '';
+    txtNombre.SetFocus;
 end;
 
 procedure TfrmCatalogoGrupos.EditarClick(Sender: TObject);
@@ -188,11 +190,9 @@ begin
 
     end;
 
-
-
     Conn := nil;
     try
-
+    begin
       Conn := TADOConnection.Create(nil);
       Conn.ConnectionString := frmMain.sConnString;
       Conn.LoginPrompt := False;
@@ -200,17 +200,15 @@ begin
       SQLStr := 'Grupos 2,' + QuotedStr('') + ',' + GridView1.Cells[0,GridView1.SelectedRow];
 
       Conn.Execute(SQLStr);
-      BindGrid();
-
-    except
-          on e : EOleException do
-                ShowMessage('La base de datos no esta disponible. Por favor verifique que exista conectividad al servidor.');
-          on e : Exception do
-                ShowMessage(e.ClassName + ' error raised, with message : ' + e.Message + ' Method : BindGrid');
+    end
+    finally
+      if Conn <> nil then begin
+        Conn.Close;
+        Conn.Free
+      end;
     end;
 
-    Conn.Close;
-
+    BindGrid();
 end;
 
 procedure TfrmCatalogoGrupos.btnCancelarClick(Sender: TObject);
@@ -245,6 +243,7 @@ begin
 
     Conn := nil;
     try
+    begin
         Conn := TADOConnection.Create(nil);
         Conn.ConnectionString := frmMain.sConnString;
         Conn.LoginPrompt := False;
@@ -253,16 +252,16 @@ begin
 
         Conn.Execute(SQLStr);
 
-        BindGrid();
-        btnCancelarClick(nil);
-    except
-          on e : EOleException do
-                ShowMessage('La base de datos no esta disponible. Por favor verifique que exista conectividad al servidor.');
-          on e : Exception do
-                ShowMessage(e.ClassName + ' error raised, with message : ' + e.Message + ' Method : BindGrid');
+    end
+    finally
+      if Conn <> nil then begin
+        Conn.Close;
+        Conn.Free
+      end;
     end;
 
-    Conn.Close;
+    BindGrid();
+    btnCancelarClick(nil);
 end;
 
 procedure TfrmCatalogoGrupos.GridView1SelectCell(Sender: TObject; ACol,

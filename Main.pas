@@ -87,6 +87,9 @@ type
     Planos1: TMenuItem;
     Stock1: TMenuItem;
     EntradasStock1: TMenuItem;
+    EntradasvsSalidas1: TMenuItem;
+    EntradasvsSalidasPorPlano1: TMenuItem;
+    TotalPiezasStock1: TMenuItem;
     procedure Productos1Click(Sender: TObject);
     procedure Monitor1Click(Sender: TObject);
     procedure areas1Click(Sender: TObject);
@@ -153,6 +156,9 @@ type
       Sender: TObject);
     procedure Planos1Click(Sender: TObject);
     procedure EntradasStock1Click(Sender: TObject);
+    procedure EntradasvsSalidas1Click(Sender: TObject);
+    procedure EntradasvsSalidasPorPlano1Click(Sender: TObject);
+    procedure TotalPiezasStock1Click(Sender: TObject);
   private
     { Private declarations }
     FirstTimeLogin : Boolean;
@@ -184,7 +190,9 @@ uses Login, Users, PorcentajeScrap, Screens, PorcentajeRetrabajo,
   ReporteEntradasSalidasLarco, ReporteMaterialesEscasos, SalidasLarco,
   ReporteProductividadEmpleado, ReporteProductividadEmpleadoDinero,
   ReporteMaterialesPorOrden, CatalogoDiasInhabiles,
-  ReporteCumplimientoFechaEntrega, CatalogoPlanos, EntradasSalidasStock;
+  ReporteCumplimientoFechaEntrega, CatalogoPlanos, EntradasSalidasStock,
+  ReporteEntradasSalidasStock, ReporteEntradasSalidasPlano,
+  ReporteTotalPiezasStock;
 
 {$R *.dfm}
 
@@ -458,35 +466,46 @@ begin
     application.ProcessMessages;
     application.ProcessMessages;
 
-    //Create Connection
-    Conn := TADOConnection.Create(nil);
-    Conn.ConnectionString := gsConnString;
-    Conn.LoginPrompt := False;
-    Qry := TADOQuery.Create(nil);
-    Qry.Connection :=Conn;
-
-    // Update all items that are active or terminated in almacen task
-    SQLStr := 'UPDATE tblScrap SET SCR_Activo = 1 ' +
-              'FROM TBLSCRAP S ' +
-              'INNER JOIN tblItemTasks I ON S.SCR_NewItem = I.ITE_Nombre ' +
-              'WHERE I.TAS_ID = 2 AND (I.ITS_Status IS NOT NULL AND I.ITS_Status <> 0)';
-
-    Conn.Execute(SQLStr);
-
-    //select all items that need to be reschedule
-    Qry.SQL.Clear;
-    Qry.SQL.Text := 'SELECT COUNT(*) AS Ordenes FROM tblScrap WHERE SCR_Activo = 0';
-    Qry.Open;
-
-    if Qry['Ordenes'] > 0 then
+    Qry := nil;
+    Conn := nil;
+    try
     begin
-        lblScrap.Visible := True;
-        lblScrap.Caption := 'Scrap Pendiente de Reprogramar.';
-        application.ProcessMessages;
-    end;
+      Conn := TADOConnection.Create(nil);
+      Conn.ConnectionString := gsConnString;
+      Conn.LoginPrompt := False;
+      Qry := TADOQuery.Create(nil);
+      Qry.Connection :=Conn;
 
-    Qry.Close;
-    Conn.Close;
+      // Update all items that are active or terminated in almacen task
+      SQLStr := 'UPDATE tblScrap SET SCR_Activo = 1 ' +
+                'FROM TBLSCRAP S ' +
+                'INNER JOIN tblItemTasks I ON S.SCR_NewItem = I.ITE_Nombre ' +
+                'WHERE I.TAS_ID = 2 AND (I.ITS_Status IS NOT NULL AND I.ITS_Status <> 0)';
+
+      Conn.Execute(SQLStr);
+
+      //select all items that need to be reschedule
+      Qry.SQL.Clear;
+      Qry.SQL.Text := 'SELECT COUNT(*) AS Ordenes FROM tblScrap WHERE SCR_Activo = 0';
+      Qry.Open;
+
+      if Qry['Ordenes'] > 0 then
+      begin
+          lblScrap.Visible := True;
+          lblScrap.Caption := 'Scrap Pendiente de Reprogramar.';
+          application.ProcessMessages;
+      end;
+    end
+    finally
+      if Qry <> nil then begin
+        Qry.Close;
+        Qry.Free;
+      end;
+      if Conn <> nil then begin
+        Conn.Close;
+        Conn.Free
+      end;
+    end;
 end;
 
 procedure TfrmMain.ReportedeScrap1Click(Sender: TObject);
@@ -700,8 +719,10 @@ Qry2 : TADOQuery;
 begin
     Conn := nil;
     Qry := nil;
+    Qry2 := nil;
     MainMenu1.Items.Clear;
     try
+    begin
         Conn := TADOConnection.Create(nil);
         Conn.ConnectionString := frmMain.sConnString;
         Conn.LoginPrompt := False;
@@ -790,7 +811,7 @@ begin
 
 
         MainMenu1.Items.Add(item);
-
+    end
     except
           on e : EOleException do
                 ShowMessage('La base de datos no esta disponible. Por favor verifique que exista conectividad al servidor.');
@@ -798,9 +819,18 @@ begin
                 ShowMessage(e.ClassName + ' error raised, with message : ' + e.Message + ' Method : BindGrid');
     end;
 
-    Qry.Close;
-    Conn.Close;
-
+    if Qry2 <> nil then begin
+      Qry2.Close;
+      Qry2.Free;
+    end;
+    if Qry <> nil then begin
+      Qry.Close;
+      Qry.Free;
+    end;
+    if Conn <> nil then begin
+      Conn.Close;
+      Conn.Free
+    end;
 
 end;
 
@@ -966,6 +996,15 @@ begin
       end
       else if UT(formName) = UT('frmESStock') then begin
         menuItem.OnClick := EntradasStock1Click;
+      end
+      else if UT(formName) = UT('frmReporteESStock') then begin
+        menuItem.OnClick := EntradasvsSalidas1Click;
+      end
+      else if UT(formName) = UT('frmReporteESPlano') then begin
+        menuItem.OnClick := EntradasvsSalidasPorPlano1Click;
+      end
+      else if UT(formName) = UT('frmReporteTotalPiezasStock') then begin
+        menuItem.OnClick := TotalPiezasStock1Click;
       end;
 end;
 
@@ -1394,6 +1433,48 @@ else
   begin
         Application.CreateForm(TfrmESStock, frmESStock);
         frmESStock.Show;
+  end;
+end;
+
+procedure TfrmMain.EntradasvsSalidas1Click(Sender: TObject);
+begin
+if FormIsRunning('frmReporteESStock') Then
+  begin
+        setActiveWindow(frmReporteESStock.Handle);
+        frmReporteESStock.WindowState := wsNormal;
+  end
+else
+  begin
+        Application.CreateForm(TfrmReporteESStock, frmReporteESStock);
+        frmReporteESStock.Show;
+  end;
+end;
+
+procedure TfrmMain.EntradasvsSalidasPorPlano1Click(Sender: TObject);
+begin
+if FormIsRunning('frmReporteESPlano') Then
+  begin
+        setActiveWindow(frmReporteESPlano.Handle);
+        frmReporteESPlano.WindowState := wsNormal;
+  end
+else
+  begin
+        Application.CreateForm(TfrmReporteESPlano, frmReporteESPlano);
+        frmReporteESPlano.Show;
+  end;
+end;
+
+procedure TfrmMain.TotalPiezasStock1Click(Sender: TObject);
+begin
+if FormIsRunning('frmReporteTotalPiezasStock') Then
+  begin
+        setActiveWindow(frmReporteTotalPiezasStock.Handle);
+        frmReporteTotalPiezasStock.WindowState := wsNormal;
+  end
+else
+  begin
+        Application.CreateForm(TfrmReporteTotalPiezasStock, frmReporteTotalPiezasStock);
+        frmReporteTotalPiezasStock.Show;
   end;
 end;
 

@@ -1,6 +1,6 @@
 object frmCargaTrabajo: TfrmCargaTrabajo
-  Left = 4
-  Top = 136
+  Left = 146
+  Top = 90
   Width = 1008
   Height = 565
   Caption = 'Reporte de Carga de Trabajo'

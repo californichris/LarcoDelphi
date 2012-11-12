@@ -1810,6 +1810,7 @@ object frmTareas: TfrmTareas
       ReadOnly = True
       ShowHint = True
       TabOrder = 0
+      OnKeyPress = txtNombreKeyPress
     end
     object btnAceptar: TButton
       Left = 117

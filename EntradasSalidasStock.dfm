@@ -861,6 +861,7 @@ object frmESStock: TfrmESStock
     Top = 4
     Width = 460
     Height = 301
+    PopupMenu = PopupMenu1
     TabOrder = 0
     object Label1: TLabel
       Left = 16
@@ -1521,5 +1522,17 @@ object frmESStock: TfrmESStock
   object SaveDialog1: TSaveDialog
     Left = 224
     Top = 264
+  end
+  object PopupMenu1: TPopupMenu
+    Left = 296
+    Top = 224
+    object Copiar1: TMenuItem
+      Caption = 'Copiar'
+      OnClick = Copiar1Click
+    end
+    object Pegar1: TMenuItem
+      Caption = 'Pegar'
+      OnClick = Pegar1Click
+    end
   end
 end

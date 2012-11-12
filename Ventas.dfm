@@ -1,6 +1,6 @@
 object frmVentas: TfrmVentas
-  Left = 202
-  Top = 102
+  Left = 171
+  Top = 64
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
   Caption = 'Ventas'

@@ -88,30 +88,42 @@ Qry : TADOQuery;
 SQLStr : String;
 begin
     Result := False;
-    //Create Connection
-    Conn := TADOConnection.Create(nil);
-    Conn.ConnectionString := frmMain.sConnString;
-    Conn.LoginPrompt := False;
-    Qry := TADOQuery.Create(nil);
-    Qry.Connection :=Conn;
 
-    SQLStr := 'SELECT USE_ID FROM tblUsers WHERE USE_Login = ' + QuotedStr(User) +
-              ' AND USE_Password = ' + QuotedStr(Password);
+    Qry := nil;
+    Conn := nil;
+    try
+    begin
+      Conn := TADOConnection.Create(nil);
+      Conn.ConnectionString := frmMain.sConnString;
+      Conn.LoginPrompt := False;
+      Qry := TADOQuery.Create(nil);
+      Qry.Connection :=Conn;
 
-    Qry.SQL.Clear;
-    Qry.SQL.Text := SQLStr;
-    Qry.Open;
+      SQLStr := 'SELECT USE_ID FROM tblUsers WHERE USE_Login = ' + QuotedStr(User) +
+                ' AND USE_Password = ' + QuotedStr(Password);
 
-    if Qry.RecordCount > 0 then begin
-        if lblValidate.Caption <> 'true' then begin
-           frmMain.sUserID := Qry['USE_ID'];
-           frmMain.BindMenu(Qry['USE_ID']);
-        end;
-        Result := True;
+      Qry.SQL.Clear;
+      Qry.SQL.Text := SQLStr;
+      Qry.Open;
+
+      if Qry.RecordCount > 0 then begin
+          if lblValidate.Caption <> 'true' then begin
+             frmMain.sUserID := Qry['USE_ID'];
+             frmMain.BindMenu(Qry['USE_ID']);
+          end;
+          Result := True;
+      end;
+    end
+    finally
+      if Qry <> nil then begin
+        Qry.Close;
+        Qry.Free;
+      end;
+      if Conn <> nil then begin
+        Conn.Close;
+        Conn.Free
+      end;
     end;
-
-    Qry.Close;
-    Conn.Close;
 end;
 
 procedure TfrmLogin.txtUserKeyPress(Sender: TObject; var Key: Char);
@@ -128,7 +140,7 @@ end;
 
 procedure TfrmLogin.FormShow(Sender: TObject);
 begin
-frmMain.Enabled := False;
+  frmMain.Enabled := False;
 end;
 
 end.

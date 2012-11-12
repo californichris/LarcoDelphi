@@ -60,6 +60,13 @@ type
     Button6: TButton;
     Label5: TLabel;
     cmbTareas: TComboBox;
+    GroupBox4: TGroupBox;
+    gvTareas: TGridView;
+    CheckBox4: TCheckBox;
+    btnOK4: TButton;
+    btnTodos4: TButton;
+    txtTarea: TEdit;
+    Button8: TButton;
     procedure FormCreate(Sender: TObject);
     procedure BindProductos();
     procedure BindClientes();
@@ -92,6 +99,10 @@ type
     procedure btnTodos3Click(Sender: TObject);
     procedure Button5Click(Sender: TObject);
     procedure Button6Click(Sender: TObject);
+    procedure Button8Click(Sender: TObject);
+    procedure CheckBox4Click(Sender: TObject);
+    procedure btnOK4Click(Sender: TObject);
+    procedure btnTodos4Click(Sender: TObject);
   private
     { Private declarations }
   public
@@ -173,7 +184,7 @@ begin
               'T.Nombre AS Tarea,CASE WHEN I.ITS_Status = 0 THEN ''Listo'' ' +
               'WHEN I.ITS_Status = 1 THEN ''Activo'' ' +
               'WHEN I.ITS_Status = 2 THEN ''Terminado'' END AS Status, ' +
-              'O.Observaciones,I.ITS_DTStart,E.Nombre ' +
+              'O.Observaciones,I.ITS_DTStart,E.Nombre,O.OrdenCompra, O.Recibido ' +
               'FROM tblOrdenes O ' +
               'INNER JOIN tblItemTasks I ON O.ITE_ID = I.ITE_ID AND ITS_DTStart IS NOT NULL AND ITS_DTStop IS NULL ' +
               'INNER JOIN tblTareas T ON T.[ID] = I.TAS_ID ' +
@@ -230,10 +241,12 @@ begin
         SQLWhere := SQLWhere + ' O.Numero = ' + QuotedStr(cmbPartes.Text) + ' ';
     end;
 
-    if cmbTareas.Text <> 'Todos' then
+    if txtTarea.Text <> 'Todos' then
     begin
         if SQLWhere2 <> '' then SQLWhere2 := SQLWhere2 + ' AND ';
-        SQLWhere2 := SQLWhere2 + ' T.Nombre = ' + QuotedStr(cmbTareas.Text) + ' ';
+        //SQLWhere2 := SQLWhere2 + ' T.Nombre = ' + QuotedStr(cmbTareas.Text) + ' ';
+        SQLWhere2 := SQLWhere2 + ' T.Nombre IN (''' +
+        StringReplace(txtTarea.Text,',',''',''',[rfReplaceAll, rfIgnoreCase]) + ''') ';
     end;
 
     if SQLWhere <> '' then SQLStr := SQLStr + ' AND ' + SQLWhere;
@@ -255,15 +268,17 @@ begin
 
         GridView1.Cells[3,GridView1.RowCount -1] := VarToStr(Qry['Descripcion']);
         GridView1.Cells[4,GridView1.RowCount -1] := VarToStr(Qry['Numero']);
-        GridView1.Cells[5,GridView1.RowCount -1] := VarToStr(Qry['Terminal']);
-        GridView1.Cells[6,GridView1.RowCount -1] := VarToStr(Qry['Fecha']);
-        GridView1.Cells[7,GridView1.RowCount -1] := VarToStr(Qry['Compromiso']);
+        GridView1.Cells[5,GridView1.RowCount -1] := VarToStr(Qry['OrdenCompra']);
+        GridView1.Cells[6,GridView1.RowCount -1] := VarToStr(Qry['Terminal']);
+        GridView1.Cells[7,GridView1.RowCount -1] := VarToStr(Qry['Fecha']);
+        GridView1.Cells[8,GridView1.RowCount -1] := VarToStr(Qry['Compromiso']);
+        GridView1.Cells[9,GridView1.RowCount -1] := VarToStr(Qry['Recibido']);
 
-        GridView1.Cells[8,GridView1.RowCount -1] := VarToStr(Qry['Tarea']);
-        GridView1.Cells[9,GridView1.RowCount -1] := VarToStr(Qry['Status']);
-        GridView1.Cells[10,GridView1.RowCount -1] := VarToStr(Qry['ITS_DTStart']);
-        GridView1.Cells[11,GridView1.RowCount -1] := VarToStr(Qry['Nombre']);
-        GridView1.Cells[12,GridView1.RowCount -1] := VarToStr(Qry['Observaciones']);
+        GridView1.Cells[10,GridView1.RowCount -1] := VarToStr(Qry['Tarea']);
+        GridView1.Cells[11,GridView1.RowCount -1] := VarToStr(Qry['Status']);
+        GridView1.Cells[12,GridView1.RowCount -1] := VarToStr(Qry['ITS_DTStart']);
+        GridView1.Cells[13,GridView1.RowCount -1] := VarToStr(Qry['Nombre']);
+        GridView1.Cells[14,GridView1.RowCount -1] := VarToStr(Qry['Observaciones']);
         Qry.Next;
     End;
 
@@ -379,11 +394,15 @@ begin
 
     cmbTareas.Items.Clear;
     cmbTareas.Items.Add('Todos');
-    While not Qry2.Eof do
-    Begin
+    gvTareas.ClearRows;
+    while not Qry2.Eof do
+    begin
+        gvTareas.AddRow(1);
+        gvTareas.Cells[0,gvTareas.RowCount -1] := VarToStr(Qry2['Nombre']);
+
         cmbTareas.Items.Add(Qry2['Nombre']);
         Qry2.Next;
-    End;
+    end;
 
     Qry2.Close;
 end;
@@ -785,7 +804,6 @@ begin
                 txtProducto.Text :=  LeftStr(sProductos,Length(sProductos) - 1);
         end;
   end;
-
 end;
 
 procedure TfrmEntrega.btnTodos3Click(Sender: TObject);
@@ -832,6 +850,83 @@ begin
   ChildControl := gbSearch.FindChildControl('chkRecibido');
   if(ChildControl.ClassName = 'TCheckBox') then begin
    (ChildControl as TCheckBox).Checked := True;
+  end;
+
+end;
+
+procedure TfrmEntrega.Button8Click(Sender: TObject);
+begin
+  if GroupBox4.Visible = True then
+  begin
+          GroupBox4.Visible := False;
+  end
+  else begin
+      GroupBox4.Visible := True;
+      if txtTarea.Text = 'Todos' then
+      begin
+              CheckBox4.Checked := True;
+              gvTareas.Enabled := False;
+              btnTodos4.Enabled := False;
+      end
+      else
+      begin
+              CheckBox4.Checked := False;
+              gvTareas.Enabled := True;
+              btnTodos4.Enabled := True;
+      end;
+
+      GroupBox4.Top := txtTarea.Top + txtTarea.Height + 5;
+      GroupBox4.Left := txtTarea.Left + 10;
+  end;
+end;
+
+procedure TfrmEntrega.CheckBox4Click(Sender: TObject);
+begin
+gvTareas.Enabled := not CheckBox4.Checked;
+btnTodos4.Enabled := not CheckBox4.Checked;
+end;
+
+procedure TfrmEntrega.btnOK4Click(Sender: TObject);
+var i: integer;
+sTareas : String;
+begin
+  GroupBox4.Visible := False;
+  if CheckBox4.Checked = True then begin
+          txtTarea.Text := 'Todos';
+  end
+  else begin
+        sTareas := '';
+        for i:= 0 to gvTareas.RowCount - 1 do
+        begin
+                if gvTareas.Cell[1,i].AsBoolean = True then
+                begin
+                        sTareas := sTareas + gvTareas.Cells[0,i] + ',';
+                end;
+        end;
+        txtTarea.Text := 'Todos';
+        if sTareas <> '' then
+        begin
+                txtTarea.Text :=  LeftStr(sTareas,Length(sTareas) - 1);
+        end;
+  end;
+end;
+
+procedure TfrmEntrega.btnTodos4Click(Sender: TObject);
+var i: integer;
+begin
+  if UT(btnTodos4.Caption) = UT('Seleccionar Todos') then begin
+        btnTodos4.Caption := 'Deseleccionar Todos';
+        for i:= 0 to gvTareas.RowCount - 1 do
+        begin
+                gvTareas.Cell[1,i].AsBoolean := True;
+        end;
+  end
+  else begin
+        btnTodos4.Caption := 'Seleccionar Todos';
+        for i:= 0 to gvTareas.RowCount - 1 do
+        begin
+                gvTareas.Cell[1,i].AsBoolean := False;
+        end;
   end;
 
 end;
