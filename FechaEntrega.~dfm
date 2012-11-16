@@ -1536,7 +1536,7 @@ object frmEntrega: TfrmEntrega
       Height = 17
       Caption = 'Aceptar'
       TabOrder = 2
-      OnClick = btnOK3Click
+      OnClick = btnOK4Click
     end
     object btnTodos4: TButton
       Left = 8
@@ -1545,7 +1545,7 @@ object frmEntrega: TfrmEntrega
       Height = 18
       Caption = 'Seleccionar Todos'
       TabOrder = 3
-      OnClick = btnTodos3Click
+      OnClick = btnTodos4Click
     end
   end
   object Timer1: TTimer

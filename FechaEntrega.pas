@@ -59,7 +59,6 @@ type
     Button5: TButton;
     Button6: TButton;
     Label5: TLabel;
-    cmbTareas: TComboBox;
     GroupBox4: TGroupBox;
     gvTareas: TGridView;
     CheckBox4: TCheckBox;
@@ -161,7 +160,6 @@ begin
     cmbClientes.Text := 'Todos';
     cmbPartes.Text := 'Todos';
     cmbOrdenes.Text := 'Todos';
-    cmbTareas.Text := 'Todos';
 
     BindClientes();
     BindTareas('');
@@ -392,15 +390,12 @@ begin
     Qry2.SQL.Text := SQLStr;
     Qry2.Open;
 
-    cmbTareas.Items.Clear;
-    cmbTareas.Items.Add('Todos');
     gvTareas.ClearRows;
     while not Qry2.Eof do
     begin
         gvTareas.AddRow(1);
         gvTareas.Cells[0,gvTareas.RowCount -1] := VarToStr(Qry2['Nombre']);
 
-        cmbTareas.Items.Add(Qry2['Nombre']);
         Qry2.Next;
     end;
 

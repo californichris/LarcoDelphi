@@ -1002,6 +1002,9 @@ begin
       end
       else if UT(formName) = UT('frmReporteESPlano') then begin
         menuItem.OnClick := EntradasvsSalidasPorPlano1Click;
+      end
+      else if UT(formName) = UT('frmReporteTotalPiezasStock') then begin
+        menuItem.OnClick := TotalPiezasStock1Click;
       end;
 end;
 

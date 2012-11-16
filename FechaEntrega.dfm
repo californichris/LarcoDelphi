@@ -968,7 +968,7 @@ object frmEntrega: TfrmEntrega
     object cmbPartes: TComboBox
       Left = 682
       Top = 15
-      Width = 145
+      Width = 161
       Height = 21
       ItemHeight = 13
       TabOrder = 12
@@ -1045,30 +1045,22 @@ object frmEntrega: TfrmEntrega
       TabOrder = 20
       OnClick = Button4Click
     end
-    object cmbTareas: TComboBox
-      Left = 682
-      Top = 39
-      Width = 145
-      Height = 21
-      ItemHeight = 13
-      TabOrder = 21
-    end
     object txtTarea: TEdit
-      Left = 915
+      Left = 681
       Top = 38
       Width = 144
       Height = 21
       ReadOnly = True
-      TabOrder = 22
+      TabOrder = 21
       Text = 'Todos'
     end
     object Button8: TButton
-      Left = 1060
+      Left = 826
       Top = 38
       Width = 17
       Height = 21
       Caption = '...'
-      TabOrder = 23
+      TabOrder = 22
       OnClick = Button8Click
     end
   end

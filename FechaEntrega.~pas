@@ -101,6 +101,8 @@ type
     procedure Button6Click(Sender: TObject);
     procedure Button8Click(Sender: TObject);
     procedure CheckBox4Click(Sender: TObject);
+    procedure btnOK4Click(Sender: TObject);
+    procedure btnTodos4Click(Sender: TObject);
   private
     { Private declarations }
   public
@@ -802,7 +804,6 @@ begin
                 txtProducto.Text :=  LeftStr(sProductos,Length(sProductos) - 1);
         end;
   end;
-
 end;
 
 procedure TfrmEntrega.btnTodos3Click(Sender: TObject);
@@ -883,6 +884,51 @@ procedure TfrmEntrega.CheckBox4Click(Sender: TObject);
 begin
 gvTareas.Enabled := not CheckBox4.Checked;
 btnTodos4.Enabled := not CheckBox4.Checked;
+end;
+
+procedure TfrmEntrega.btnOK4Click(Sender: TObject);
+var i: integer;
+sTareas : String;
+begin
+  GroupBox4.Visible := False;
+  if CheckBox4.Checked = True then begin
+          txtTarea.Text := 'Todos';
+  end
+  else begin
+        sTareas := '';
+        for i:= 0 to gvTareas.RowCount - 1 do
+        begin
+                if gvTareas.Cell[1,i].AsBoolean = True then
+                begin
+                        sTareas := sTareas + gvTareas.Cells[0,i] + ',';
+                end;
+        end;
+        txtTarea.Text := 'Todos';
+        if sTareas <> '' then
+        begin
+                txtTarea.Text :=  LeftStr(sTareas,Length(sTareas) - 1);
+        end;
+  end;
+end;
+
+procedure TfrmEntrega.btnTodos4Click(Sender: TObject);
+var i: integer;
+begin
+  if UT(btnTodos4.Caption) = UT('Seleccionar Todos') then begin
+        btnTodos4.Caption := 'Deseleccionar Todos';
+        for i:= 0 to gvTareas.RowCount - 1 do
+        begin
+                gvTareas.Cell[1,i].AsBoolean := True;
+        end;
+  end
+  else begin
+        btnTodos4.Caption := 'Seleccionar Todos';
+        for i:= 0 to gvTareas.RowCount - 1 do
+        begin
+                gvTareas.Cell[1,i].AsBoolean := False;
+        end;
+  end;
+
 end;
 
 end.
