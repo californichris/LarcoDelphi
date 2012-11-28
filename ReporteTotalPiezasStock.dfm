@@ -1356,6 +1356,7 @@ object frmReporteTotalPiezasStock: TfrmReporteTotalPiezasStock
       Top = 32
       Width = 169
       Height = 290
+      Cursor = 3000
       BorderStyle = bsSingle
       GridStyle = gsReport
       GridLinesStyle = lsNormal

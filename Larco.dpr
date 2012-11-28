@@ -80,7 +80,8 @@ uses
   EntradasSalidasStock in 'EntradasSalidasStock.pas' {frmESStock},
   ReporteEntradasSalidasStock in 'ReporteEntradasSalidasStock.pas' {frmReporteESStock},
   ReporteEntradasSalidasPlano in 'ReporteEntradasSalidasPlano.pas' {frmReporteESPlano},
-  ReporteTotalPiezasStock in 'ReporteTotalPiezasStock.pas' {frmReporteTotalPiezasStock};
+  ReporteTotalPiezasStock in 'ReporteTotalPiezasStock.pas' {frmReporteTotalPiezasStock},
+  ReportePiezasStock in 'ReportePiezasStock.pas' {frmReportePiezasStock};
 
 {$R *.res}
 

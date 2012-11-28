@@ -120,6 +120,7 @@ begin
 
     If giOpcion <> 3 Then
     begin
+        txtNombre.Text := Trim(txtNombre.Text);
         If txtNombre.Text = '' then
           begin
             MessageDlg('Por favor escriba un nombre de Producto.', mtInformation,[mbOk], 0);
@@ -153,6 +154,11 @@ begin
           begin
             SQLStr := 'UPDATE tblItems SET PRO_Nombre = ' +  QuotedStr(txtNombre.Text) +
                       ' WHERE PRO_Nombre = ' +  QuotedStr(sProducto);
+
+            Conn.Execute(SQLStr);
+
+            SQLStr := 'UPDATE tblPlano SET PN_Descripcion = UPPER(' +  QuotedStr(txtNombre.Text) +
+                      ') WHERE UPPER(PN_Descripcion) = UPPER(' +  QuotedStr(sProducto) + ')';
 
             Conn.Execute(SQLStr);
 

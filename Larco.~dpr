@@ -80,7 +80,8 @@ uses
   EntradasSalidasStock in 'EntradasSalidasStock.pas' {frmESStock},
   ReporteEntradasSalidasStock in 'ReporteEntradasSalidasStock.pas' {frmReporteESStock},
   ReporteEntradasSalidasPlano in 'ReporteEntradasSalidasPlano.pas' {frmReporteESPlano},
-  ReporteTotalPiezasStock in 'ReporteTotalPiezasStock.pas' {frmReporteTotalPiezasStock};
+  ReporteTotalPiezasStock in 'ReporteTotalPiezasStock.pas' {frmReporteTotalPiezasStock},
+  ReportePiezasStock in 'ReportePiezasStock.pas' {frmReportePiezasStock};
 
 {$R *.res}
 
@@ -89,6 +90,6 @@ begin
   Application.Title := 'Larco';
   Application.CreateForm(TfrmMain, frmMain);
   Application.CreateForm(TfrmLogin, frmLogin);
-  Application.CreateForm(TfrmReporteTotalPiezasStock, frmReporteTotalPiezasStock);
+  Application.CreateForm(TfrmReportePiezasStock, frmReportePiezasStock);
   Application.Run;
 end.

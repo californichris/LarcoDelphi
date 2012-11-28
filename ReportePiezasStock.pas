@@ -1,4 +1,4 @@
-unit ReporteTotalPiezasStock;
+unit ReportePiezasStock;
 
 interface
 
@@ -9,48 +9,36 @@ uses
   CustomGridViewControl, CustomGridView, GridView, Menus,Clipbrd,LTCUtils,Larco_functions;
 
 type
-  TfrmReporteTotalPiezasStock = class(TForm)
+  TfrmReportePiezasStock = class(TForm)
     GridView1: TGridView;
     GroupBox1: TGroupBox;
     Label2: TLabel;
-    Label1: TLabel;
-    Label3: TLabel;
+    Label4: TLabel;
     Button1: TButton;
     btnBuscar: TButton;
     Button3: TButton;
     txtDescripcion: TEdit;
-    deFrom: TDateEditor;
-    deTo: TDateEditor;
+    txtPlano: TEdit;
+    Button2: TButton;
     GroupBox5: TGroupBox;
     gvDesc: TGridView;
     CheckBox1: TCheckBox;
     btnOK: TButton;
     btnTodos: TButton;
-    SaveDialog1: TSaveDialog;
-    PopupMenu2: TPopupMenu;
-    Copiar1: TMenuItem;
-    OpenDialog1: TOpenDialog;
-    Label4: TLabel;
-    txtPlano: TEdit;
-    Button2: TButton;
     GroupBox2: TGroupBox;
     gvPlanos: TGridView;
     CheckBox2: TCheckBox;
     btnOK2: TButton;
     btnTodos2: TButton;
-    Label5: TLabel;
-    txtCliente: TEdit;
-    Button4: TButton;
-    GroupBox3: TGroupBox;
-    gvClientes: TGridView;
-    CheckBox3: TCheckBox;
-    btnOK3: TButton;
-    btnTodos3: TButton;
+    SaveDialog1: TSaveDialog;
+    PopupMenu2: TPopupMenu;
+    Copiar1: TMenuItem;
+    OpenDialog1: TOpenDialog;
+    CopyPlano1: TMenuItem;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCreate(Sender: TObject);
     procedure BindDescripciones();
     procedure BindPlanos();
-    procedure BindClientes();
     procedure BindGrid();
     procedure ExportGrid(Grid: TGridView;sFileName: String);
     procedure CheckBox1Click(Sender: TObject);
@@ -61,10 +49,6 @@ type
     procedure btnTodos2Click(Sender: TObject);
     procedure Button3Click(Sender: TObject);
     procedure Button2Click(Sender: TObject);
-    procedure CheckBox3Click(Sender: TObject);
-    procedure btnOK3Click(Sender: TObject);
-    procedure btnTodos3Click(Sender: TObject);
-    procedure Button4Click(Sender: TObject);
     procedure btnBuscarClick(Sender: TObject);
     procedure Button1Click(Sender: TObject);
     procedure Copiar1Click(Sender: TObject);
@@ -74,6 +58,7 @@ type
     procedure txtPlanoKeyPress(Sender: TObject; var Key: Char);
     procedure txtPlanoKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
+    procedure CopyPlano1Click(Sender: TObject);
   private
     { Private declarations }
   public
@@ -81,7 +66,7 @@ type
   end;
 
 var
-  frmReporteTotalPiezasStock: TfrmReporteTotalPiezasStock;
+  frmReportePiezasStock: TfrmReportePiezasStock;
 
 implementation
 
@@ -89,24 +74,21 @@ uses Main;
 
 {$R *.dfm}
 
-procedure TfrmReporteTotalPiezasStock.FormClose(Sender: TObject;
+procedure TfrmReportePiezasStock.FormClose(Sender: TObject;
   var Action: TCloseAction);
 begin
   Action := caFree;
 end;
 
-procedure TfrmReporteTotalPiezasStock.FormCreate(Sender: TObject);
+procedure TfrmReportePiezasStock.FormCreate(Sender: TObject);
 begin
-  deFrom.Date := StartOfAMonth(YearOf(Now), MonthOf(Now));
-  deTo.Date :=  EndOfTheMonth(Now);
   BindDescripciones();
   BindPlanos();
-  BindClientes();
 
   BindGrid();
 end;
 
-procedure TfrmReporteTotalPiezasStock.BindGrid();
+procedure TfrmReportePiezasStock.BindGrid();
 var SQLStr : String;
 Conn : TADOConnection;
 Qry : TADOQuery;
@@ -126,15 +108,12 @@ begin
       Qry.Connection :=Conn;
 
       SQLStr := 'SELECT P.PN_Descripcion, P.PN_Numero, ' +
-                'CASE WHEN O.Numero IS NULL THEN '''' ELSE O.Numero END AS Numero, ' +
-                'SUBSTRING(S.ITE_Nombre,4,3) AS Cliente, ' +
                 'SUM(CASE WHEN S.ST_Tipo = ''Entrada'' THEN S.ST_Cantidad ELSE 0 END) AS Entradas, ' +
                 'SUM(CASE WHEN S.ST_Tipo = ''Salida'' THEN S.ST_Cantidad ELSE 0 END) AS Salidas, ' +
                 'SUM(CASE WHEN S.ST_Tipo = ''Entrada'' THEN S.ST_Cantidad ELSE 0 END) - SUM(CASE WHEN S.ST_Tipo = ''Salida'' THEN S.ST_Cantidad ELSE 0 END) AS Cantidad ' +
                 'FROM tblPlano P ' +
                 'INNER JOIN tblStock S ON P.PN_Id = S.PN_Id ' +
-                'LEFT OUTER JOIN tblOrdenes O ON S.ITE_Nombre = O.ITE_Nombre ' + 
-                'WHERE S.ST_Fecha >= ' + QuotedStr(deFrom.Text) + ' AND S.ST_Fecha <= ' + QuotedStr(deTo.Text  + ' 23:59:59.99');
+                'WHERE 1 = 1 ';
 
       if Pos('*', txtPlano.Text) <> 0 then begin
         SQLStr := SQLStr + ' AND P.PN_Numero LIKE ''' + StringReplace(txtPlano.Text, '*', '%', [rfReplaceAll, rfIgnoreCase]) + '''';
@@ -148,11 +127,7 @@ begin
         SQLStr := SQLStr + ' AND P.PN_Descripcion IN (''' + StringReplace(txtDescripcion.Text, ',', ''',''', [rfReplaceAll, rfIgnoreCase]) + ''')';
       end;
 
-      if txtCliente.Text <> 'Todos' then begin
-        SQLStr := SQLStr + ' AND SUBSTRING(S.ITE_Nombre,4,3) IN (''' + StringReplace(txtCliente.Text, ',', ''',''', [rfReplaceAll, rfIgnoreCase]) + ''')';
-      end;
-
-      SQLStr := SQLStr + ' GROUP BY P.PN_Descripcion, P.PN_Numero, SUBSTRING(S.ITE_Nombre,4,3), O.Numero';
+      SQLStr := SQLStr + ' GROUP BY P.PN_Descripcion, P.PN_Numero';
 
       Qry.SQL.Clear;
       Qry.SQL.Text := SQLStr;
@@ -163,11 +138,9 @@ begin
         GridView1.AddRow(1);
         GridView1.Cells[0,GridView1.RowCount -1] := VarToStr(Qry['PN_Descripcion']);
         GridView1.Cells[1,GridView1.RowCount -1] := VarToStr(Qry['PN_Numero']);
-        GridView1.Cells[2,GridView1.RowCount -1] := VarToStr(Qry['Numero']);
-        GridView1.Cells[3,GridView1.RowCount -1] := VarToStr(Qry['Cliente']);
-        GridView1.Cells[4,GridView1.RowCount -1] := VarToStr(Qry['Entradas']);
-        GridView1.Cells[5,GridView1.RowCount -1] := VarToStr(Qry['Salidas']);
-        GridView1.Cells[6,GridView1.RowCount -1] := VarToStr(Qry['Cantidad']);
+        GridView1.Cells[2,GridView1.RowCount -1] := VarToStr(Qry['Entradas']);
+        GridView1.Cells[3,GridView1.RowCount -1] := VarToStr(Qry['Salidas']);
+        GridView1.Cells[4,GridView1.RowCount -1] := VarToStr(Qry['Cantidad']);
 
         entradas := entradas + StrToInt(VarToStr(Qry['Entradas']));
         salidas := salidas + StrToInt(VarToStr(Qry['Salidas']));
@@ -177,17 +150,17 @@ begin
       end;
 
         GridView1.AddRow(1);
-        GridView1.Cells[3,GridView1.RowCount -1] := 'Totales :';
-        GridView1.Cells[4,GridView1.RowCount -1] := IntToStr(entradas);
-        GridView1.Cells[5,GridView1.RowCount -1] := IntToStr(salidas);
-        GridView1.Cells[6,GridView1.RowCount -1] := IntToStr(existencia);
+        GridView1.Cells[1,GridView1.RowCount -1] := 'Totales :';
+        GridView1.Cells[2,GridView1.RowCount -1] := IntToStr(entradas);
+        GridView1.Cells[3,GridView1.RowCount -1] := IntToStr(salidas);
+        GridView1.Cells[4,GridView1.RowCount -1] := IntToStr(existencia);
     end
     finally
       CloseConns(Qry, Conn);
     end;
 end;
 
-procedure TfrmReporteTotalPiezasStock.BindDescripciones();
+procedure TfrmReportePiezasStock.BindDescripciones();
 var SQLStr : String;
 Conn : TADOConnection;
 Qry : TADOQuery;
@@ -220,7 +193,7 @@ begin
     end;
 end;
 
-procedure TfrmReporteTotalPiezasStock.BindPlanos();
+procedure TfrmReportePiezasStock.BindPlanos();
 var SQLStr : String;
 Conn : TADOConnection;
 Qry : TADOQuery;
@@ -253,58 +226,19 @@ begin
     end;
 end;
 
-procedure TfrmReporteTotalPiezasStock.BindClientes();
-var Qry : TADOQuery;
-SQLStr : String;
-//slClientes : TStringList;
-begin
-    //slClientes := TStringList.Create;
-    //slClientes.CommaText := '010,060,062,162,699,799,862,899,999,960';
-    Conn := nil;
-    Qry := nil;
-    try
-    begin
-      Conn := TADOConnection.Create(nil);
-      Conn.ConnectionString := frmMain.sConnString;
-      Conn.LoginPrompt := False;
-      Qry := TADOQuery.Create(nil);
-      Qry.Connection :=Conn;
-
-      SQLStr := 'SELECT Distinct Clave FROM tblClientes Order By Clave';
-
-      Qry.SQL.Clear;
-      Qry.SQL.Text := SQLStr;
-      Qry.Open;
-
-      gvClientes.ClearRows;
-      While not Qry.Eof do
-      Begin
-          gvClientes.AddRow(1);
-          gvClientes.Cells[0,gvClientes.RowCount -1] := VarToStr(Qry['Clave']);
-          //if (slClientes.IndexOf(VarToStr(Qry['Clave'])) = -1) then begin
-          //        gvClientes.Cell[1,gvClientes.RowCount -1].AsBoolean := True;
-          //end;
-          Qry.Next;
-      End;
-    end
-    finally
-      CloseConns(Qry, Conn);
-    end;
-end;
-
-procedure TfrmReporteTotalPiezasStock.CheckBox1Click(Sender: TObject);
+procedure TfrmReportePiezasStock.CheckBox1Click(Sender: TObject);
 begin
 gvDesc.Enabled := not CheckBox1.Checked;
 btnTodos.Enabled := not CheckBox1.Checked;
 end;
 
-procedure TfrmReporteTotalPiezasStock.CheckBox2Click(Sender: TObject);
+procedure TfrmReportePiezasStock.CheckBox2Click(Sender: TObject);
 begin
 gvPlanos.Enabled := not CheckBox2.Checked;
 btnTodos2.Enabled := not CheckBox2.Checked;
 end;
 
-procedure TfrmReporteTotalPiezasStock.btnOKClick(Sender: TObject);
+procedure TfrmReportePiezasStock.btnOKClick(Sender: TObject);
 var i: integer;
 sDescs : String;
 begin
@@ -330,7 +264,7 @@ begin
   end;
 end;
 
-procedure TfrmReporteTotalPiezasStock.btnOK2Click(Sender: TObject);
+procedure TfrmReportePiezasStock.btnOK2Click(Sender: TObject);
 var i: integer;
 sDescs : String;
 begin
@@ -356,7 +290,7 @@ begin
   end;
 end;
 
-procedure TfrmReporteTotalPiezasStock.btnTodosClick(Sender: TObject);
+procedure TfrmReportePiezasStock.btnTodosClick(Sender: TObject);
 var i: integer;
 begin
   if UT(btnTodos.Caption) = UT('Seleccionar Todos') then begin
@@ -375,7 +309,7 @@ begin
   end;
 end;
 
-procedure TfrmReporteTotalPiezasStock.btnTodos2Click(Sender: TObject);
+procedure TfrmReportePiezasStock.btnTodos2Click(Sender: TObject);
 var i: integer;
 begin
   if UT(btnTodos2.Caption) = UT('Seleccionar Todos') then begin
@@ -394,7 +328,7 @@ begin
   end;
 end;
 
-procedure TfrmReporteTotalPiezasStock.Button3Click(Sender: TObject);
+procedure TfrmReportePiezasStock.Button3Click(Sender: TObject);
 begin
   if GroupBox5.Visible = True then
   begin
@@ -421,7 +355,7 @@ begin
 
 end;
 
-procedure TfrmReporteTotalPiezasStock.Button2Click(Sender: TObject);
+procedure TfrmReportePiezasStock.Button2Click(Sender: TObject);
 begin
   if GroupBox2.Visible = True then
   begin
@@ -448,88 +382,16 @@ begin
 
 end;
 
-procedure TfrmReporteTotalPiezasStock.CheckBox3Click(Sender: TObject);
+procedure TfrmReportePiezasStock.btnBuscarClick(Sender: TObject);
 begin
-gvClientes.Enabled := not CheckBox3.Checked;
-btnTodos3.Enabled := not CheckBox3.Checked;
+  Button1.Enabled := false;
+  btnBuscar.Enabled := false;
+  BindGrid();
+  Button1.Enabled := true;
+  btnBuscar.Enabled := true;
 end;
 
-procedure TfrmReporteTotalPiezasStock.btnOK3Click(Sender: TObject);
-var i: integer;
-sClientes : String;
-begin
-  GroupBox3.Visible := False;
-  if CheckBox3.Checked = True then begin
-          txtCliente.Text := 'Todos';
-  end
-  else begin
-        sClientes := '';
-        for i:= 0 to gvClientes.RowCount - 1 do
-        begin
-                if gvClientes.Cell[1,i].AsBoolean = True then
-                begin
-                        sClientes := sClientes + gvClientes.Cells[0,i] + ',';
-                end;
-        end;
-        txtCliente.Text := 'Todos';
-        if sClientes <> '' then
-        begin
-                txtCliente.Text :=  LeftStr(sClientes,Length(sClientes) - 1);
-        end;
-  end;
-end;
-
-procedure TfrmReporteTotalPiezasStock.btnTodos3Click(Sender: TObject);
-var i: integer;
-begin
-  if UT(btnTodos3.Caption) = UT('Seleccionar Todos') then begin
-        btnTodos3.Caption := 'Deseleccionar Todos';
-        for i:= 0 to gvClientes.RowCount - 1 do
-        begin
-                gvClientes.Cell[1,i].AsBoolean := True;
-        end;
-  end
-  else begin
-        btnTodos3.Caption := 'Seleccionar Todos';
-        for i:= 0 to gvClientes.RowCount - 1 do
-        begin
-                gvClientes.Cell[1,i].AsBoolean := False;
-        end;
-  end;
-end;
-
-procedure TfrmReporteTotalPiezasStock.Button4Click(Sender: TObject);
-begin
-  if GroupBox3.Visible = True then
-  begin
-          GroupBox3.Visible := False;
-  end
-  else begin
-      GroupBox3.Visible := True;
-      if txtCliente.Text = 'Todos' then
-      begin
-              CheckBox3.Checked := True;
-              gvClientes.Enabled := False;
-              btnTodos3.Enabled := False;
-      end
-      else
-      begin
-              CheckBox3.Checked := False;
-              gvClientes.Enabled := True;
-              btnTodos3.Enabled := True;
-      end;
-
-      GroupBox3.Top := txtCliente.Top + txtCliente.Height + 5;
-      GroupBox3.Left := txtCliente.Left + 10;
-  end;
-end;
-
-procedure TfrmReporteTotalPiezasStock.btnBuscarClick(Sender: TObject);
-begin
-BindGrid();
-end;
-
-procedure TfrmReporteTotalPiezasStock.Button1Click(Sender: TObject);
+procedure TfrmReportePiezasStock.Button1Click(Sender: TObject);
 var sFileName: String;
 begin
   if GridView1.RowCount = 0 then
@@ -549,7 +411,7 @@ begin
   end;
 end;
 
-procedure TfrmReporteTotalPiezasStock.ExportGrid(Grid: TGridView;sFileName: String);
+procedure TfrmReportePiezasStock.ExportGrid(Grid: TGridView;sFileName: String);
 const
   xlWorkSheet = -4167;
   xlCSV = 6;
@@ -557,6 +419,9 @@ var XApp : Variant;
 Sheet : Variant;
 Row, col, startRow :Integer;
 begin
+      Button1.Enabled := false;
+      btnBuscar.Enabled := false;
+
       try //Create the excel object
       begin
             XApp:= CreateOleObject('Excel.Application');
@@ -565,6 +430,8 @@ begin
             XApp.DisplayAlerts := False;
       end;
       except
+        Button1.Enabled := true;
+        btnBuscar.Enabled := true;
         ShowMessage('No se pudo abrir Microsoft Excel,  parece que no esta instalado en el sistema.');
         Exit;
       end;
@@ -574,10 +441,9 @@ begin
       Sheet.Name := 'Total de piezas en Stock';
 
       Sheet.Cells[1,1] := 'Total de piezas en Stock';
-      Sheet.Cells[2,1] := 'Periodo de: ' + deFrom.Text + ' hasta: ' + deTo.Text;
       XApp.Range['A1:A2'].Font.Bold := True;
 
-      startRow := 4;
+      startRow := 3;
 
       for Col := 1 to Grid.Columns.Count do
               Sheet.Cells[startRow, Col] := Grid.Columns[Col - 1].Header.Caption;
@@ -595,15 +461,18 @@ begin
       XApp.Quit;
       XApp := Unassigned;
 
+      Button1.Enabled := true;
+      btnBuscar.Enabled := true;
+
       ShowMessage('El archivo se exporto exitosamente.');
 end;
 
-procedure TfrmReporteTotalPiezasStock.Copiar1Click(Sender: TObject);
+procedure TfrmReportePiezasStock.Copiar1Click(Sender: TObject);
 begin
 Button1Click(nil);
 end;
 
-procedure TfrmReporteTotalPiezasStock.txtDescripcionKeyDown(
+procedure TfrmReportePiezasStock.txtDescripcionKeyDown(
   Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
   If Key = vk_return then
@@ -612,25 +481,30 @@ begin
   end
 end;
 
-procedure TfrmReporteTotalPiezasStock.txtDescripcionKeyPress(
+procedure TfrmReportePiezasStock.txtDescripcionKeyPress(
   Sender: TObject; var Key: Char);
 begin
   Key := upcase(Key);
 end;
 
-procedure TfrmReporteTotalPiezasStock.txtPlanoKeyPress(Sender: TObject;
+procedure TfrmReportePiezasStock.txtPlanoKeyPress(Sender: TObject;
   var Key: Char);
 begin
   Key := upcase(Key);
 end;
 
-procedure TfrmReporteTotalPiezasStock.txtPlanoKeyDown(Sender: TObject;
+procedure TfrmReportePiezasStock.txtPlanoKeyDown(Sender: TObject;
   var Key: Word; Shift: TShiftState);
 begin
   If Key = vk_return then
   begin
       BindGrid();
   end
+end;
+
+procedure TfrmReportePiezasStock.CopyPlano1Click(Sender: TObject);
+begin
+  Clipboard.AsText := GridView1.Cells[1,GridView1.SelectedRow]
 end;
 
 end.

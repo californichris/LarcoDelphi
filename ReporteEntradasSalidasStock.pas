@@ -159,7 +159,7 @@ begin
       Qry := TADOQuery.Create(nil);
       Qry.Connection :=Conn;
 
-      SQLStr := 'SELECT DISTINCT PN_Descripcion FROM tblPlano ORDER BY PN_Descripcion';
+      SQLStr := 'SELECT UPPER(Nombre) AS Nombre FROM tblProductos ORDER BY Nombre';
 
       Qry.SQL.Clear;
       Qry.SQL.Text := SQLStr;
@@ -168,7 +168,7 @@ begin
       gvDesc.ClearRows;
       while not Qry.Eof do begin
         gvDesc.AddRow(1);
-        gvDesc.Cells[0,gvDesc.RowCount -1] := VarToStr(Qry['PN_Descripcion']);
+        gvDesc.Cells[0,gvDesc.RowCount -1] := VarToStr(Qry['Nombre']);
         Qry.Next;
       end;
     end

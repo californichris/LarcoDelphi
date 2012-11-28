@@ -90,6 +90,7 @@ type
     EntradasvsSalidas1: TMenuItem;
     EntradasvsSalidasPorPlano1: TMenuItem;
     TotalPiezasStock1: TMenuItem;
+    PiezasenStock1: TMenuItem;
     procedure Productos1Click(Sender: TObject);
     procedure Monitor1Click(Sender: TObject);
     procedure areas1Click(Sender: TObject);
@@ -159,6 +160,7 @@ type
     procedure EntradasvsSalidas1Click(Sender: TObject);
     procedure EntradasvsSalidasPorPlano1Click(Sender: TObject);
     procedure TotalPiezasStock1Click(Sender: TObject);
+    procedure PiezasenStock1Click(Sender: TObject);
   private
     { Private declarations }
     FirstTimeLogin : Boolean;
@@ -192,7 +194,7 @@ uses Login, Users, PorcentajeScrap, Screens, PorcentajeRetrabajo,
   ReporteMaterialesPorOrden, CatalogoDiasInhabiles,
   ReporteCumplimientoFechaEntrega, CatalogoPlanos, EntradasSalidasStock,
   ReporteEntradasSalidasStock, ReporteEntradasSalidasPlano,
-  ReporteTotalPiezasStock;
+  ReporteTotalPiezasStock, ReportePiezasStock;
 
 {$R *.dfm}
 
@@ -1005,6 +1007,9 @@ begin
       end
       else if UT(formName) = UT('frmReporteTotalPiezasStock') then begin
         menuItem.OnClick := TotalPiezasStock1Click;
+      end
+      else if UT(formName) = UT('frmReportePiezasStock') then begin
+        menuItem.OnClick := PiezasenStock1Click;
       end;
 end;
 
@@ -1475,6 +1480,20 @@ else
   begin
         Application.CreateForm(TfrmReporteTotalPiezasStock, frmReporteTotalPiezasStock);
         frmReporteTotalPiezasStock.Show;
+  end;
+end;
+
+procedure TfrmMain.PiezasenStock1Click(Sender: TObject);
+begin
+if FormIsRunning('frmReportePiezasStock') Then
+  begin
+        setActiveWindow(frmReportePiezasStock.Handle);
+        frmReportePiezasStock.WindowState := wsNormal;
+  end
+else
+  begin
+        Application.CreateForm(TfrmReportePiezasStock, frmReportePiezasStock);
+        frmReportePiezasStock.Show;
   end;
 end;
 

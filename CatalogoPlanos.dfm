@@ -1014,6 +1014,26 @@ object frmCatalogoPlanos: TfrmCatalogoPlanos
       Height = 13
       Caption = 'Aliases'
     end
+    object txtCantidad: TEdit
+      Left = 112
+      Top = 72
+      Width = 248
+      Height = 21
+      TabOrder = 1
+      Visible = False
+    end
+    object cmbProductos: TComboBox
+      Left = 112
+      Top = 48
+      Width = 249
+      Height = 21
+      Enabled = False
+      ItemHeight = 13
+      TabOrder = 17
+      Text = 'cmbProductos'
+      OnKeyDown = SendTab
+      OnKeyPress = cmbProductosKeyPress
+    end
     object txtPlano: TEdit
       Left = 112
       Top = 24
@@ -1024,23 +1044,6 @@ object frmCatalogoPlanos: TfrmCatalogoPlanos
       OnExit = txtPlanoExit
       OnKeyDown = SendTab
       OnKeyPress = txtPlanoKeyPress
-    end
-    object txtDescripcion: TEdit
-      Left = 112
-      Top = 48
-      Width = 248
-      Height = 21
-      MaxLength = 100
-      TabOrder = 1
-      OnKeyDown = SendTab
-    end
-    object txtCantidad: TEdit
-      Left = 112
-      Top = 72
-      Width = 248
-      Height = 21
-      TabOrder = 2
-      Visible = False
     end
     object Nuevo: TButton
       Left = 6
@@ -1057,7 +1060,7 @@ object frmCatalogoPlanos: TfrmCatalogoPlanos
       ParentFont = False
       ParentShowHint = False
       ShowHint = True
-      TabOrder = 9
+      TabOrder = 8
       OnClick = NuevoClick
       OnKeyDown = ButtonKeyDown
     end
@@ -1076,7 +1079,7 @@ object frmCatalogoPlanos: TfrmCatalogoPlanos
       ParentFont = False
       ParentShowHint = False
       ShowHint = True
-      TabOrder = 10
+      TabOrder = 9
       OnClick = EditarClick
       OnKeyDown = ButtonKeyDown
     end
@@ -1095,7 +1098,7 @@ object frmCatalogoPlanos: TfrmCatalogoPlanos
       ParentFont = False
       ParentShowHint = False
       ShowHint = True
-      TabOrder = 11
+      TabOrder = 10
       OnClick = BorrarClick
       OnKeyDown = ButtonKeyDown
     end
@@ -1114,7 +1117,7 @@ object frmCatalogoPlanos: TfrmCatalogoPlanos
       ParentFont = False
       ParentShowHint = False
       ShowHint = True
-      TabOrder = 12
+      TabOrder = 11
       OnClick = BuscarClick
       OnKeyDown = ButtonKeyDown
     end
@@ -1134,7 +1137,7 @@ object frmCatalogoPlanos: TfrmCatalogoPlanos
       ParentFont = False
       ParentShowHint = False
       ShowHint = True
-      TabOrder = 13
+      TabOrder = 12
       OnClick = btnAceptarClick
     end
     object btnCancelar: TButton
@@ -1153,7 +1156,7 @@ object frmCatalogoPlanos: TfrmCatalogoPlanos
       ParentFont = False
       ParentShowHint = False
       ShowHint = True
-      TabOrder = 14
+      TabOrder = 13
       OnClick = btnCancelarClick
     end
     object Panel1: TPanel
@@ -1161,7 +1164,7 @@ object frmCatalogoPlanos: TfrmCatalogoPlanos
       Top = 398
       Width = 114
       Height = 27
-      TabOrder = 15
+      TabOrder = 14
       object Primero: TButton
         Left = 8
         Top = 4
@@ -1256,7 +1259,7 @@ object frmCatalogoPlanos: TfrmCatalogoPlanos
       ParentColor = False
       SelectionMoveDirection = mdDown
       SlideSize = 80
-      TabOrder = 16
+      TabOrder = 15
       TabStop = True
       WantReturns = False
       object Interno: TTextualColumn
@@ -1306,7 +1309,7 @@ object frmCatalogoPlanos: TfrmCatalogoPlanos
       ParentColor = False
       SelectionMoveDirection = mdDown
       SlideSize = 80
-      TabOrder = 17
+      TabOrder = 16
       TabStop = True
       WantReturns = False
       object Alias: TTextualColumn
@@ -1345,7 +1348,7 @@ object frmCatalogoPlanos: TfrmCatalogoPlanos
       Width = 121
       Height = 21
       MaxLength = 50
-      TabOrder = 3
+      TabOrder = 2
       OnKeyDown = txtInternoKeyDown
       OnKeyPress = txtInternoKeyPress
     end
@@ -1358,7 +1361,7 @@ object frmCatalogoPlanos: TfrmCatalogoPlanos
       Caption = '+'
       ParentShowHint = False
       ShowHint = True
-      TabOrder = 4
+      TabOrder = 3
       OnClick = AddInternosClick
       OnKeyDown = ButtonKeyDown
     end
@@ -1371,7 +1374,7 @@ object frmCatalogoPlanos: TfrmCatalogoPlanos
       Caption = '-'
       ParentShowHint = False
       ShowHint = True
-      TabOrder = 5
+      TabOrder = 4
       OnClick = DeleteInternosClick
       OnKeyDown = ButtonKeyDown
     end
@@ -1381,7 +1384,7 @@ object frmCatalogoPlanos: TfrmCatalogoPlanos
       Width = 121
       Height = 21
       MaxLength = 50
-      TabOrder = 6
+      TabOrder = 5
       OnKeyDown = txtInternoKeyDown
       OnKeyPress = txtAliasKeyPress
     end
@@ -1394,7 +1397,7 @@ object frmCatalogoPlanos: TfrmCatalogoPlanos
       Caption = '+'
       ParentShowHint = False
       ShowHint = True
-      TabOrder = 7
+      TabOrder = 6
       OnClick = AddAliasClick
       OnKeyDown = ButtonKeyDown
     end
@@ -1407,7 +1410,7 @@ object frmCatalogoPlanos: TfrmCatalogoPlanos
       Caption = '-'
       ParentShowHint = False
       ShowHint = True
-      TabOrder = 8
+      TabOrder = 7
       OnClick = DeleteAliasClick
       OnKeyDown = ButtonKeyDown
     end

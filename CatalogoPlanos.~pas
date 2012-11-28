@@ -15,7 +15,6 @@ type
     Label2: TLabel;
     Label3: TLabel;
     txtPlano: TEdit;
-    txtDescripcion: TEdit;
     txtCantidad: TEdit;
     lblId: TLabel;
     Nuevo: TButton;
@@ -51,6 +50,7 @@ type
     PopupMenu2: TPopupMenu;
     MenuItem1: TMenuItem;
     CopiarOrden1: TMenuItem;
+    cmbProductos: TComboBox;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     Procedure ClearData();
     procedure FormCreate(Sender: TObject);
@@ -93,6 +93,7 @@ type
     procedure txtPlanoKeyPress(Sender: TObject; var Key: Char);
     procedure txtInternoKeyPress(Sender: TObject; var Key: Char);
     procedure txtAliasKeyPress(Sender: TObject; var Key: Char);
+    procedure BindProductos();    
   private
     { Private declarations }
   public
@@ -117,10 +118,35 @@ begin
 Action := caFree;
 end;
 
+procedure TfrmCatalogoPlanos.BindProductos();
+var Qry2 : TADOQuery;
+SQLStr : String;
+begin
+    Qry2 := TADOQuery.Create(nil);
+    Qry2.Connection :=Conn;
+
+    SQLStr := 'SELECT UPPER(Nombre) AS Nombre FROM tblProductos ORDER BY Nombre';
+
+    Qry2.SQL.Clear;
+    Qry2.SQL.Text := SQLStr;
+    Qry2.Open;
+
+    cmbProductos.Items.Clear;
+    While not Qry2.Eof do
+    Begin
+        cmbProductos.Items.Add(Qry2['Nombre']);
+        Qry2.Next;
+    End;
+
+    cmbProductos.Text := '';
+    Qry2.Close;
+    Qry2.Free;
+end;
+
 procedure TfrmCatalogoPlanos.ClearData();
 begin
   txtPlano.Text := '';
-  txtDescripcion.Text := '';
+  cmbProductos.Text := '';
   txtCantidad.Text := '';
 
   txtInterno.Text := '';
@@ -138,6 +164,9 @@ begin
   Conn := TADOConnection.Create(nil);
   Conn.ConnectionString := frmMain.sConnString;
   Conn.LoginPrompt := False;
+
+  BindProductos();
+
   Qry := TADOQuery.Create(nil);
   Qry.Connection :=Conn;
 
@@ -154,6 +183,7 @@ begin
 
   EnableControls(True);
   EnableButtons();
+
 end;
 
 procedure TfrmCatalogoPlanos.BindData();
@@ -168,7 +198,7 @@ begin
 
     lblId.Caption := VarToStr(Qry['PN_Id']);
     txtPlano.Text := VarToStr(Qry['PN_Numero']);
-    txtDescripcion.Text := VarToStr(Qry['PN_Descripcion']);
+    cmbProductos.Text := VarToStr(Qry['PN_Descripcion']);
 
     Qry2 := TADOQuery.Create(nil);
     Qry2.Connection :=Conn;
@@ -205,7 +235,7 @@ end;
 procedure TfrmCatalogoPlanos.EnableControls(Value:Boolean);
 begin
     txtPlano.ReadOnly := Value;
-    txtDescripcion.ReadOnly := Value;
+    cmbProductos.Enabled := not Value;
     txtCantidad.ReadOnly := Value;
     txtInterno.ReadOnly :=Value;
     txtAlias.ReadOnly := Value;
@@ -348,7 +378,7 @@ begin
         try
           Qry.Insert;
           Qry['PN_Numero'] := txtPlano.Text;
-          Qry['PN_Descripcion'] := txtDescripcion.Text;
+          Qry['PN_Descripcion'] := cmbProductos.Text;
           Qry['Update_Date'] := DateTimeToStr(Now);
           Qry['Update_User'] := frmMain.sUserLogin;
           Qry.Post;
@@ -380,7 +410,7 @@ begin
         try
           Qry.Edit;
           Qry['PN_Numero'] := txtPlano.Text;
-          Qry['PN_Descripcion'] := txtDescripcion.Text;
+          Qry['PN_Descripcion'] := cmbProductos.Text;
           Qry['Update_Date'] := DateTimeToStr(Now);
           Qry['Update_User'] := frmMain.sUserLogin;
           Qry.Post;
@@ -443,10 +473,28 @@ end;
 function TfrmCatalogoPlanos.ValidateData():Boolean;
 begin
   ValidateData := True;
+
+  txtPlano.Text := Trim(txtPlano.Text);
   if txtPlano.Text = '' Then
   begin
     MessageDlg('Por favor capture el Numero de Plano.', mtInformation,[mbOk], 0);
     result :=  False;
+    Exit;
+  end;
+
+  cmbProductos.Text := Trim(cmbProductos.Text);
+  if cmbProductos.Text = '' Then
+  begin
+    MessageDlg('Por favor seleccione la descripcion.', mtInformation,[mbOk], 0);
+    result :=  False;
+    Exit;
+  end;
+
+  if (cmbProductos.Items.IndexOf(cmbProductos.Text) = -1) then
+  begin
+      MessageDlg('Descripcion incorrecta seleccionelo de la lista.', mtInformation,[mbOk], 0);
+      result :=  False;
+      Exit;
   end;
 
 end;

@@ -364,6 +364,10 @@ object frmMain: TfrmMain
         Caption = 'Total de Piezas en Stock'
         OnClick = TotalPiezasStock1Click
       end
+      object PiezasenStock1: TMenuItem
+        Caption = 'Piezas en Stock'
+        OnClick = PiezasenStock1Click
+      end
     end
   end
   object Timer1: TTimer
