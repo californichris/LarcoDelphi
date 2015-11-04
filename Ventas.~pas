@@ -99,6 +99,7 @@ type
     Copiar1: TMenuItem;
     Label17: TLabel;
     txtRequisicion: TEdit;
+    chkUrgente: TCheckBox;
     function FormIsRunning(FormName: String):Boolean;
     procedure ExportGrid(Grid:TGridView;sFileName: String);
     procedure BindGrid();
@@ -333,6 +334,7 @@ begin
     cmbEmpleados.Text := '';
     cmbProductos.Text := '';
     chkAprobacion.Checked := False;
+    chkUrgente.Checked := False;
     chkDlls.Checked := False;
     txtCompra.Text := '';
     chkStock.Checked := False;
@@ -414,6 +416,7 @@ begin
     cmbProductos.Enabled := not Value;
     cmbEmpleados.Enabled := not Value;
     chkAprobacion.Enabled := not Value;
+    chkUrgente.Enabled := not Value;
     chkDlls.Enabled := not Value;
     chkStock.Enabled := not Value;
     chkPlano.Enabled := not Value;
@@ -499,6 +502,7 @@ begin
     cmbEmpleados.Text := VarToStr(Qry['Nombre']);
     cmbProductos.Text := VarToStr(Qry['Producto']);
     chkAprobacion.Checked := StrToBool(VarToStr(Qry['Aprobacion']));
+    chkUrgente.Checked := StrToBool(VarToStr(Qry['Urgente']));
     chkDlls.Checked := StrToBool(VarToStr(Qry['Dolares']));
     txtCompra.Text := VarToStr(Qry['OrdenCompra']);
     chkStock.Checked := StrToBool(VarToStr(Qry['Stock']));
@@ -602,7 +606,7 @@ begin
                   ',' + QuotedStr(txtCompra.Text) + ',' + BoolToStrInt(chkDlls.Checked) +
                   ',' + BoolToStrInt(chkStock.Checked) + ',' + planoId + ',' + BoolToStrInt(chkStockParcial.Checked) +
                   ',' + stockParcial + ',' + BoolToStrInt(chkMezclar.Checked) + ',' + BoolToStrInt(stock) +
-                  ',' + QuotedStr(txtRequisicion.Text);
+                  ',' + QuotedStr(txtRequisicion.Text) + ',' + BoolToStrInt(chkUrgente.Checked);
 
         Qry2.SQL.Clear;
         Qry2.SQL.Text := SQLStr;
@@ -676,7 +680,7 @@ begin
                   ',' + QuotedStr(txtCompra.Text) + ',' + BoolToStrInt(chkDlls.Checked) +
                   ',' + BoolToStrInt(cambio) + ',' + BoolToStrInt(chkStock.Checked)+ ',' + planoId +
                   ',' + BoolToStrInt(chkStockParcial.Checked) + ',' + stockParcial +
-                  ',' + BoolToStrInt(chkMezclar.Checked) + ',' + QuotedStr(txtRequisicion.Text);
+                  ',' + BoolToStrInt(chkMezclar.Checked) + ',' + QuotedStr(txtRequisicion.Text) + ',' + BoolToStrInt(chkUrgente.Checked);
 
         Qry2.SQL.Clear;
         Qry2.SQL.Text := SQLStr;

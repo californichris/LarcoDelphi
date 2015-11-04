@@ -12,6 +12,7 @@ object frmYear: TfrmYear
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
+  FormStyle = fsMDIChild
   Icon.Data = {
     000001000300101000000000000068050000360000002020000000000000A808
     00009E0500003030000000000000A80E0000460E000028000000100000002000
@@ -246,6 +247,8 @@ object frmYear: TfrmYear
     000001FFFFFFFC00000003FFFFFFFC00000007FFFFFFFC0000000FFFFFFFFC00
     00001FFFFFFFFC0000003FFFFFFF}
   OldCreateOrder = False
+  Position = poDefault
+  Visible = True
   OnClose = FormClose
   OnCreate = FormCreate
   PixelsPerInch = 96

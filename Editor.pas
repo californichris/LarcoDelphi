@@ -110,8 +110,13 @@ end;
 
 
 procedure TfrmEditor.btnBuscarClick(Sender: TObject);
+var orden : String;
 begin
-BindGrid(gsYear + txtOrden.Text);
+  orden := txtOrden.Text;
+  if(Length(orden) <= 10) then
+    orden := gsYear + orden;
+
+BindGrid(orden);
 end;
 
 procedure TfrmEditor.GridView1AfterEdit(Sender: TObject; ACol,  ARow: Integer; Value: String; var Accept: Boolean);

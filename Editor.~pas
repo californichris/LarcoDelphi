@@ -38,7 +38,6 @@ type
 
 var
   frmEditor: TfrmEditor;
-  gsConnString,StartDDir: String;
 
 implementation
 {$R *.dfm}
@@ -51,19 +50,7 @@ Action := caFree;
 end;
 
 procedure TfrmEditor.FormCreate(Sender: TObject);
-var sUser,sPassword,sServer,sDB : String;
-IniFile: TIniFile;
 begin
-    StartDDir := ExtractFileDir(ParamStr(0)) + '\';
-    IniFile := TiniFile.Create(StartDDir + 'Larco.ini');
-
-    sServer := IniFile.ReadString('Conn','Server','BeltranC');
-    sDB := IniFile.ReadString('Conn','DB','Larco');
-    sUser := IniFile.ReadString('Conn','User','sa');
-    sPassword := IniFile.ReadString('Conn','Password','');
-    gsConnString := 'Provider=SQLOLEDB.1;Persist Security Info=False;User ID=' + sUser +
-                   ';Password= ' + sPassword +'; Initial Catalog=' + sDB + ';Data Source=' + sServer;
-
     lblAnio.Caption := getFormYear(frmMain.sConnString,Self.Name);
     gsYear := RightStr(lblAnio.Caption,2) + '-';
 
@@ -88,7 +75,7 @@ begin
 
     //Create Connection
     Conn := TADOConnection.Create(nil);
-    Conn.ConnectionString := gsConnString;
+    Conn.ConnectionString := frmMain.sConnString;
     Conn.LoginPrompt := False;
     Qry := TADOQuery.Create(nil);
     Qry.Connection :=Conn;
@@ -123,8 +110,13 @@ end;
 
 
 procedure TfrmEditor.btnBuscarClick(Sender: TObject);
+var orden : String;
 begin
-BindGrid(gsYear + txtOrden.Text);
+  orden := txtOrden.Text;
+  if(Length(orden) <= 10) then
+    orden := gsYear + orden;
+
+BindGrid(orden);
 end;
 
 procedure TfrmEditor.GridView1AfterEdit(Sender: TObject; ACol,  ARow: Integer; Value: String; var Accept: Boolean);
@@ -269,7 +261,7 @@ begin
     // agregar validacion a los datos
     //Create Connection
     Conn := TADOConnection.Create(nil);
-    Conn.ConnectionString := gsConnString;
+    Conn.ConnectionString := frmMain.sConnString;
     Conn.LoginPrompt := False;
 
     for i := 0 to GridView1.RowCount - 1 do

@@ -1,6 +1,6 @@
 object frmCumplimientoTiempoEntrega: TfrmCumplimientoTiempoEntrega
-  Left = 275
-  Top = 161
+  Left = 126
+  Top = 51
   Width = 1007
   Height = 668
   Caption = 'Reporte de Cumplimiento de Tiempo de Entrega'

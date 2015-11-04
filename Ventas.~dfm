@@ -1,6 +1,6 @@
 object frmVentas: TfrmVentas
-  Left = 171
-  Top = 64
+  Left = 248
+  Top = 112
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
   Caption = 'Ventas'
@@ -1353,6 +1353,15 @@ object frmVentas: TfrmVentas
           ReadOnly = True
           TabOrder = 11
           OnKeyDown = SendTab
+        end
+        object chkUrgente: TCheckBox
+          Left = 389
+          Top = 336
+          Width = 97
+          Height = 17
+          Caption = 'Urgente'
+          Enabled = False
+          TabOrder = 38
         end
       end
       object GroupBox1: TGroupBox

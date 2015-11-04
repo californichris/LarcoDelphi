@@ -96,7 +96,7 @@ begin
     SQLStr := 'SELECT O.ITE_Nombre, CONVERT(VARCHAR, O.Recibido, 101) AS Recibido, CONVERT(VARCHAR, O.Interna, 101) AS Interna, CONVERT(VARCHAR, IT.ITS_DTStop, 101) AS ITS_DTStop,  ' +
               'DATEDIFF(dd, O.Recibido, IT.ITS_DTStop) AS Days, ' +
               'DATEDIFF(ww, O.Recibido, IT.ITS_DTStop) * 2 AS Weekenddays, ' +
-              '(SELECT COUNT(*) FROM tblNonWorkingDay WHERE NonWorkingDay BETWEEN O.Interna AND IT.ITS_DTStop) AS NonWorkingDays, ' +
+              '(SELECT COUNT(*) FROM tblNonWorkingDay WHERE NonWorkingDay BETWEEN O.Recibido AND IT.ITS_DTStop) AS NonWorkingDays, ' +
               'DATEDIFF(dd, O.Recibido, IT.ITS_DTStop) - (DATEDIFF(ww, O.Recibido, IT.ITS_DTStop) * 2) - (SELECT COUNT(*) FROM tblNonWorkingDay WHERE NonWorkingDay BETWEEN O.Recibido AND IT.ITS_DTStop) AS WorkDays ' +
               'FROM tblOrdenes O ' +
               'INNER JOIN tblItemTasks IT ON O.ITE_Nombre = IT.ITE_Nombre AND ' +
