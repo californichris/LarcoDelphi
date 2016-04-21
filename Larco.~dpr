@@ -90,6 +90,5 @@ begin
   Application.Title := 'Larco';
   Application.CreateForm(TfrmMain, frmMain);
   Application.CreateForm(TfrmLogin, frmLogin);
-  Application.CreateForm(TfrmReportePiezasStock, frmReportePiezasStock);
   Application.Run;
 end.

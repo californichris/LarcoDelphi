@@ -6,7 +6,8 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs,ADODB,DB,IniFiles,All_Functions,StrUtils,chris_Functions, Mask, StdCtrls,sndkey32,
   ScrollView, CustomGridViewControl, CustomGridView, GridView, ComCtrls,ComObj,
-  CellEditors,ImpresionOrden,Larco_Functions, ExtCtrls, Menus,Clipbrd;
+  CellEditors,ImpresionOrden,Larco_Functions, ExtCtrls, Menus,Clipbrd,
+  ActnList, ActnMan, ToolWin, ActnCtrls, ImgList, Buttons;
 
 type
   TfrmVentas = class(TForm)
@@ -100,6 +101,19 @@ type
     Label17: TLabel;
     txtRequisicion: TEdit;
     chkUrgente: TCheckBox;
+    GroupBox4: TGroupBox;
+    chkInstrucciones: TCheckBox;
+    lblAlertaMsg: TLabel;
+    txtAlertaMsg: TEdit;
+    ButtonTest: TButton;
+    ControlBar1: TControlBar;
+    txtInstrucciones: TRichEdit;
+    SpeedButton1: TSpeedButton;
+    SpeedButton2: TSpeedButton;
+    SpeedButton3: TSpeedButton;
+    cmbFontSize: TComboBox;
+    cmbFonts: TComboBox;
+    cmbFontColor: TComboBox;
     function FormIsRunning(FormName: String):Boolean;
     procedure ExportGrid(Grid:TGridView;sFileName: String);
     procedure BindGrid();
@@ -163,6 +177,16 @@ type
     procedure Mezclar1Click(Sender: TObject);
     procedure InsertOrdenesMezclar();
     procedure BindOrdenesMezclar();
+    procedure chkInstruccionesClick(Sender: TObject);
+    procedure ButtonTestClick(Sender: TObject);
+    procedure SpeedButton1Click(Sender: TObject);
+    procedure SpeedButton2Click(Sender: TObject);
+    procedure SpeedButton3Click(Sender: TObject);
+    procedure cmbFontSizeChange(Sender: TObject);
+    procedure cmbFontsChange(Sender: TObject);
+    procedure cmbFontColorChange(Sender: TObject);
+    //function  GetRichText():string;
+    //procedure  SetRichText(Qry2 : TADOQuery);
   private
     { Private declarations }
   public
@@ -174,7 +198,7 @@ var
   giOpcion : Integer;
   Conn : TADOConnection;
   Qry : TADOQuery;
-  gsFirstTask,gsYear,gsOYear : String;
+  gsFirstTask,gsYear,gsOYear,gsInstrucciones : String;
   sPermits : String;
 implementation
 
@@ -261,9 +285,22 @@ end;
 
 
 procedure TfrmVentas.FormCreate(Sender: TObject);
+var IniFile: TIniFile;
 begin
+    StartDDir := ExtractFileDir(ParamStr(0)) + '\';
+    IniFile := TiniFile.Create(StartDDir + 'Larco.ini');
+
+    gsInstrucciones := IniFile.ReadString('System','Instrucciones','Instrucciones/');
+    //ShowMessage(gsInstrucciones);
+    
+    txtInstrucciones.SelAttributes.Size := 11;
+    txtInstrucciones.SelAttributes.Name := 'Tahoma';
+    cmbFonts.Items.AddStrings(Screen.Fonts);
+    cmbFonts.ItemIndex := cmbFonts.Items.IndexOf('Tahoma');
+
     gsFirstTask := 'Ventas';
 
+    
     lblAnio.Caption := getFormYear(frmMain.sConnString,Self.Name);
     gsOYear := RightStr(lblAnio.Caption,2);
     gsYear := gsOYear + '-';
@@ -340,6 +377,10 @@ begin
     chkStock.Checked := False;
     chkPlano.Checked := False;
     cmbPlanos.Text := '';
+    chkInstrucciones.Checked := False;
+    chkInstrucciones.Color := clBtnFace;
+    txtInstrucciones.Text := '';
+    txtAlertaMsg.Text := '';
 
     chkStockParcial.Checked := false;
     txtStockParcial.Text := '';
@@ -419,6 +460,17 @@ begin
     chkUrgente.Enabled := not Value;
     chkDlls.Enabled := not Value;
     chkStock.Enabled := not Value;
+    chkInstrucciones.Enabled := not Value;
+    if giOpcion = 0 then begin
+      txtAlertaMsg.ReadOnly := True;
+      txtInstrucciones.ReadOnly := True;
+      ControlBar1.Enabled := False;
+    end else begin
+      txtAlertaMsg.ReadOnly := not chkInstrucciones.Checked;
+      txtInstrucciones.ReadOnly := not chkInstrucciones.Checked;
+      ControlBar1.Enabled := chkInstrucciones.Checked;
+    end;
+
     chkPlano.Enabled := not Value;
     if giOpcion = 0 then begin
       cmbPlanos.Enabled := not Value;
@@ -506,6 +558,18 @@ begin
     chkDlls.Checked := StrToBool(VarToStr(Qry['Dolares']));
     txtCompra.Text := VarToStr(Qry['OrdenCompra']);
     chkStock.Checked := StrToBool(VarToStr(Qry['Stock']));
+
+    chkInstrucciones.Checked := StrToBool(VarToStr(Qry['Alerta']));
+    txtAlertaMsg.Text := VarToStr(Qry['AlertaMsg']);
+
+    if chkInstrucciones.Checked then begin
+        txtInstrucciones.Lines.LoadFromFile(gsInstrucciones + txtNumero.Text + '.rtf');
+    end;
+
+
+    txtAlertaMsg.ReadOnly :=  not chkInstrucciones.Checked;
+    txtInstrucciones.ReadOnly :=  not chkInstrucciones.Checked;
+    ControlBar1.Enabled := chkInstrucciones.Checked;
 
     chkplano.Checked := False;
     cmbPlanos.Text := '';
@@ -606,7 +670,9 @@ begin
                   ',' + QuotedStr(txtCompra.Text) + ',' + BoolToStrInt(chkDlls.Checked) +
                   ',' + BoolToStrInt(chkStock.Checked) + ',' + planoId + ',' + BoolToStrInt(chkStockParcial.Checked) +
                   ',' + stockParcial + ',' + BoolToStrInt(chkMezclar.Checked) + ',' + BoolToStrInt(stock) +
-                  ',' + QuotedStr(txtRequisicion.Text) + ',' + BoolToStrInt(chkUrgente.Checked);
+                  ',' + QuotedStr(txtRequisicion.Text) + ',' + BoolToStrInt(chkUrgente.Checked) +
+                  ',' + BoolToStrInt(chkInstrucciones.Checked) + ',' + QuotedStr(txtAlertaMsg.Text) +
+                  ',' + QuotedStr('');//TODO:Save instructions to DB
 
         Qry2.SQL.Clear;
         Qry2.SQL.Text := SQLStr;
@@ -619,6 +685,12 @@ begin
           end
         else
           begin
+
+            DeleteFile(gsInstrucciones + txtNumero.Text + '.rtf');
+            if chkInstrucciones.Checked then begin
+                txtInstrucciones.Lines.SaveToFile(gsInstrucciones + txtNumero.Text + '.rtf');
+            end;
+
             if chkMezclar.Checked then begin
               InsertOrdenesMezclar();
             end;
@@ -680,7 +752,9 @@ begin
                   ',' + QuotedStr(txtCompra.Text) + ',' + BoolToStrInt(chkDlls.Checked) +
                   ',' + BoolToStrInt(cambio) + ',' + BoolToStrInt(chkStock.Checked)+ ',' + planoId +
                   ',' + BoolToStrInt(chkStockParcial.Checked) + ',' + stockParcial +
-                  ',' + BoolToStrInt(chkMezclar.Checked) + ',' + QuotedStr(txtRequisicion.Text) + ',' + BoolToStrInt(chkUrgente.Checked);
+                  ',' + BoolToStrInt(chkMezclar.Checked) + ',' + QuotedStr(txtRequisicion.Text) + ',' + BoolToStrInt(chkUrgente.Checked) +
+                  ',' + BoolToStrInt(chkInstrucciones.Checked) + ',' + QuotedStr(txtAlertaMsg.Text) +
+                  ',' + QuotedStr(''); //TODO:Save instructions to DB
 
         Qry2.SQL.Clear;
         Qry2.SQL.Text := SQLStr;
@@ -693,6 +767,12 @@ begin
           end
         else
           begin
+            DeleteFile(gsInstrucciones + txtNumero.Text + '.rtf');
+            if chkInstrucciones.Checked then begin
+                txtInstrucciones.Lines.SaveToFile(gsInstrucciones + txtNumero.Text + '.rtf');
+            end;
+
+
             if chkMezclar.Checked then begin
               InsertOrdenesMezclar();
             end;
@@ -727,6 +807,8 @@ begin
                 end
               else
                 begin
+                  DeleteFile(gsInstrucciones + txtNumero.Text + '.rtf');
+
                   Qry.SQL.Clear;
                   //Qry.SQL.Text := 'SELECT * FROM tblOrdenes ORDER BY ITE_ID';
                   Qry.SQL.Text := 'Traer_Ordenes ' + QuotedStr(gsOYear);
@@ -1029,6 +1111,25 @@ begin
             Exit;
           end;
         end;
+
+        if (chkInstrucciones.Checked) and (txtNumero.Text = '')then begin
+          MessageDlg('El Numero de parte es requerido cuando se van a incluir Instrucciones adicionales.', mtInformation,[mbOk], 0);
+          result :=  False;
+          Exit;
+        end;
+
+        if (chkInstrucciones.Checked) and (txtAlertaMsg.Text = '')then begin
+          MessageDlg('El Mensaje en Orden de Trabajo es requerido.', mtInformation,[mbOk], 0);
+          result :=  False;
+          Exit;
+        end;
+
+        if (chkInstrucciones.Checked) and (txtInstrucciones.Text = '')then begin
+          MessageDlg('Instrucciones adicionales son requeridas.', mtInformation,[mbOk], 0);
+          result :=  False;
+          Exit;
+        end;
+
 end;
 
 function  TfrmVentas.ValidateCliente(Clave:String):Boolean;
@@ -1315,9 +1416,19 @@ begin
     qrImpresionOrden.QRMsg.Caption := 'Forma: Larco-015' + #13 +
                                       'Nivel de Revisión: D' + #13 +
                                       'Retención: 1 año+uso';
+
+    qrImpresionOrden.QRInstrucciones.Caption := txtAlertaMsg.Text;    
+
     //qrImpresionOrden.Print;
     qrImpresionOrden.Preview;
     qrImpresionOrden.Free;
+
+    if chkInstrucciones.Checked then begin
+      if MessageDlg('Quieres Imprimir las instrucciones especiales?',mtConfirmation, [mbYes, mbNo], 0) = mrYes then
+      begin
+          txtInstrucciones.Print('Instrucciones Especiales');
+      end;
+    end;
 end;
 
 procedure TfrmVentas.txtOrdenChange(Sender: TObject);
@@ -1697,6 +1808,17 @@ begin
 
   Qry2.Close;
   Qry2.Free;
+
+  if FileExists(gsInstrucciones + txtNumero.Text + '.rtf') then begin
+        chkInstrucciones.Checked := True;
+
+        txtAlertaMsg.Text := 'Atención: INSTRUCCIONES ESPECIALES';
+        txtInstrucciones.Lines.LoadFromFile(gsInstrucciones + txtNumero.Text + '.rtf');
+        if giOpcion = 1 then begin
+                chkInstrucciones.Color := clYellow;
+        end;
+  end;
+
 end;
 
 procedure TfrmVentas.txtOrdenKeyDown(Sender: TObject; var Key: Word;
@@ -1923,6 +2045,155 @@ begin
 
   Qry2.Close;
   Qry2.Free;
+end;
+
+procedure TfrmVentas.chkInstruccionesClick(Sender: TObject);
+begin
+  txtAlertaMsg.ReadOnly := not chkInstrucciones.Checked;
+  txtInstrucciones.ReadOnly := not chkInstrucciones.Checked;
+  ControlBar1.Enabled := chkInstrucciones.Checked;
+  
+  if (giOpcion = 1) and (chkInstrucciones.Checked) then begin
+      txtAlertaMsg.Text := 'Atención: INSTRUCCIONES ESPECIALES';
+  end;
+
+  if (giOpcion = 2) and (txtAlertaMsg.Text = '') then begin
+      txtAlertaMsg.Text := 'Atención: INSTRUCCIONES ESPECIALES';
+  end;
+
+  if not chkInstrucciones.Checked then begin
+      txtAlertaMsg.Text := '';
+      txtInstrucciones.Text := '';
+  end;
+
+
+end;
+
+procedure TfrmVentas.ButtonTestClick(Sender: TObject);
+begin
+if FileExists(gsInstrucciones + 'tmp.rtf') then begin
+      ShowMessage(' exists OK');
+end;
+
+txtInstrucciones.Lines.SaveToFile(gsInstrucciones + 'tmp.rtf');
+
+end;
+
+{
+function TfrmVentas.GetRichText():String;
+var stream : TMemoryStream;
+rtfString : string;
+begin
+    Result := '';
+    stream := TMemoryStream.Create;
+    stream.Clear;
+
+    txtInstrucciones.Lines.SaveToStream(stream);
+    stream.Position := 0;
+
+    //Read from the stream into an AnsiString (rtfString)
+    if (stream.Size > 0) then begin
+        SetLength(rtfString, stream.Size);
+        if (stream.Read(rtfString[1], stream.Size) <= 0) then
+            raise EStreamError.CreateFmt('End of stream reached with %d bytes left to read.', [stream.Size]);
+    end;
+
+    stream.Free;
+
+    rtfString :=  StringReplace(rtfString,'''','''''',[rfReplaceAll, rfIgnoreCase]);
+    Result := rtfString;
+end;
+
+procedure TfrmVentas.SetRichText(Qry2 : TADOQuery);
+var stream : TMemoryStream;
+rtfString : string;
+begin
+
+    rtfString := Qry2['Instructions'];
+
+    //Write the string into a stream
+    stream := TMemoryStream.Create;
+    stream.Clear;
+    stream.Write(PAnsiChar(rtfString)^, Length(rtfString));
+    stream.Position := 0;
+
+    //Load the stream into the RichEdit
+    //txtInstrucciones.PlainText := False;
+    txtInstrucciones.Lines.LoadFromStream(stream);
+
+    stream.Free;
+
+end;         }
+
+procedure TfrmVentas.SpeedButton1Click(Sender: TObject);
+begin
+if( SpeedButton1.Down ) then
+  begin
+     txtInstrucciones.SelAttributes.Style := txtInstrucciones.SelAttributes.Style + [fsBold];
+  end else
+  begin
+     txtInstrucciones.SelAttributes.Style := txtInstrucciones.SelAttributes.Style - [fsBold];
+  end;
+end;
+
+procedure TfrmVentas.SpeedButton2Click(Sender: TObject);
+begin
+  if( SpeedButton2.Down ) then
+  begin
+     txtInstrucciones.SelAttributes.Style := txtInstrucciones.SelAttributes.Style + [fsItalic];
+  end else
+  begin
+     txtInstrucciones.SelAttributes.Style := txtInstrucciones.SelAttributes.Style - [fsItalic];
+  end;
+end;
+
+procedure TfrmVentas.SpeedButton3Click(Sender: TObject);
+begin
+  if( SpeedButton3.Down ) then
+  begin
+     txtInstrucciones.SelAttributes.Style := txtInstrucciones.SelAttributes.Style + [fsUnderline];
+  end else
+  begin
+     txtInstrucciones.SelAttributes.Style := txtInstrucciones.SelAttributes.Style - [fsUnderline];
+  end;
+end;
+
+procedure TfrmVentas.cmbFontSizeChange(Sender: TObject);
+begin
+    txtInstrucciones.SelAttributes.Size := StrToInt(cmbFontSize.Items[cmbFontSize.ItemIndex]);
+end;
+
+procedure TfrmVentas.cmbFontsChange(Sender: TObject);
+begin
+    txtInstrucciones.SelAttributes.Name  := cmbFonts.Items[cmbFonts.ItemIndex];
+end;
+
+procedure TfrmVentas.cmbFontColorChange(Sender: TObject);
+var Tag : String;
+begin
+    Tag := cmbFontColor.Items[cmbFontColor.ItemIndex];
+
+    if lowercase(Tag) = 'red' then begin
+        txtInstrucciones.SelAttributes.Color := clRed;
+    end else if lowercase(Tag) = 'black' then begin
+        txtInstrucciones.SelAttributes.Color := clBlack;
+    end else if lowercase(Tag) = 'blue' then begin
+        txtInstrucciones.SelAttributes.Color := clBlue;
+    end else if lowercase(Tag) = 'cyan' then begin
+        txtInstrucciones.SelAttributes.Color := clAqua;
+    end else if (lowercase(Tag) = 'gray') then begin
+        txtInstrucciones.SelAttributes.Color := clGray;
+    end else if lowercase(Tag) = 'green' then begin
+        txtInstrucciones.SelAttributes.Color := clGreen;
+    end else if lowercase(Tag) = 'pink' then begin
+        txtInstrucciones.SelAttributes.Color := clFuchsia;
+    end else if lowercase(Tag) = 'purple' then begin
+        txtInstrucciones.SelAttributes.Color := clPurple;
+    end else if lowercase(Tag) = 'yellow' then begin
+        txtInstrucciones.SelAttributes.Color := clYellow;
+    end else if lowercase(Tag) = 'navy' then begin
+        txtInstrucciones.SelAttributes.Color := clNavy;
+    end;
 end;
 
 end.

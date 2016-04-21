@@ -30,8 +30,10 @@ type
     QREntrega2: TQRLabel;
     QRMsg: TQRLabel;
     QRLabel1: TQRLabel;
+    QRInstrucciones: TQRLabel;
     procedure QuickRepBeforePrint(Sender: TCustomQuickRep;
       var PrintReport: Boolean);
+    procedure WinControlFormCreate(Sender: TObject);
   private
 
   public
@@ -55,6 +57,11 @@ begin
     OPicture := TPicture.Create;
     OPicture.LoadFromFile(StartDDir + 'Orden.bmp');
     QRImage1.Picture := OPicture;
+end;
+
+procedure TqrImpresionOrden.WinControlFormCreate(Sender: TObject);
+begin
+QRInstrucciones.Caption := '';
 end;
 
 end.

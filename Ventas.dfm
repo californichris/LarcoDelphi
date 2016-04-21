@@ -1,11 +1,11 @@
 object frmVentas: TfrmVentas
-  Left = 248
-  Top = 112
+  Left = 1
+  Top = 111
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
   Caption = 'Ventas'
   ClientHeight = 579
-  ClientWidth = 912
+  ClientWidth = 1304
   Color = clBtnFace
   Font.Charset = ANSI_CHARSET
   Font.Color = clWindowText
@@ -574,7 +574,7 @@ object frmVentas: TfrmVentas
   object PageControl1: TPageControl
     Left = 2
     Top = 5
-    Width = 906
+    Width = 1297
     Height = 572
     ActivePage = TabSheet1
     TabIndex = 0
@@ -1828,6 +1828,7 @@ object frmVentas: TfrmVentas
           Top = 304
           Width = 305
           Height = 105
+          Cursor = 3000
           BorderStyle = bsSingle
           GridStyle = gsReport
           GridLinesStyle = lsNormal
@@ -2121,6 +2122,185 @@ object frmVentas: TfrmVentas
           end
         end
       end
+      object GroupBox4: TGroupBox
+        Left = 902
+        Top = -1
+        Width = 385
+        Height = 553
+        Caption = ' Alerta / Instruciones Especiales '
+        TabOrder = 2
+        object lblAlertaMsg: TLabel
+          Left = 8
+          Top = 48
+          Width = 143
+          Height = 13
+          Caption = 'Mensaje en Orden de Trabajo'
+        end
+        object chkInstrucciones: TCheckBox
+          Left = 8
+          Top = 15
+          Width = 367
+          Height = 30
+          Caption = 'Instruciones Especiales'
+          Color = clBtnFace
+          Enabled = False
+          Font.Charset = ANSI_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -19
+          Font.Name = 'Tahoma'
+          Font.Style = [fsBold]
+          ParentColor = False
+          ParentFont = False
+          TabOrder = 0
+          OnClick = chkInstruccionesClick
+        end
+        object txtAlertaMsg: TEdit
+          Left = 8
+          Top = 64
+          Width = 369
+          Height = 21
+          MaxLength = 50
+          ReadOnly = True
+          TabOrder = 1
+          Text = ' '
+        end
+        object ButtonTest: TButton
+          Left = 304
+          Top = 56
+          Width = 75
+          Height = 25
+          Caption = 'ButtonTest'
+          TabOrder = 2
+          Visible = False
+          OnClick = ButtonTestClick
+        end
+        object ControlBar1: TControlBar
+          Left = 8
+          Top = 94
+          Width = 371
+          Height = 35
+          Enabled = False
+          TabOrder = 3
+          object SpeedButton1: TSpeedButton
+            Left = 11
+            Top = 2
+            Width = 23
+            Height = 22
+            AllowAllUp = True
+            GroupIndex = 1
+            Caption = 'B'
+            Font.Charset = ANSI_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'Tahoma'
+            Font.Style = [fsBold]
+            ParentFont = False
+            OnClick = SpeedButton1Click
+          end
+          object SpeedButton2: TSpeedButton
+            Left = 47
+            Top = 2
+            Width = 23
+            Height = 22
+            AllowAllUp = True
+            GroupIndex = 2
+            Caption = 'I'
+            Font.Charset = ANSI_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'Tahoma'
+            Font.Style = []
+            ParentFont = False
+            OnClick = SpeedButton2Click
+          end
+          object SpeedButton3: TSpeedButton
+            Left = 83
+            Top = 2
+            Width = 23
+            Height = 22
+            AllowAllUp = True
+            GroupIndex = 3
+            Caption = 'U'
+            Font.Charset = ANSI_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'Tahoma'
+            Font.Style = [fsUnderline]
+            ParentFont = False
+            OnClick = SpeedButton3Click
+          end
+          object cmbFontSize: TComboBox
+            Left = 119
+            Top = 2
+            Width = 41
+            Height = 21
+            Style = csDropDownList
+            ItemHeight = 13
+            ItemIndex = 3
+            TabOrder = 0
+            Text = '11'
+            OnChange = cmbFontSizeChange
+            Items.Strings = (
+              '8'
+              '9'
+              '10'
+              '11'
+              '12'
+              '14'
+              '16'
+              '18'
+              '20'
+              '22'
+              '24'
+              '26'
+              '28'
+              '30'
+              '32')
+          end
+          object cmbFonts: TComboBox
+            Left = 173
+            Top = 2
+            Width = 113
+            Height = 21
+            Style = csDropDownList
+            ItemHeight = 13
+            TabOrder = 1
+            OnChange = cmbFontsChange
+          end
+          object cmbFontColor: TComboBox
+            Left = 299
+            Top = 2
+            Width = 66
+            Height = 21
+            Style = csDropDownList
+            ItemHeight = 13
+            ItemIndex = 0
+            TabOrder = 2
+            Text = 'Black'
+            OnChange = cmbFontColorChange
+            Items.Strings = (
+              'Black'
+              'Red'
+              'Blue'
+              'Cyan'
+              'Navy'
+              'Gray'
+              'Green'
+              'Pink'
+              'Purple'
+              'Yellow')
+          end
+        end
+        object txtInstrucciones: TRichEdit
+          Left = 8
+          Top = 130
+          Width = 370
+          Height = 413
+          ReadOnly = True
+          ScrollBars = ssVertical
+          TabOrder = 4
+        end
+      end
     end
     object TabSheet2: TTabSheet
       Caption = 'Lista'
@@ -2129,7 +2309,7 @@ object frmVentas: TfrmVentas
       object gvVentas: TGridView
         Left = 5
         Top = 7
-        Width = 868
+        Width = 1276
         Height = 490
         BorderStyle = bsSingle
         GridStyle = gsReport
@@ -2448,7 +2628,7 @@ object frmVentas: TfrmVentas
         end
       end
       object btnExport: TButton
-        Left = 816
+        Left = 1216
         Top = 504
         Width = 59
         Height = 25

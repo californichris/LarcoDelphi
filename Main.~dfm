@@ -1,6 +1,6 @@
 object frmMain: TfrmMain
-  Left = 382
-  Top = 144
+  Left = 200
+  Top = 121
   Width = 696
   Height = 478
   Caption = 'Larco'
@@ -40,8 +40,8 @@ object frmMain: TfrmMain
   end
   object StatusBar: TStatusBar
     Left = 0
-    Top = 413
-    Width = 688
+    Top = 401
+    Width = 680
     Height = 19
     Panels = <
       item

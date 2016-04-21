@@ -34,7 +34,6 @@ type
 
 var
   frmScrap: TfrmScrap;
-  gsConnString,StartDDir: String;
   gsYear : String;
 
 implementation
@@ -54,19 +53,7 @@ Close;
 end;
 
 procedure TfrmScrap.FormCreate(Sender: TObject);
-var sUser,sPassword,sServer,sDB : String;
-IniFile: TIniFile;
 begin
-    StartDDir := ExtractFileDir(ParamStr(0)) + '\';
-    IniFile := TiniFile.Create(StartDDir + 'Larco.ini');
-
-    sServer := IniFile.ReadString('Conn','Server','BeltranC');
-    sDB := IniFile.ReadString('Conn','DB','Larco');
-    sUser := IniFile.ReadString('Conn','User','sa');
-    sPassword := IniFile.ReadString('Conn','Password','');
-    gsConnString := 'Provider=SQLOLEDB.1;Persist Security Info=False;User ID=' + sUser +
-                   ';Password= ' + sPassword +'; Initial Catalog=' + sDB + ';Data Source=' + sServer;
-
     gsYear := RightStr(getFormYear(frmMain.sConnString,Self.Name),2) + '-';
 
     BindGrid();
@@ -80,7 +67,7 @@ begin
 
     //Create Connection
     Conn := TADOConnection.Create(nil);
-    Conn.ConnectionString := gsConnString;
+    Conn.ConnectionString := frmMain.sConnString;
     Conn.LoginPrompt := False;
     Qry := TADOQuery.Create(nil);
     Qry.Connection :=Conn;
@@ -141,7 +128,7 @@ begin
 
     //Create Connection
     Conn := TADOConnection.Create(nil);
-    Conn.ConnectionString := gsConnString;
+    Conn.ConnectionString := frmMain.sConnString;
     Conn.LoginPrompt := False;
     Qry := TADOQuery.Create(nil);
     Qry.Connection :=Conn;
@@ -185,6 +172,8 @@ begin
     qrImpresionOrden.QRMsg.Caption := 'Forma: Larco-015' + #13 +
                                       'Nivel de Revisión: D' + #13 +
                                       'Retención: 1 año+uso';
+
+    qrImpresionOrden.QRInstrucciones.Caption := VarToStr(Qry['AlertaMsg']);
     //qrImpresionOrden.Print;
     qrImpresionOrden.Preview;
     qrImpresionOrden.Free;
