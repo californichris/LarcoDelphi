@@ -81,7 +81,8 @@ uses
   ReporteEntradasSalidasStock in 'ReporteEntradasSalidasStock.pas' {frmReporteESStock},
   ReporteEntradasSalidasPlano in 'ReporteEntradasSalidasPlano.pas' {frmReporteESPlano},
   ReporteTotalPiezasStock in 'ReporteTotalPiezasStock.pas' {frmReporteTotalPiezasStock},
-  ReportePiezasStock in 'ReportePiezasStock.pas' {frmReportePiezasStock};
+  ReportePiezasStock in 'ReportePiezasStock.pas' {frmReportePiezasStock},
+  PrintLabel in 'PrintLabel.pas' {LabelReport: TQuickRep};
 
 {$R *.res}
 

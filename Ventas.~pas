@@ -7,7 +7,7 @@ uses
   Dialogs,ADODB,DB,IniFiles,All_Functions,StrUtils,chris_Functions, Mask, StdCtrls,sndkey32,
   ScrollView, CustomGridViewControl, CustomGridView, GridView, ComCtrls,ComObj,
   CellEditors,ImpresionOrden,Larco_Functions, ExtCtrls, Menus,Clipbrd,
-  ActnList, ActnMan, ToolWin, ActnCtrls, ImgList, Buttons;
+  ActnList, ActnMan, ToolWin, ActnCtrls, ImgList, Buttons,Printers;
 
 type
   TfrmVentas = class(TForm)
@@ -114,6 +114,7 @@ type
     cmbFontSize: TComboBox;
     cmbFonts: TComboBox;
     cmbFontColor: TComboBox;
+    btnLabel: TButton;
     function FormIsRunning(FormName: String):Boolean;
     procedure ExportGrid(Grid:TGridView;sFileName: String);
     procedure BindGrid();
@@ -185,6 +186,9 @@ type
     procedure cmbFontSizeChange(Sender: TObject);
     procedure cmbFontsChange(Sender: TObject);
     procedure cmbFontColorChange(Sender: TObject);
+    procedure btnLabelClick(Sender: TObject);
+    function GetLabelPrinterIndex: Integer;
+    procedure PrintLabel(Orden: String);    
     //function  GetRichText():string;
     //procedure  SetRichText(Qry2 : TADOQuery);
   private
@@ -198,12 +202,13 @@ var
   giOpcion : Integer;
   Conn : TADOConnection;
   Qry : TADOQuery;
-  gsFirstTask,gsYear,gsOYear,gsInstrucciones : String;
+  gsFirstTask,gsYear,gsOYear,gsInstrucciones,gsPrinterName : String;
   sPermits : String;
+  giPrinterIndex: Integer;
 implementation
 
 {$R *.dfm}
-uses Main, Editor;
+uses Main, Editor, PrintLabel;
 
 procedure TfrmVentas.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
@@ -291,6 +296,7 @@ begin
     IniFile := TiniFile.Create(StartDDir + 'Larco.ini');
 
     gsInstrucciones := IniFile.ReadString('System','Instrucciones','Instrucciones/');
+    gsPrinterName := IniFile.ReadString('Tasks','PrinterName','Leitz');
     //ShowMessage(gsInstrucciones);
     
     txtInstrucciones.SelAttributes.Size := 11;
@@ -335,6 +341,7 @@ begin
     EnableFormButtons(gbButtons, sPermits);
 
     giOpcion := 0;
+    giPrinterIndex := GetLabelPrinterIndex;
 end;
 
 procedure TfrmVentas.SendTab(Sender: TObject; var Key: Word;  Shift: TShiftState);
@@ -514,6 +521,8 @@ EnableControls(True);
 
 Nuevo.Enabled := True;
 Button5.Enabled := True;
+btnLabel.Enabled := True;
+
 if Qry.RecordCount > 0 Then
 begin
       Editar.Enabled := True;
@@ -838,6 +847,7 @@ begin
   btnCancelar.Enabled := False;
   Nuevo.Enabled := True;
   Button5.Enabled := True;
+  btnLabel.Enabled := True;
   if Qry.RecordCount > 0 Then
   begin
         Editar.Enabled := True;
@@ -1677,6 +1687,7 @@ begin
     Borrar.Enabled := False;
     Buscar.Enabled := False;
     Button5.Enabled := True; //Imprimir
+    btnLabel.Enabled := True;
     if Qry.RecordCount > 0 Then
     begin
           Editar.Enabled := True;
@@ -1691,24 +1702,28 @@ begin
     Borrar.Enabled := False;
     Buscar.Enabled := False;
     Button5.Enabled := False; //Imprimir
+    btnLabel.Enabled := False;
   end
   else if giOpcion = 2 then begin
     Nuevo.Enabled := False;
     Borrar.Enabled := False;
     Buscar.Enabled := False;
     Button5.Enabled := False; //Imprimir
+    btnLabel.Enabled := False;
   end
   else if giOpcion = 3 then begin
     Nuevo.Enabled := False;
     Editar.Enabled := False;
     Buscar.Enabled := False;
     Button5.Enabled := False; //Imprimir
+    btnLabel.Enabled := False;
   end
   else if giOpcion = 4 then begin
     Nuevo.Enabled := False;
     Editar.Enabled := False;
     Borrar.Enabled := False;
     Button5.Enabled := False; //Imprimir
+    btnLabel.Enabled := False;
   end;
 
   if giOpcion = 0 then begin
@@ -2194,6 +2209,117 @@ begin
     end else if lowercase(Tag) = 'navy' then begin
         txtInstrucciones.SelAttributes.Color := clNavy;
     end;
+end;
+
+procedure TfrmVentas.btnLabelClick(Sender: TObject);
+begin
+   if (giPrinterIndex = -1) then begin
+       ShowMessage('Impresora ' + gsPrinterName + ' no encontrada.');
+       Exit;
+   end;
+   PrintLabel(gsOYear + '-' + txtOrden.Text);
+
+  {Application.Initialize;
+  Application.CreateForm(TLabelReport, LabelReport);
+  LabelReport.lblPartida.Caption := '';
+
+      LabelReport.lblCliente.Caption := VarToStr(Qry['NombreCliente']);
+      LabelReport.lblOCompra.Caption := VarToStr(Qry['OrdenCompra']);
+      LabelReport.lblFecha.Caption := DateToStr(date);
+      LabelReport.lblDesc.Caption := VarToStr(Qry['Producto']);
+      LabelReport.lblCantidad.Caption := VarToStr(Qry['Requerida']);
+
+      LabelReport.lblReq.Caption := VarToStr(Qry['Requisicion']);
+      LabelReport.lblNoParte.Caption := VarToStr(Qry['Numero']);
+      LabelReport.lblPartida.Caption := RightStr(txtOrden.Text, 2);
+
+  LabelReport.PrinterSettings.PrinterIndex := GetLabelPrinterIndex;
+  //LabelReport.PrinterSettings.Orientation := poPortrait;
+  //LabelReport.PrinterSettings.Orientation := poLandscape;
+  //LabelReport.Preview;
+  LabelReport.Print;
+  LabelReport.Free;  }
+end;
+
+procedure TfrmVentas.PrintLabel(Orden: String);
+var Conn : TADOConnection;
+Qry : TADOQuery;
+SQLStr,table : String;
+begin
+    Qry := nil;
+    Conn := nil;
+    try
+    begin
+      Conn := TADOConnection.Create(nil);
+      Conn.ConnectionString := gsConnString;
+      Conn.LoginPrompt := False;
+      Qry := TADOQuery.Create(nil);
+      Qry.Connection := Conn;
+
+      table := 'tblOrdenes';
+      if(chkStock.Checked) then begin
+        table:= 'tblStockOrdenes';
+      end;
+
+      SQLStr := 'SELECT Top 1 O.*, C.Nombre AS NombreCliente FROM ' + table + ' O ' +
+                'INNER JOIN tblClientes  C ON substring(O.ITE_Nombre,4,3) = C.Clave ' +
+                'WHERE ITE_Nombre = ' + QuotedStr(Orden);
+
+      Qry.SQL.Clear;
+      Qry.SQL.Text := SQLStr;
+      Qry.Open;
+
+      if Qry.RecordCount <= 0 then
+      begin
+          MessageDlg('La orden no existe en el sistema.', mtInformation, [mbOK],0);
+          Exit;
+      end;
+
+      Application.Initialize;
+      Application.CreateForm(TLabelReport, LabelReport);
+      LabelReport.lblPartida.Caption := '';
+
+      LabelReport.lblCliente.Caption := VarToStr(Qry['NombreCliente']);
+      LabelReport.lblOCompra.Caption := VarToStr(Qry['OrdenCompra']);
+      LabelReport.lblFecha.Caption := DateToStr(date);
+      LabelReport.lblDesc.Caption := VarToStr(Qry['Producto']);
+      LabelReport.lblCantidad.Caption := VarToStr(Qry['Requerida']);
+
+      LabelReport.lblReq.Caption := VarToStr(Qry['Requisicion']);
+      LabelReport.lblNoParte.Caption := VarToStr(Qry['Numero']);
+      LabelReport.lblPartida.Caption := RightStr(Orden, 2);
+
+      LabelReport.PrinterSettings.PrinterIndex := giPrinterIndex;
+
+      LabelReport.Print;
+      //LabelReport.Preview;
+      LabelReport.Free;
+
+    end
+    finally
+      if Qry <> nil then begin
+        Qry.Close;
+        Qry.Free;
+      end;
+      if Conn <> nil then begin
+        Conn.Close;
+        Conn.Free
+      end;
+    end;
+end;
+
+function TfrmVentas.GetLabelPrinterIndex: Integer;
+var
+  i: Integer;
+begin
+  Result := -1;
+  for i := 0 to Printer.Printers.Count - 1 do
+    if (InStr(0,Printer.Printers[i],gsPrinterName) <> 0) then
+    begin
+      Result := i;
+      break;
+    end;
+
 end;
 
 end.

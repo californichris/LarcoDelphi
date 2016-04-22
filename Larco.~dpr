@@ -81,7 +81,8 @@ uses
   ReporteEntradasSalidasStock in 'ReporteEntradasSalidasStock.pas' {frmReporteESStock},
   ReporteEntradasSalidasPlano in 'ReporteEntradasSalidasPlano.pas' {frmReporteESPlano},
   ReporteTotalPiezasStock in 'ReporteTotalPiezasStock.pas' {frmReporteTotalPiezasStock},
-  ReportePiezasStock in 'ReportePiezasStock.pas' {frmReportePiezasStock};
+  ReportePiezasStock in 'ReportePiezasStock.pas' {frmReportePiezasStock},
+  PrintLabel in 'PrintLabel.pas' {LabelReport: TQuickRep};
 
 {$R *.res}
 
@@ -90,5 +91,6 @@ begin
   Application.Title := 'Larco';
   Application.CreateForm(TfrmMain, frmMain);
   Application.CreateForm(TfrmLogin, frmLogin);
+  Application.CreateForm(TLabelReport, LabelReport);
   Application.Run;
 end.

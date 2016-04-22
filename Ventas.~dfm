@@ -1363,6 +1363,15 @@ object frmVentas: TfrmVentas
           Enabled = False
           TabOrder = 38
         end
+        object btnLabel: TButton
+          Left = 419
+          Top = 507
+          Width = 47
+          Height = 25
+          Caption = 'Etiqueta'
+          TabOrder = 39
+          OnClick = btnLabelClick
+        end
       end
       object GroupBox1: TGroupBox
         Left = 578
@@ -1828,7 +1837,6 @@ object frmVentas: TfrmVentas
           Top = 304
           Width = 305
           Height = 105
-          Cursor = 3000
           BorderStyle = bsSingle
           GridStyle = gsReport
           GridLinesStyle = lsNormal
