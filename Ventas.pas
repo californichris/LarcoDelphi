@@ -2257,7 +2257,7 @@ begin
       Qry.Connection := Conn;
 
       table := 'tblOrdenes';
-      if(chkStock.Checked) then begin
+      if(chkStock.Checked) or (chkMezclar.Checked) then begin
         table:= 'tblStockOrdenes';
       end;
 
