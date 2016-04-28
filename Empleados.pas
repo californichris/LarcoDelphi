@@ -42,6 +42,8 @@ type
     btnCancelar: TButton;
     btnExport: TButton;
     SaveDialog1: TSaveDialog;
+    Label9: TLabel;
+    chkActivo: TCheckBox;
     procedure ExportGrid(Grid:TGridView;sFileName: String);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCreate(Sender: TObject);
@@ -63,6 +65,7 @@ type
     procedure BuscarClick(Sender: TObject);
     procedure btnExportClick(Sender: TObject);
     procedure FormResize(Sender: TObject);
+    function BoolToStrInt(Value:Boolean):String;
     procedure SendTab(Sender: TObject; var Key: Word;
       Shift: TShiftState);
   private
@@ -121,6 +124,7 @@ begin
         txtPercep.Text := VarToStr(Qry['Percepciones']);
         txtCosto.Text := VarToStr(Qry['CostoHora']);
         txtFecha.Text := VarToStr(Qry['FechaNac']);
+        chkActivo.Checked := StrToBool(VarToStr(Qry['Activo']));
 end;
 
 procedure TfrmEmpleados.ClearData();
@@ -133,6 +137,7 @@ begin
         txtPercep.Text := '';
         txtCosto.Text := '';
         txtFecha.Text := '';
+        chkActivo.Checked := False;
 end;
 
 procedure TfrmEmpleados.EnableControls(Value:Boolean);
@@ -144,6 +149,7 @@ begin
         txtPercep.ReadOnly := Value;
         txtCosto.ReadOnly := Value;
         txtFecha.ReadOnly := Value;
+        chkActivo.Enabled := not Value;
 end;
 
 procedure TfrmEmpleados.Button1Click(Sender: TObject);
@@ -255,6 +261,13 @@ Editar.Enabled := False;
 Buscar.Enabled := False;
 end;
 
+function TfrmEmpleados.BoolToStrInt(Value:Boolean):String;
+begin
+        Result := '0';
+        if Value Then
+                Result := '1';
+end;
+
 procedure TfrmEmpleados.btnAceptarClick(Sender: TObject);
 var SQLStr,SQLWhere : String;
 Qry2 : TADOQuery;
@@ -273,6 +286,7 @@ begin
         Qry['Percepciones'] := txtPercep.Text;
         Qry['CostoHora'] := txtCosto.Text;
         Qry['FechaNac'] := txtFecha.Text;
+        Qry['Activo'] := BoolToStrInt(chkActivo.Checked);
         Qry.Post;
   end
   else if giOpcion = 2 then
@@ -288,6 +302,7 @@ begin
         Qry['Percepciones'] := txtPercep.Text;
         Qry['CostoHora'] := txtCosto.Text;
         Qry['FechaNac'] := txtFecha.Text;
+        Qry['Activo'] := BoolToStrInt(chkActivo.Checked);
         Qry.Post;
   end
   else if giOpcion = 3 then
@@ -442,6 +457,13 @@ begin
       gvEmpleados.Cells[5,gvEmpleados.RowCount -1] := VarToStr(Qry['Percepciones']);
       gvEmpleados.Cells[6,gvEmpleados.RowCount -1] := VarToStr(Qry['CostoHora']);
       gvEmpleados.Cells[7,gvEmpleados.RowCount -1] := VarToStr(Qry['FechaNac']);
+      if(VarToStr(Qry['Activo']) = '0') then begin
+        gvEmpleados.Cells[8,gvEmpleados.RowCount -1] := 'Inactivo';
+      end
+      else begin
+        gvEmpleados.Cells[8,gvEmpleados.RowCount -1] := 'Activo';
+      end;
+
       Qry.Next;
   end;
 

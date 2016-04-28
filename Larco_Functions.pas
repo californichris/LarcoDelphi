@@ -5,7 +5,7 @@ interface
 uses
   Windows, SysUtils, Dialogs,  Db, ADODB, Classes,Variants,Winsock,
   NMsmtp,DateUtils,StdCtrls,CustomGridViewControl, CustomGridView, GridView,
-  IdTrivialFTPBase,ComObj,Controls;
+  IdTrivialFTPBase,ComObj,Controls,LTCUtils;
 
   procedure BindComboEmpleados(sConnString: String; cmbEmpleados: TComboBox);
   procedure BindComboTareasDetectado(sConnString: String; cmbTareas: TComboBox; cmbDetectado: TComboBox);
@@ -14,7 +14,48 @@ uses
   function getUserPermits(sConnString: String; sFormName: String; sUserLogin: String): String;
   procedure EnableFormButtons(gbButtons: TGroupBox; sPermits: String);
   function getStringBoolean(value: String):Boolean;
+  function ValidateEmpleado(sConnString: String; Id: String):Boolean;
 implementation
+
+function ValidateEmpleado(sConnString: String; Id: String):Boolean;
+var Conn : TADOConnection;
+Qry : TADOQuery;
+SQLStr : String;
+begin
+    Result := False;
+    if UT(Id) = '' then
+        Exit;
+
+    Qry := nil;
+    Conn := nil;
+    try
+    begin
+      Conn := TADOConnection.Create(nil);
+      Conn.ConnectionString := sConnString;
+      Conn.LoginPrompt := False;
+      Qry := TADOQuery.Create(nil);
+      Qry.Connection := Conn;
+
+      SQLStr := 'SELECT Nombre FROM tblEmpleados WHERE Activo = 1 AND Id =  ' + IntToStr(StrToInt(Id));
+
+      Qry.SQL.Clear;
+      Qry.SQL.Text := SQLStr;
+      Qry.Open;
+
+      if Qry.RecordCount > 0 then
+          Result := True;
+    end
+    finally
+      if Qry <> nil then begin
+        Qry.Close;
+        Qry.Free;
+      end;
+      if Conn <> nil then begin
+        Conn.Close;
+        Conn.Free
+      end;
+    end;
+end;
 
 procedure BindComboEmpleados(sConnString: String; cmbEmpleados: TComboBox);
 var Conn : TADOConnection;

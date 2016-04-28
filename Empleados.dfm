@@ -834,7 +834,7 @@ object frmEmpleados: TfrmEmpleados
         Height = 377
         TabOrder = 0
         object Label1: TLabel
-          Left = 30
+          Left = 25
           Top = 24
           Width = 76
           Height = 13
@@ -848,7 +848,7 @@ object frmEmpleados: TfrmEmpleados
           ParentFont = False
         end
         object Label2: TLabel
-          Left = 58
+          Left = 54
           Top = 56
           Width = 47
           Height = 13
@@ -862,7 +862,7 @@ object frmEmpleados: TfrmEmpleados
           ParentFont = False
         end
         object Label3: TLabel
-          Left = 27
+          Left = 25
           Top = 88
           Width = 76
           Height = 13
@@ -876,7 +876,7 @@ object frmEmpleados: TfrmEmpleados
           ParentFont = False
         end
         object Label4: TLabel
-          Left = 61
+          Left = 58
           Top = 119
           Width = 43
           Height = 13
@@ -904,7 +904,7 @@ object frmEmpleados: TfrmEmpleados
           ParentFont = False
         end
         object Label6: TLabel
-          Left = 30
+          Left = 28
           Top = 180
           Width = 73
           Height = 13
@@ -932,7 +932,7 @@ object frmEmpleados: TfrmEmpleados
           ParentFont = False
         end
         object Label8: TLabel
-          Left = 41
+          Left = 40
           Top = 241
           Width = 61
           Height = 13
@@ -944,6 +944,13 @@ object frmEmpleados: TfrmEmpleados
           Font.Name = 'Tahoma'
           Font.Style = []
           ParentFont = False
+        end
+        object Label9: TLabel
+          Left = 64
+          Top = 272
+          Width = 37
+          Height = 13
+          Caption = 'Activo :'
         end
         object txtId: TEdit
           Left = 110
@@ -1237,6 +1244,14 @@ object frmEmpleados: TfrmEmpleados
           TabOrder = 9
           OnClick = btnCancelarClick
         end
+        object chkActivo: TCheckBox
+          Left = 110
+          Top = 272
+          Width = 97
+          Height = 17
+          Enabled = False
+          TabOrder = 18
+        end
       end
     end
     object TabSheet2: TTabSheet
@@ -1497,6 +1512,36 @@ object frmEmpleados: TfrmEmpleados
           Header.DisplayMode = dmTextOnly
           Options = [coCanClick, coCanSort, coEditorAutoSelect, coPublicUsing]
           Position = 7
+          SlideBounds.Height = 0
+          SlideBounds.Left = 0
+          SlideBounds.Top = 0
+          SlideBounds.Width = 0
+          Sorted = False
+          SortType = stAlphabetic
+          VerticalAlignment = vaMiddle
+          Visible = True
+          Width = 80
+          WrapKind = wkEllipsis
+          AutoExecute = False
+        end
+        object TTextualColumn
+          Alignment = taLeftJustify
+          Color = clWindow
+          Cursor = crDefault
+          DrawingOptions = doNormal
+          DefaultWidth = 80
+          Font.Charset = ANSI_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -11
+          Font.Name = 'Tahoma'
+          Font.Style = []
+          Footer.Color = clWindow
+          Footer.FormulaKind = fkNone
+          Header.Color = clBtnFace
+          Header.Caption = 'Activo'
+          Header.DisplayMode = dmTextOnly
+          Options = [coCanClick, coCanSort, coEditorAutoSelect, coPublicUsing]
+          Position = 8
           SlideBounds.Height = 0
           SlideBounds.Left = 0
           SlideBounds.Top = 0
