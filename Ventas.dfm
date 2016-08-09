@@ -1,11 +1,11 @@
 object frmVentas: TfrmVentas
-  Left = 1
-  Top = 111
+  Left = 7
+  Top = 87
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
   Caption = 'Ventas'
   ClientHeight = 579
-  ClientWidth = 1304
+  ClientWidth = 1325
   Color = clBtnFace
   Font.Charset = ANSI_CHARSET
   Font.Color = clWindowText
@@ -574,7 +574,7 @@ object frmVentas: TfrmVentas
   object PageControl1: TPageControl
     Left = 2
     Top = 5
-    Width = 1297
+    Width = 1319
     Height = 572
     ActivePage = TabSheet1
     TabIndex = 0
@@ -1376,7 +1376,7 @@ object frmVentas: TfrmVentas
       object GroupBox1: TGroupBox
         Left = 578
         Top = -1
-        Width = 320
+        Width = 347
         Height = 544
         Caption = ' Informaci'#243'n Adicional '
         TabOrder = 1
@@ -1409,9 +1409,9 @@ object frmVentas: TfrmVentas
           Caption = 'Ordenes en produccion por Numero de Plano.'
         end
         object gvNumParte: TGridView
-          Left = 8
+          Left = 5
           Top = 40
-          Width = 305
+          Width = 338
           Height = 41
           BorderStyle = bsSingle
           GridStyle = gsReport
@@ -1433,7 +1433,7 @@ object frmVentas: TfrmVentas
             Color = clWindow
             Cursor = crDefault
             DrawingOptions = doNormal
-            DefaultWidth = 98
+            DefaultWidth = 82
             Font.Charset = ANSI_CHARSET
             Font.Color = clWindowText
             Font.Height = -11
@@ -1450,11 +1450,11 @@ object frmVentas: TfrmVentas
             SlideBounds.Left = 0
             SlideBounds.Top = 0
             SlideBounds.Width = 0
-            Sorted = True
+            Sorted = False
             SortType = stAlphabetic
             VerticalAlignment = vaMiddle
             Visible = True
-            Width = 98
+            Width = 82
             WrapKind = wkEllipsis
             AutoExecute = False
           end
@@ -1463,7 +1463,7 @@ object frmVentas: TfrmVentas
             Color = clWindow
             Cursor = crDefault
             DrawingOptions = doNormal
-            DefaultWidth = 98
+            DefaultWidth = 82
             Font.Charset = ANSI_CHARSET
             Font.Color = clWindowText
             Font.Height = -11
@@ -1484,7 +1484,7 @@ object frmVentas: TfrmVentas
             SortType = stAlphabetic
             VerticalAlignment = vaMiddle
             Visible = True
-            Width = 98
+            Width = 82
             WrapKind = wkEllipsis
             AutoExecute = False
           end
@@ -1493,7 +1493,7 @@ object frmVentas: TfrmVentas
             Color = clWindow
             Cursor = crDefault
             DrawingOptions = doNormal
-            DefaultWidth = 98
+            DefaultWidth = 82
             Font.Charset = ANSI_CHARSET
             Font.Color = clWindowText
             Font.Height = -11
@@ -1510,19 +1510,49 @@ object frmVentas: TfrmVentas
             SlideBounds.Left = 0
             SlideBounds.Top = 0
             SlideBounds.Width = 0
+            Sorted = True
+            SortType = stAlphabetic
+            VerticalAlignment = vaMiddle
+            Visible = True
+            Width = 82
+            WrapKind = wkEllipsis
+            AutoExecute = False
+          end
+          object TTextualColumn
+            Alignment = taLeftJustify
+            Color = clWindow
+            Cursor = crDefault
+            DrawingOptions = doNormal
+            DefaultWidth = 82
+            Font.Charset = ANSI_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'Tahoma'
+            Font.Style = []
+            Footer.Color = clWindow
+            Footer.FormulaKind = fkNone
+            Header.Color = clBtnFace
+            Header.Caption = 'Sugerida'
+            Header.DisplayMode = dmTextOnly
+            Options = [coCanClick, coCanSort, coEditorAutoSelect, coPublicUsing]
+            Position = 3
+            SlideBounds.Height = 0
+            SlideBounds.Left = 0
+            SlideBounds.Top = 0
+            SlideBounds.Width = 0
             Sorted = False
             SortType = stAlphabetic
             VerticalAlignment = vaMiddle
             Visible = True
-            Width = 98
+            Width = 82
             WrapKind = wkEllipsis
             AutoExecute = False
           end
         end
         object gvNumPlano: TGridView
-          Left = 8
+          Left = 5
           Top = 104
-          Width = 305
+          Width = 338
           Height = 41
           BorderStyle = bsSingle
           GridStyle = gsReport
@@ -1544,7 +1574,7 @@ object frmVentas: TfrmVentas
             Color = clWindow
             Cursor = crDefault
             DrawingOptions = doNormal
-            DefaultWidth = 98
+            DefaultWidth = 82
             Font.Charset = ANSI_CHARSET
             Font.Color = clWindowText
             Font.Height = -11
@@ -1561,11 +1591,11 @@ object frmVentas: TfrmVentas
             SlideBounds.Left = 0
             SlideBounds.Top = 0
             SlideBounds.Width = 0
-            Sorted = True
+            Sorted = False
             SortType = stAlphabetic
             VerticalAlignment = vaMiddle
             Visible = True
-            Width = 98
+            Width = 82
             WrapKind = wkEllipsis
             AutoExecute = False
           end
@@ -1574,7 +1604,7 @@ object frmVentas: TfrmVentas
             Color = clWindow
             Cursor = crDefault
             DrawingOptions = doNormal
-            DefaultWidth = 98
+            DefaultWidth = 82
             Font.Charset = ANSI_CHARSET
             Font.Color = clWindowText
             Font.Height = -11
@@ -1595,7 +1625,7 @@ object frmVentas: TfrmVentas
             SortType = stAlphabetic
             VerticalAlignment = vaMiddle
             Visible = True
-            Width = 98
+            Width = 82
             WrapKind = wkEllipsis
             AutoExecute = False
           end
@@ -1604,7 +1634,7 @@ object frmVentas: TfrmVentas
             Color = clWindow
             Cursor = crDefault
             DrawingOptions = doNormal
-            DefaultWidth = 98
+            DefaultWidth = 82
             Font.Charset = ANSI_CHARSET
             Font.Color = clWindowText
             Font.Height = -11
@@ -1621,19 +1651,49 @@ object frmVentas: TfrmVentas
             SlideBounds.Left = 0
             SlideBounds.Top = 0
             SlideBounds.Width = 0
+            Sorted = True
+            SortType = stAlphabetic
+            VerticalAlignment = vaMiddle
+            Visible = True
+            Width = 82
+            WrapKind = wkEllipsis
+            AutoExecute = False
+          end
+          object TTextualColumn
+            Alignment = taLeftJustify
+            Color = clWindow
+            Cursor = crDefault
+            DrawingOptions = doNormal
+            DefaultWidth = 82
+            Font.Charset = ANSI_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -11
+            Font.Name = 'Tahoma'
+            Font.Style = []
+            Footer.Color = clWindow
+            Footer.FormulaKind = fkNone
+            Header.Color = clBtnFace
+            Header.Caption = 'Sugerida'
+            Header.DisplayMode = dmTextOnly
+            Options = [coCanClick, coCanSort, coEditorAutoSelect, coPublicUsing]
+            Position = 3
+            SlideBounds.Height = 0
+            SlideBounds.Left = 0
+            SlideBounds.Top = 0
+            SlideBounds.Width = 0
             Sorted = False
             SortType = stAlphabetic
             VerticalAlignment = vaMiddle
             Visible = True
-            Width = 98
+            Width = 82
             WrapKind = wkEllipsis
             AutoExecute = False
           end
         end
         object gvProdNumero: TGridView
-          Left = 8
+          Left = 5
           Top = 176
-          Width = 305
+          Width = 338
           Height = 105
           BorderStyle = bsSingle
           GridStyle = gsReport
@@ -1703,7 +1763,7 @@ object frmVentas: TfrmVentas
             SlideBounds.Left = 0
             SlideBounds.Top = 0
             SlideBounds.Width = 0
-            Sorted = True
+            Sorted = False
             SortType = stAlphabetic
             VerticalAlignment = vaMiddle
             Visible = True
@@ -1823,7 +1883,7 @@ object frmVentas: TfrmVentas
             SlideBounds.Left = 0
             SlideBounds.Top = 0
             SlideBounds.Width = 0
-            Sorted = False
+            Sorted = True
             SortType = stAlphabetic
             VerticalAlignment = vaMiddle
             Visible = True
@@ -1833,9 +1893,9 @@ object frmVentas: TfrmVentas
           end
         end
         object gvProdPlano: TGridView
-          Left = 8
+          Left = 5
           Top = 304
-          Width = 305
+          Width = 338
           Height = 105
           BorderStyle = bsSingle
           GridStyle = gsReport
@@ -1875,7 +1935,7 @@ object frmVentas: TfrmVentas
             SlideBounds.Left = 0
             SlideBounds.Top = 0
             SlideBounds.Width = 0
-            Sorted = True
+            Sorted = False
             SortType = stAlphabetic
             VerticalAlignment = vaMiddle
             Visible = True
@@ -2025,7 +2085,7 @@ object frmVentas: TfrmVentas
             SlideBounds.Left = 0
             SlideBounds.Top = 0
             SlideBounds.Width = 0
-            Sorted = False
+            Sorted = True
             SortType = stAlphabetic
             VerticalAlignment = vaMiddle
             Visible = True
@@ -2049,9 +2109,9 @@ object frmVentas: TfrmVentas
           TabOrder = 5
         end
         object gvStatus: TGridView
-          Left = 8
+          Left = 5
           Top = 424
-          Width = 305
+          Width = 338
           Height = 41
           BorderStyle = bsSingle
           GridStyle = gsReport
@@ -2090,7 +2150,7 @@ object frmVentas: TfrmVentas
             SlideBounds.Left = 0
             SlideBounds.Top = 0
             SlideBounds.Width = 0
-            Sorted = True
+            Sorted = False
             SortType = stAlphabetic
             VerticalAlignment = vaMiddle
             Visible = True
@@ -2120,7 +2180,7 @@ object frmVentas: TfrmVentas
             SlideBounds.Left = 0
             SlideBounds.Top = 0
             SlideBounds.Width = 0
-            Sorted = False
+            Sorted = True
             SortType = stAlphabetic
             VerticalAlignment = vaMiddle
             Visible = True
@@ -2131,7 +2191,7 @@ object frmVentas: TfrmVentas
         end
       end
       object GroupBox4: TGroupBox
-        Left = 902
+        Left = 925
         Top = -1
         Width = 385
         Height = 553

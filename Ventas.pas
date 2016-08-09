@@ -7,7 +7,7 @@ uses
   Dialogs,ADODB,DB,IniFiles,All_Functions,StrUtils,chris_Functions, Mask, StdCtrls,sndkey32,
   ScrollView, CustomGridViewControl, CustomGridView, GridView, ComCtrls,ComObj,
   CellEditors,ImpresionOrden,Larco_Functions, ExtCtrls, Menus,Clipbrd,
-  ActnList, ActnMan, ToolWin, ActnCtrls, ImgList, Buttons,Printers;
+  ActnList, ActnMan, ToolWin, ActnCtrls, ImgList, Buttons,Printers,math;
 
 type
   TfrmVentas = class(TForm)
@@ -1590,6 +1590,7 @@ end;
 
 procedure TfrmVentas.cmbPlanosChange(Sender: TObject);
 var SQLStr, enStock, piezas, ordenes: String;
+sugerida: Integer;
 Qry2 : TADOQuery;
 begin
   cmbPlanos.Text := Trim(cmbPlanos.Text);
@@ -1640,6 +1641,13 @@ begin
   gvNumPlano.Cells[0, gvNumPlano.RowCount -1] := ordenes;
   gvNumPlano.Cells[1, gvNumPlano.RowCount -1] := piezas;
   gvNumPlano.Cells[2, gvNumPlano.RowCount -1] := enStock;
+
+  sugerida := 0;
+  if piezas <> '' then begin
+    sugerida:= Ceil(StrToInt(piezas) * 0.50);
+  end;
+
+  gvNumPlano.Cells[3, gvNumPlano.RowCount -1] := IntToStr(sugerida);
 
   SQLStr := 'SELECT RIGHT(O.ITE_Nombre,LEN(O.ITE_Nombre) - 3) AS Orden, ' +
             'O.Ordenada As Cantidad, O.Requerida As Cliente, ' +
@@ -1738,6 +1746,7 @@ end;
 
 procedure TfrmVentas.txtNumeroExit(Sender: TObject);
 var SQLStr, enStock, piezas, ordenes: String;
+sugerida: Integer;
 Qry2 : TADOQuery;
 begin
   txtNumero.Text := Trim(txtNumero.Text);
@@ -1786,6 +1795,13 @@ begin
   gvNumParte.Cells[0, gvNumParte.RowCount -1] := ordenes;
   gvNumParte.Cells[1, gvNumParte.RowCount -1] := piezas;
   gvNumParte.Cells[2, gvNumParte.RowCount -1] := enStock;
+
+  sugerida := 0;
+  if piezas <> '' then begin
+    sugerida:= Ceil(StrToInt(piezas) * 0.50);
+  end;
+
+  gvNumParte.Cells[3, gvNumParte.RowCount -1] := IntToStr(sugerida);
 
   SQLStr := 'SELECT RIGHT(O.ITE_Nombre,LEN(O.ITE_Nombre) - 3) AS Orden, ' +
             'O.Ordenada As Cantidad, O.Requerida As Cliente, ' +
