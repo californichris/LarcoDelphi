@@ -202,7 +202,7 @@ var
   giOpcion : Integer;
   Conn : TADOConnection;
   Qry : TADOQuery;
-  gsFirstTask,gsYear,gsOYear,gsInstrucciones,gsPrinterName : String;
+  gsFirstTask,gsYear,gsOYear,gsInstrucciones,gsPrinterName,gsMonths,gsFactor : String;
   sPermits : String;
   giPrinterIndex: Integer;
 implementation
@@ -297,6 +297,9 @@ begin
 
     gsInstrucciones := IniFile.ReadString('System','Instrucciones','Instrucciones/');
     gsPrinterName := IniFile.ReadString('Tasks','PrinterName','Leitz');
+    gsMonths := IniFile.ReadString('Tasks','Months','6');
+    gsFactor := IniFile.ReadString('Tasks','Factor','0,5');
+
     //ShowMessage(gsInstrucciones);
     
     txtInstrucciones.SelAttributes.Size := 11;
@@ -1591,6 +1594,7 @@ end;
 procedure TfrmVentas.cmbPlanosChange(Sender: TObject);
 var SQLStr, enStock, piezas, ordenes: String;
 sugerida: Integer;
+factor: Extended;
 Qry2 : TADOQuery;
 begin
   cmbPlanos.Text := Trim(cmbPlanos.Text);
@@ -1621,11 +1625,21 @@ begin
       enStock := VarToStr(Qry2['Cantidad']);
   end;
 
-  SQLStr := 'SELECT P.PN_Id,P.PN_Numero, COUNT(*) AS Ordenes, SUM(O.Requerida) AS Piezas ' +
+  SQLStr := 'SELECT PN_Id,PN_Numero,SUM(Ordenes) AS Ordenes, SUM(Piezas) AS Piezas FROM (' +
+            'SELECT P.PN_Id,P.PN_Numero, COUNT(*) AS Ordenes, SUM(O.Requerida) AS Piezas ' +
             'FROM tblOrdenes O ' +
             'INNER JOIN tblPlano P ON O.PN_Id = P.PN_Id AND P.PN_Numero = ' + QuotedStr(cmbPlanos.Text) + ' ' +
-            'WHERE O.Recibido <= GETDATE() AND O.Recibido >= DATEADD(MONTH, -6, GETDATE()) ' +
-            'GROUP BY P.PN_Id,P.PN_Numero';
+            'WHERE O.Recibido <= GETDATE() AND O.Recibido >= DATEADD(MONTH, -' + gsMonths + ', GETDATE()) ' +
+            'GROUP BY P.PN_Id,P.PN_Numero' +
+            ' UNION ' +
+            'SELECT P.PN_Id,P.PN_Numero, COUNT(*) AS Ordenes, SUM(O.Requerida) AS Piezas ' +
+            'FROM tblStockOrdenes O ' +
+            'INNER JOIN tblPlano P ON O.PN_Id = P.PN_Id AND P.PN_Numero = ' + QuotedStr(cmbPlanos.Text) + ' ' +
+            'WHERE O.Recibido <= GETDATE() AND O.Recibido >= DATEADD(MONTH, -' + gsMonths + ', GETDATE()) ' +
+            'GROUP BY P.PN_Id,P.PN_Numero' +
+            ') footable ' +
+            'GROUP BY PN_Id,PN_Numero';
+
 
   Qry2.SQL.Clear;
   Qry2.SQL.Text := SQLStr;
@@ -1643,8 +1657,9 @@ begin
   gvNumPlano.Cells[2, gvNumPlano.RowCount -1] := enStock;
 
   sugerida := 0;
+  factor := StrToFloat(gsFactor);
   if piezas <> '' then begin
-    sugerida:= Ceil(StrToInt(piezas) * 0.50);
+    sugerida:= Ceil(StrToInt(piezas) * factor);
   end;
 
   gvNumPlano.Cells[3, gvNumPlano.RowCount -1] := IntToStr(sugerida);
@@ -1747,6 +1762,7 @@ end;
 procedure TfrmVentas.txtNumeroExit(Sender: TObject);
 var SQLStr, enStock, piezas, ordenes: String;
 sugerida: Integer;
+factor: Extended;
 Qry2 : TADOQuery;
 begin
   txtNumero.Text := Trim(txtNumero.Text);
@@ -1777,9 +1793,16 @@ begin
       enStock := VarToStr(Qry2['Cantidad']);
   end;
 
-  SQLStr := 'SELECT COUNT(*) AS Ordenes, SUM(O.Requerida) AS Piezas ' +
+  SQLStr := 'SELECT SUM(Ordenes) AS Ordenes, SUM(Piezas) AS Piezas FROM (' +
+            'SELECT COUNT(*) AS Ordenes, SUM(O.Requerida) AS Piezas ' +
             'FROM tblOrdenes O ' +
-            'WHERE O.Recibido <= GETDATE() AND O.Recibido >= DATEADD(MONTH, -6, GETDATE()) AND O.Numero = ' + QuotedStr(txtNumero.Text);
+            'WHERE O.Recibido <= GETDATE() AND O.Recibido >= DATEADD(MONTH, -' + gsMonths+ ', GETDATE()) AND O.Numero = ' + QuotedStr(txtNumero.Text) +
+            ' UNION ' +
+            'SELECT COUNT(*) AS Ordenes, SUM(O.Requerida) AS Piezas ' +
+            'FROM tblStockOrdenes O ' +
+            'WHERE O.Recibido <= GETDATE() AND O.Recibido >= DATEADD(MONTH, -' + gsMonths+ ', GETDATE()) AND O.Numero = ' + QuotedStr(txtNumero.Text) +
+            ') footable';
+
 
   Qry2.SQL.Clear;
   Qry2.SQL.Text := SQLStr;
@@ -1797,8 +1820,9 @@ begin
   gvNumParte.Cells[2, gvNumParte.RowCount -1] := enStock;
 
   sugerida := 0;
+  factor := StrToFloat(gsFactor);
   if piezas <> '' then begin
-    sugerida:= Ceil(StrToInt(piezas) * 0.50);
+    sugerida:= Ceil(StrToInt(piezas) * factor);
   end;
 
   gvNumParte.Cells[3, gvNumParte.RowCount -1] := IntToStr(sugerida);
