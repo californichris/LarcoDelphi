@@ -1,6 +1,6 @@
 object frmRelacionOC: TfrmRelacionOC
-  Left = 49
-  Top = 35
+  Left = 44
+  Top = 81
   Width = 1219
   Height = 675
   Caption = 'Relacion  de Ordene de Compra por Cliente'

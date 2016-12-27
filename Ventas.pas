@@ -1428,7 +1428,7 @@ begin
 
     qrImpresionOrden.QRMsg.Caption := 'Forma: Larco-015' + #13 +
                                       'Nivel de Revisión: D' + #13 +
-                                      'Retención: 1 año+uso';
+                                      'Retención: 2 año+uso';
 
     qrImpresionOrden.QRInstrucciones.Caption := txtAlertaMsg.Text;    
 
