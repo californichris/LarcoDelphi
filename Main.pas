@@ -378,7 +378,7 @@ begin
                        StatusBar.Panels.Items[1].Width + StatusBar.Panels.Items[2].Width +
                        StatusBar.Panels.Items[3].Width + StatusBar.Panels.Items[4].Width + 2;
 
-    Self.Caption := Self.Caption + ' 3.4';
+    Self.Caption := Self.Caption + ' 3.5';
     Timer1Timer(nil);
 
 end;

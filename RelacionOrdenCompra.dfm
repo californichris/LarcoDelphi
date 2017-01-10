@@ -854,6 +854,13 @@ object frmRelacionOC: TfrmRelacionOC
       Caption = 'lblWeek'
       Visible = False
     end
+    object Label9: TLabel
+      Left = 878
+      Top = 40
+      Width = 46
+      Height = 13
+      Caption = 'Urgente :'
+    end
     object GroupBox2: TGroupBox
       Left = 820
       Top = 65
@@ -1216,6 +1223,15 @@ object frmRelacionOC: TfrmRelacionOC
         AutoExecute = False
       end
     end
+    object cmbUrgente: TComboBox
+      Left = 927
+      Top = 38
+      Width = 86
+      Height = 21
+      ItemHeight = 13
+      TabOrder = 24
+      OnKeyDown = cmbPartesKeyDown
+    end
   end
   object ProgressBar1: TProgressBar
     Left = 755
@@ -1456,12 +1472,12 @@ object frmRelacionOC: TfrmRelacionOC
     end
   end
   object Timer1: TTimer
-    Left = 984
-    Top = 12
+    Left = 1008
+    Top = 4
   end
   object SaveDialog1: TSaveDialog
-    Left = 948
-    Top = 12
+    Left = 972
+    Top = 4
   end
   object PopupMenu2: TPopupMenu
     Left = 952
@@ -1472,7 +1488,7 @@ object frmRelacionOC: TfrmRelacionOC
     end
   end
   object OpenDialog1: TOpenDialog
-    Left = 1013
-    Top = 14
+    Left = 1037
+    Top = 6
   end
 end

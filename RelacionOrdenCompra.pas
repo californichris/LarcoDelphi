@@ -69,6 +69,8 @@ type
     ExportROC: TButton;
     gvColorCode: TGridView;
     lblWeek: TLabel;
+    Label9: TLabel;
+    cmbUrgente: TComboBox;
     procedure IdleLoop; virtual;
     function FormIsRunning(FormName: String):Boolean;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
@@ -172,6 +174,12 @@ begin
     cmbCompra.Text := 'Todos';
     cmbProductos.Text := 'Todos';
     cmbPlanos.Text := 'Todos';
+    cmbUrgente.Text := 'Todos';
+
+    cmbUrgente.Items.Add('Todos');
+    cmbUrgente.Items.Add('No');
+    cmbUrgente.Items.Add('Si');
+
     deRecibido1.Date := Now;
     deRecibido2.Date := Now;
 
@@ -212,9 +220,27 @@ begin
     giCantidad := 0;
     giCantCliente := 0;
     additionalWhere := '';
+
+    if cmbUrgente.Text <> 'Todos' then
+    begin
+        if cmbUrgente.Text = 'No' then
+        begin
+          additionalWhere := ' O.Urgente = 0 '
+        end
+        else if cmbUrgente.Text = 'Si' then
+        begin
+          additionalWhere := ' O.Urgente = 1 '
+        end;
+    end;
+
     if chkRecibido.Checked = True then
     begin
-        additionalWhere := ' (O.Recibido >= ' + QuotedStr(deRecibido1.Text) + ' AND O.Recibido <= ' + QuotedStr(deRecibido2.Text  + ' 23:59:59.99') + ')';
+        if(additionalWhere <> '') then
+        begin
+            additionalWhere := additionalWhere + ' AND '
+        end;
+
+        additionalWhere := additionalWhere + ' (O.Recibido >= ' + QuotedStr(deRecibido1.Text) + ' AND O.Recibido <= ' + QuotedStr(deRecibido2.Text  + ' 23:59:59.99') + ')';
     end;
 
     SQLStr := 'Relacion_Orden_Compra ' + QuotedStr(txtCliente.Text) + ','
