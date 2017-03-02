@@ -896,8 +896,8 @@ begin
                           StringReplace(gvEntradas.Cells[5,i],',','',[rfReplaceAll, rfIgnoreCase]) + ')';
             end
             else begin
-                sValor := StringReplace(gvEntradas.Cells[4,i],',','',[rfReplaceAll, rfIgnoreCase]);
-                sActual := gvEntradas.Cells[8,i];
+                sValor := StringReplace(gvEntradas.Cells[4,i],',','',[rfReplaceAll, rfIgnoreCase]); //ED_Cantidad
+                sActual := gvEntradas.Cells[8,i]; //ED_Restante
 
                 dValor := StrToFloat(sValor);
                 dActual := StrToFloat(sActual);
