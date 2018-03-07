@@ -1965,7 +1965,7 @@ object frmVentas: TfrmVentas
             SlideBounds.Left = 0
             SlideBounds.Top = 0
             SlideBounds.Width = 0
-            Sorted = False
+            Sorted = True
             SortType = stAlphabetic
             VerticalAlignment = vaMiddle
             Visible = True
@@ -2085,7 +2085,7 @@ object frmVentas: TfrmVentas
             SlideBounds.Left = 0
             SlideBounds.Top = 0
             SlideBounds.Width = 0
-            Sorted = True
+            Sorted = False
             SortType = stAlphabetic
             VerticalAlignment = vaMiddle
             Visible = True

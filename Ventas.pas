@@ -188,7 +188,7 @@ type
     procedure cmbFontColorChange(Sender: TObject);
     procedure btnLabelClick(Sender: TObject);
     function GetLabelPrinterIndex: Integer;
-    procedure PrintLabel(Orden: String);    
+    procedure PrintLabel(Orden: String);
     //function  GetRichText():string;
     //procedure  SetRichText(Qry2 : TADOQuery);
   private
